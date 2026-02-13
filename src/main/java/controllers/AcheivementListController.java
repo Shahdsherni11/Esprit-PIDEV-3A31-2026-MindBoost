@@ -40,7 +40,7 @@ public class AcheivementListController {
 
     @FXML
     private void goBack(ActionEvent event) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/resources/AcheivementsMenu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/AcheivementsMenu.fxml"));
         Scene scene = new Scene(loader.load());
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);

@@ -46,4 +46,5 @@ public class AcheivementAddController {
         alert.setContentText(msg);
         alert.showAndWait();
     }
+
 }

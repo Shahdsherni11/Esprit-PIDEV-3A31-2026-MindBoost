@@ -46,7 +46,7 @@ public class CommentAddController {
     }
 
     private void switchScene(ActionEvent event, String fxml) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/resources/" + fxml));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxml));
         Scene scene = new Scene(loader.load());
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);

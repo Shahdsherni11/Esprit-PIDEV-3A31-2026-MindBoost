@@ -6,39 +6,33 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.SceneUtil;
+import org.example.SceneManager;
 
 public class PostsMenuController {
 
     @FXML
     private void goToAdd(ActionEvent event) throws Exception {
-        switchScene(event, "PostAdd.fxml");
+        SceneManager.switchTo("PostAdd.fxml");
     }
 
     @FXML
     private void goToEdit(ActionEvent event) throws Exception {
-        switchScene(event, "PostEdit.fxml");
+        SceneManager.switchTo("PostEdit.fxml");
     }
 
     @FXML
     private void goToDelete(ActionEvent event) throws Exception {
-        switchScene(event, "PostDelete.fxml");
+        SceneManager.switchTo("PostDelete.fxml");
     }
 
     @FXML
     private void goToList(ActionEvent event) throws Exception {
-        switchScene(event, "PostList.fxml");
+        SceneManager.switchTo("PostList.fxml");
     }
 
     @FXML
     private void goBack(ActionEvent event) throws Exception {
-        switchScene(event, "Home.fxml");
-    }
-
-    private void switchScene(ActionEvent event, String fxml) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxml));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+        SceneManager.switchTo("Home.fxml");
     }
 }
