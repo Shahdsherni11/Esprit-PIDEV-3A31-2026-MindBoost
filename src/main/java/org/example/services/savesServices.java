@@ -23,11 +23,11 @@ public class savesServices implements CRUDsaves<saves>
 
 
     @Override
-    public void supprimer_saves(int id) throws SQLException {
-        String sql = "DELETE FROM saves WHERE post_id=?";
+    public void supprimer_saves(int post_id, int user_id) throws SQLException {
+        String sql = "DELETE FROM saves WHERE post_id=? AND user_id=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
-        //1 est l'indice de parametre 1 donc id 2 est nom...
-        preparedStatement.setInt(1,id);
+        preparedStatement.setInt(1, post_id);
+        preparedStatement.setInt(2, user_id);
         preparedStatement.executeUpdate();
         System.out.println("suppresion avec succes!");
     }
