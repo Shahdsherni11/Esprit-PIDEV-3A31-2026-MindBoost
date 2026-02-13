@@ -29,6 +29,8 @@ public class HomeController {
         Scene scene = new Scene(loader.load());
         Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
         stage.setScene(scene);
+        stage.setResizable(true);
         stage.show();
+        stage.setMaximized(true);
     }
 }
