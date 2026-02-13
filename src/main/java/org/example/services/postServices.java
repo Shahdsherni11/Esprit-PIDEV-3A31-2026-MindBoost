@@ -15,10 +15,27 @@ public class postServices implements CRUDpost<post> {
     }
     @Override
     public void ajouter_post(post post) throws SQLException {
-        String sql="INSERT INTO `post`( `content`, `title`, `tag`, `image_url`, `likes`, `dislikes`, `help_meter`, `user_id`,`acheivement_id`) VALUES ('"+post.getContent()+"','"+post.getTitle()+"','"+post.getTag()+"','"+post.getImage_url()+"','"+post.getPost_likes()+"','"+post.getPost_dislikes()+"','"+post.getHelp_meter()+"','"+post.getUser_id()+"','"+post.getAcheivement_id()+"')";
-        Statement statement = con.createStatement();
-        statement.executeUpdate(sql);
-        System.out.println("post ajoutée avec succes!");
+        String sql = "INSERT INTO `post` " +
+                "(`content`, `title`, `tag`, `image_url`, `likes`, `dislikes`, `help_meter`, `user_id`, `acheivement_id`) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, post.getContent());
+            ps.setString(2, post.getTitle());
+            ps.setString(3, post.getTag());
+            ps.setString(4, post.getImage_url());
+            ps.setInt(5, post.getPost_likes());
+            ps.setInt(6, post.getPost_dislikes());
+            ps.setInt(7, post.getHelp_meter());
+            ps.setInt(8, post.getUser_id());
+
+            if (post.getAcheivement_id() == 0) {
+                ps.setNull(9, Types.INTEGER); // ✅ avoid FK error
+            } else {
+                ps.setInt(9, post.getAcheivement_id());
+            }
+
+            ps.executeUpdate();
+        }
     }
 
 
