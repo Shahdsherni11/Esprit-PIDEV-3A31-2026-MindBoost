@@ -15,10 +15,10 @@ import java.sql.SQLException;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) { MainFX.launch(MainFX.class, args);
         //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
         // to see how IntelliJ IDEA suggests fixing it.
-
+/*
         userServices userServices = new userServices();
         postServices postServices = new postServices();
         commentServices commentServices = new commentServices();
@@ -38,9 +38,9 @@ public class Main {
             //postServices.ajouter_post(new post("thisisatest","titre","stress","url",10,2,2,1,1));
            // System.out.println(postServices.afficher_post());
 
-            commentServices.ajouter_comment(new comment("aha",10,2,5,1));
+            /*commentServices.ajouter_comment(new comment("aha",10,2,5,1));
             commentServices.supprimer_comment(1);
-            System.out.println(commentServices.afficher_comment());
+            System.out.println(commentServices.afficher_comment());*/
 
             //savesServices.ajouter_saves(new saves("test",1,1));
             //savesServices.supprimer_saves(1);
@@ -50,9 +50,9 @@ public class Main {
             //acheivementsServices.supprimer_acheivement(1);
             //System.out.println(acheivementsServices.afficher_acheivement());
 
-        } catch (SQLException e) {
+       /* } catch (SQLException e) {
             System.out.println(e.getMessage());
-        }
+        }*/
 
     }
 }

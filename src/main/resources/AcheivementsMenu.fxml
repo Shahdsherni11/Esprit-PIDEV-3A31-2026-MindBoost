@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="15" alignment="CENTER" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.AcheivementsMenuController">
+    <Text text="Acheivements CRUD" />
+    <Button text="Ajouter" onAction="#goToAdd"/>
+    <Button text="Modifier" onAction="#goToEdit"/>
+    <Button text="Supprimer" onAction="#goToDelete"/>
+    <Button text="Afficher" onAction="#goToList"/>
+    <Button text="Retour" onAction="#goBack"/>
+</VBox>
