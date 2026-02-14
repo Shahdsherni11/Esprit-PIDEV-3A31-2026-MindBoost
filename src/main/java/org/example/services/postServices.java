@@ -49,9 +49,10 @@ public class postServices implements CRUDpost<post> {
         System.out.println("suppresion post avec succes!");
     }
 
+
     @Override
     public void modifier_post(post post) throws SQLException {
-        String sql =  "UPDATE post SET content=?, title=?, tag=?, image_url=?, likes=?, dislikes=?, help_meter=?, user_id=?, acheivement_id=? WHERE post_id=?";
+        String sql = "UPDATE post SET content=?, title=?, tag=?, image_url=?, likes=?, dislikes=?, help_meter=?, user_id=?, acheivement_id=? WHERE post_id=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
         preparedStatement.setString(1, post.getContent());
         preparedStatement.setString(2, post.getTitle());
@@ -61,12 +62,26 @@ public class postServices implements CRUDpost<post> {
         preparedStatement.setInt(6, post.getPost_dislikes());
         preparedStatement.setInt(7, post.getHelp_meter());
         preparedStatement.setInt(8, post.getUser_id());
-        preparedStatement.setInt(9, post.getAcheivement_id());
+
+        if (post.getAcheivement_id() == 0) {
+            preparedStatement.setNull(9, Types.INTEGER);
+        } else {
+            preparedStatement.setInt(9, post.getAcheivement_id());
+        }
+
         preparedStatement.setInt(10, post.getPost_id());
         preparedStatement.executeUpdate();
         System.out.println("modification avec succes!");
     }
-
+    public void updateReactions(int postId, int likes, int dislikes) throws SQLException {
+        String sql = "UPDATE post SET likes=?, dislikes=? WHERE post_id=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, likes);
+            ps.setInt(2, dislikes);
+            ps.setInt(3, postId);
+            ps.executeUpdate();
+        }
+    }
 
 
 

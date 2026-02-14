@@ -1,0 +1,165 @@
+/* ==== Base ==== */
+.root {
+    -fx-font-family: "Inter", "Segoe UI", "Arial";
+    -fx-font-size: 14px;
+}
+
+/* ==== Light Theme ==== */
+.root.light {
+    -fx-base: #f7f8fb;
+    -fx-background: #f7f8fb;
+    -fx-control-inner-background: white;
+    -fx-accent: #5b8def;
+    -fx-focus-color: #5b8def;
+    -fx-faint-focus-color: rgba(91, 141, 239, 0.2);
+}
+
+/* ==== Topbar ==== */
+.topbar {
+    -fx-background-color: linear-gradient(to right, #9bb8f5, #a6e3b5, #c6b4f3);
+    -fx-padding: 10 20;
+    -fx-spacing: 12;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.topbar-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #24324d;
+}
+
+.search-field {
+    -fx-background-radius: 20;
+    -fx-padding: 6 14;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(0,0,0,0.08);
+}
+
+/* ==== Cards ==== */
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+/* ==== Buttons ==== */
+.button.primary {
+    -fx-background-color: #5b8def;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+}
+
+.button.ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: #5b8def;
+    -fx-text-fill: #5b8def;
+    -fx-border-radius: 12;
+    -fx-padding: 8 16;
+}
+/* ==== Default Button Style (applies to all buttons) ==== */
+.button {
+    -fx-background-color: #5b8def;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+/* Hover/Pressed */
+.button:hover {
+    -fx-background-color: #4a7cdc;
+}
+
+.button:pressed {
+    -fx-background-color: #3d6fcf;
+}
+/* ==== Forum List ==== */
+.forum-list {
+    -fx-background-color: transparent;
+    -fx-padding: 12;
+}
+
+.forum-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 10 0;
+}
+
+.forum-list .scroll-bar:vertical {
+    -fx-opacity: 1;
+}
+
+.forum-list .scroll-bar:horizontal {
+    -fx-opacity: 0;
+}
+
+/* ==== Post Card ==== */
+.post-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+.post-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.post-meta {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+
+.post-content {
+    -fx-wrap-text: true;
+}
+
+.post-actions {
+    -fx-spacing: 8;
+}
+
+.post-action-btn {
+    -fx-background-color: #eef2ff;
+    -fx-text-fill: #3b5ccc;
+    -fx-background-radius: 10;
+    -fx-padding: 6 10;
+    -fx-font-weight: bold;
+}
+
+.post-action-btn:hover {
+    -fx-background-color: #dfe7ff;
+}
+/* ==== Comment Card ==== */
+.comment-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);
+}
+
+.comment-meta {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+
+.comment-text {
+    -fx-wrap-text: true;
+}
+
+.comment-actions {
+    -fx-spacing: 8;
+}
+/* Keep forum list text visible when selected/focused */
+.forum-list .list-cell:filled:selected,
+.forum-list .list-cell:filled:selected:hover,
+.forum-list .list-cell:filled:focused,
+.forum-list .list-cell:filled:focused:hover {
+    -fx-background-color: transparent;
+}
+
+.forum-list .list-cell:filled:selected .label,
+.forum-list .list-cell:filled:focused .label {
+    -fx-text-fill: #111827;
+}
