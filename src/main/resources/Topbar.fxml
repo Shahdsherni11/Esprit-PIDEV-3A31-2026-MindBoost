@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox spacing="12" styleClass="topbar"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.TopbarController">
+
+    <Label text="MindCare" styleClass="topbar-title"/>
+    <TextField fx:id="searchField"
+               promptText="Search..."
+               styleClass="search-field"
+               focusTraversable="false"/>
+
+    <HBox spacing="8">
+        <Button text="Home" onAction="#goHome"/>
+        <Button text="Posts" onAction="#goPosts"/>
+        <Button text="Achievements" onAction="#goAchievements"/>
+        <Button text="Saves" onAction="#goSaves"/>
+    </HBox>
+</HBox>

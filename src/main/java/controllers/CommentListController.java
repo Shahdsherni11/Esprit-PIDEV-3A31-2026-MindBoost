@@ -1,19 +1,14 @@
 package controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import org.example.SceneManager;
 import org.example.entities.comment;
 import org.example.services.commentServices;
 
 public class CommentListController {
-
     @FXML private ListView<comment> commentListView;
     private final commentServices commentServices = new commentServices();
 
@@ -36,20 +31,46 @@ public class CommentListController {
                         return;
                     }
 
-                    Label header = new Label("Comment ID: " + c.getComment_id() + " | User ID: " + c.getUser_id() + " | Post ID: " + c.getPost_id());
+                    Label meta = new Label("Comment ID: " + c.getComment_id() +
+                            " • User ID: " + c.getUser_id() +
+                            " • Post ID: " + c.getPost_id());
+                    meta.getStyleClass().add("comment-meta");
+
                     Label text = new Label(c.getComment());
-                    Label stats = new Label("Likes: " + c.getLikes() + " | Dislikes: " + c.getDislikes());
+                    text.getStyleClass().add("comment-text");
 
-                    Button like = new Button("+Like");
-                    like.setOnAction(e -> updateLike(c, true));
+                    Label stats = new Label("👍 " + c.getLikes() + "   👎 " + c.getDislikes());
+                    stats.getStyleClass().add("comment-meta");
 
-                    Button dislike = new Button("+Dislike");
-                    dislike.setOnAction(e -> updateLike(c, false));
+                    Button like = new Button("👍 Like");
+                    like.getStyleClass().add("post-action-btn");
 
-                    HBox actions = new HBox(5, like, dislike);
-                    VBox box = new VBox(5, header, text, stats, actions);
+                    Button dislike = new Button("👎 Dislike");
+                    dislike.getStyleClass().add("post-action-btn");
 
-                    setGraphic(box);
+                    like.setOnAction(e -> {
+                        updateLike(c, true);
+                        like.setDisable(true);
+                        dislike.setDisable(true);
+                    });
+
+                    dislike.setOnAction(e -> {
+                        updateLike(c, false);
+                        like.setDisable(true);
+                        dislike.setDisable(true);
+                    });
+
+                    HBox actions = new HBox(8, like, dislike);
+                    actions.getStyleClass().add("comment-actions");
+
+                    VBox card = new VBox(6, meta, text, stats, actions);
+                    card.getStyleClass().add("comment-card");
+                    card.setMaxWidth(800);
+
+                    HBox wrapper = new HBox(card);
+                    wrapper.setStyle("-fx-alignment: center;");
+
+                    setGraphic(wrapper);
                 }
             });
 
@@ -72,12 +93,8 @@ public class CommentListController {
     }
 
     @FXML
-    private void goBack(ActionEvent event) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/PostList.fxml"));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+    private void goBack() throws Exception {
+        SceneManager.switchTo("PostList.fxml");
     }
 
     private void showAlert(Alert.AlertType type, String msg) {

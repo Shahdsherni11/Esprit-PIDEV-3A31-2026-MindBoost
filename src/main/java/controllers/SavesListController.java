@@ -1,18 +1,14 @@
 package controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import org.example.SceneManager;
 import org.example.entities.saves;
 import org.example.services.savesServices;
 
 public class SavesListController {
-
     @FXML private ListView<saves> listView;
     private final savesServices savesServices = new savesServices();
 
@@ -28,9 +24,24 @@ public class SavesListController {
                         setGraphic(null);
                         return;
                     }
-                    Label label = new Label("Post ID: " + s.getPost_id() + " | User ID: " + s.getUser_id() + " | " + s.getDescription());
-                    VBox box = new VBox(label);
-                    setGraphic(box);
+
+                    Label title = new Label("Saved Post");
+                    title.getStyleClass().add("post-title");
+
+                    Label meta = new Label("Post ID: " + s.getPost_id() + " • User ID: " + s.getUser_id());
+                    meta.getStyleClass().add("post-meta");
+
+                    Label desc = new Label(s.getDescription());
+                    desc.getStyleClass().add("post-content");
+
+                    VBox card = new VBox(6, title, meta, desc);
+                    card.getStyleClass().add("post-card");
+                    card.setMaxWidth(800);
+
+                    HBox wrapper = new HBox(card);
+                    wrapper.setStyle("-fx-alignment: center;");
+
+                    setGraphic(wrapper);
                 }
             });
         } catch (Exception e) {
@@ -39,12 +50,8 @@ public class SavesListController {
     }
 
     @FXML
-    private void goBack(ActionEvent event) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/SavesMenu.fxml"));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+    private void goBack() throws Exception {
+        SceneManager.switchTo("SavesMenu.fxml");
     }
 
     private void showAlert(Alert.AlertType type, String msg) {

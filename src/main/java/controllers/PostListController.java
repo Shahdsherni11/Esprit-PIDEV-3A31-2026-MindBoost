@@ -1,19 +1,14 @@
 package controllers;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
+import org.example.SceneManager;
 import org.example.entities.post;
 import org.example.services.postServices;
 
 public class PostListController {
-
     @FXML private ListView<post> postListView;
     private final postServices postServices = new postServices();
 
@@ -30,34 +25,66 @@ public class PostListController {
                         return;
                     }
 
-                    Label header = new Label("User ID: " + p.getUser_id() + " | Post ID: " + p.getPost_id());
                     Label title = new Label(p.getTitle());
+                    title.getStyleClass().add("post-title");
+
+                    Label meta = new Label("User ID: " + p.getUser_id() + " • Post ID: " + p.getPost_id());
+                    meta.getStyleClass().add("post-meta");
+
                     Label content = new Label(p.getContent());
+                    content.getStyleClass().add("post-content");
+
+                    Label stats = new Label("👍 " + p.getPost_likes() + "   👎 " + p.getPost_dislikes());
+                    stats.getStyleClass().add("post-meta");
+
                     Label image = new Label("Image: " + p.getImage_url());
-                    Label stats = new Label("Likes: " + p.getPost_likes() + " | Dislikes: " + p.getPost_dislikes());
+                    image.getStyleClass().add("post-meta");
 
-                    Button like = new Button("+Like");
-                    like.setOnAction(e -> updateLike(p, true));
+                    Button like = new Button("👍 Like");
+                    like.getStyleClass().add("post-action-btn");
 
-                    Button dislike = new Button("+Dislike");
-                    dislike.setOnAction(e -> updateLike(p, false));
+                    Button dislike = new Button("👎 Dislike");
+                    dislike.getStyleClass().add("post-action-btn");
 
-                    Button addComment = new Button("+Ajouter Commentaire");
-                    addComment.setOnAction(e -> openCommentPage(e, "CommentAdd.fxml", p.getPost_id()));
+                    like.setOnAction(e -> {
+                        updateLike(p, true);
+                        like.setDisable(true);
+                        dislike.setDisable(true);
+                    });
 
-                    Button showComments = new Button("Afficher Commentaires");
-                    showComments.setOnAction(e -> openCommentPage(e, "CommentList.fxml", p.getPost_id()));
+                    dislike.setOnAction(e -> {
+                        updateLike(p, false);
+                        like.setDisable(true);
+                        dislike.setDisable(true);
+                    });
 
-                    Button editComment = new Button("Modifier Commentaire");
-                    editComment.setOnAction(e -> openCommentPage(e, "CommentEdit.fxml", p.getPost_id()));
+                    Button addComment = new Button("💬 Add");
+                    addComment.getStyleClass().add("post-action-btn");
+                    addComment.setOnAction(e -> openCommentPage("CommentAdd.fxml", p.getPost_id()));
 
-                    Button deleteComment = new Button("Supprimer Commentaire");
-                    deleteComment.setOnAction(e -> openCommentPage(e, "CommentDelete.fxml", p.getPost_id()));
+                    Button showComments = new Button("🗨️ View");
+                    showComments.getStyleClass().add("post-action-btn");
+                    showComments.setOnAction(e -> openCommentPage("CommentList.fxml", p.getPost_id()));
 
-                    HBox actions = new HBox(5, like, dislike, addComment, showComments, editComment, deleteComment);
-                    VBox box = new VBox(5, header, title, content, image, stats, actions);
+                    Button editComment = new Button("✏️ Edit");
+                    editComment.getStyleClass().add("post-action-btn");
+                    editComment.setOnAction(e -> openCommentPage("CommentEdit.fxml", p.getPost_id()));
 
-                    setGraphic(box);
+                    Button deleteComment = new Button("🗑️ Delete");
+                    deleteComment.getStyleClass().add("post-action-btn");
+                    deleteComment.setOnAction(e -> openCommentPage("CommentDelete.fxml", p.getPost_id()));
+
+                    HBox actions = new HBox(8, like, dislike, addComment, showComments, editComment, deleteComment);
+                    actions.getStyleClass().add("post-actions");
+
+                    VBox card = new VBox(6, title, meta, content, stats, image, actions);
+                    card.getStyleClass().add("post-card");
+                    card.setMaxWidth(800);
+
+                    HBox wrapper = new HBox(card);
+                    wrapper.setStyle("-fx-alignment: center;");
+
+                    setGraphic(wrapper);
                 }
             });
         } catch (Exception e) {
@@ -70,33 +97,25 @@ public class PostListController {
             if (like) p.setPost_likes(p.getPost_likes() + 1);
             else p.setPost_dislikes(p.getPost_dislikes() + 1);
 
-            postServices.modifier_post(p);
+            postServices.updateReactions(p.getPost_id(), p.getPost_likes(), p.getPost_dislikes());
             postListView.getItems().setAll(postServices.afficher_post());
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }
     }
 
-    private void openCommentPage(ActionEvent event, String fxml, int postId) {
+    private void openCommentPage(String fxml, int postId) {
         try {
             PostContext.setPostId(postId);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxml));
-            Scene scene = new Scene(loader.load());
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
+            SceneManager.switchTo(fxml);
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }
     }
 
     @FXML
-    private void goBack(ActionEvent event) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/PostsMenu.fxml"));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+    private void goBack() throws Exception {
+        SceneManager.switchTo("PostsMenu.fxml");
     }
 
     private void showAlert(Alert.AlertType type, String msg) {

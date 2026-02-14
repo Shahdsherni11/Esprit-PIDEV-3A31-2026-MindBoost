@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 
-<VBox spacing="10" alignment="CENTER" xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml" fx:controller="controllers.PostDeleteController">
-    <Label text="Post ID"/>
-    <TextField fx:id="postIdField"/>
-    <Button text="Supprimer" onAction="#deletePost"/>
-    <Button text="Retour" onAction="#goBack"/>
-</VBox>
+<BorderPane stylesheets="@styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PostDeleteController">
+    <top><fx:include source="Topbar.fxml"/></top>
+    <center>
+        <VBox spacing="10" alignment="CENTER" styleClass="card">
+            <Label text="Post ID"/>
+            <TextField fx:id="postIdField"/>
+            <Button text="Supprimer" onAction="#deletePost"/>
+            <Button text="Retour" onAction="#goBack"/>
+        </VBox>
+    </center>
+</BorderPane>

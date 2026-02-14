@@ -1,36 +1,18 @@
 package controllers;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import org.example.SceneManager;
 
 public class HomeController {
 
-    @FXML
-    private void goToPosts(ActionEvent event) throws Exception {
-        switchScene(event, "PostsMenu.fxml");
+    public void goToPosts() throws Exception {
+        SceneManager.switchTo("PostsMenu.fxml");
     }
 
-    @FXML
-    private void goToAcheivements(ActionEvent event) throws Exception {
-        switchScene(event, "AcheivementsMenu.fxml");
+    public void goToAcheivements() throws Exception {
+        SceneManager.switchTo("AcheivementsMenu.fxml");
     }
 
-    @FXML
-    private void goToSaves(ActionEvent event) throws Exception {
-        switchScene(event, "SavesMenu.fxml");
-    }
-
-    private void switchScene(ActionEvent event, String fxml) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + fxml));
-        Scene scene = new Scene(loader.load());
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.setResizable(true);
-        stage.show();
-        stage.setMaximized(true);
+    public void goToSaves() throws Exception {
+        SceneManager.switchTo("SavesMenu.fxml");
     }
 }
