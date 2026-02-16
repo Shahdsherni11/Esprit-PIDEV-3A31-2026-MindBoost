@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.DashboardController">
+
+    <top><fx:include source="Topbar.fxml"/></top>
+    <left><fx:include source="Sidebar.fxml"/></left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard">
+
+            <Label text="Dashboard" styleClass="page-title"/>
+
+            <!-- ✅ Statistiques dynamiques -->
+            <HBox spacing="14">
+                <VBox styleClass="stat-card">
+                    <Label text="Tests Généraux" styleClass="stat-title"/>
+                    <Label fx:id="generalTestsLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label text="Tests Spécifiques" styleClass="stat-title"/>
+                    <Label fx:id="specificTestsLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label text="Utilisateurs" styleClass="stat-title"/>
+                    <Label fx:id="usersLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="10">
+                <Button fx:id="quickGeneralBtn" text="📋 Tests Généraux" styleClass="quick-btn" onAction="#handleOpenGeneralTests"/>
+                <Button fx:id="quickSpecificBtn" text="🎯 Tests Spécifiques" styleClass="quick-btn" onAction="#handleOpenSpecificTests"/>
+            </HBox>
+
+        </VBox>
+    </center>
+</BorderPane>

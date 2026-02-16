@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.SpecificTestTakeController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard">
+
+            <!-- Header -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="✏️ Passer le Test Spécifique" styleClass="page-title"/>
+            </HBox>
+
+            <!-- Titre et catégorie -->
+            <VBox spacing="8" styleClass="card">
+                <Label fx:id="titleLabel" text="Titre du Test" styleClass="section-title"/>
+                <Label fx:id="categoryLabel" text="Catégorie: --" styleClass="form-label"/>
+            </VBox>
+
+            <!-- Barre de progression -->
+            <VBox spacing="8" styleClass="card">
+                <Label fx:id="progressLabel" text="Progression: 0/13 questions" styleClass="form-label"/>
+                <ProgressBar fx:id="progressBar" prefHeight="20" prefWidth="400"/>
+            </VBox>
+
+            <!-- Questions -->
+            <ScrollPane fx:id="questionsScrollPane" VBox.vgrow="ALWAYS" fitToWidth="true" style="-fx-background: transparent; -fx-border-color: transparent;">
+                <VBox fx:id="questionsContainer" spacing="12" style="-fx-padding: 0;"/>
+            </ScrollPane>
+
+            <!-- Boutons -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="cancelBtn" text="Annuler" styleClass="button ghost"/>
+                <Button fx:id="submitBtn" text="✅ Soumettre le test" styleClass="button"/>
+            </HBox>
+
+        </VBox>
+    </center>
+</BorderPane>

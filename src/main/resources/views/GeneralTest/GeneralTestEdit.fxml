@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.GeneralTestEditController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard">
+
+            <Label text="✏️ Modifier le Test Général" styleClass="page-title"/>
+
+            <VBox spacing="16" styleClass="card" VBox.vgrow="ALWAYS">
+
+                <HBox spacing="20">
+                    <VBox spacing="6">
+                        <Label text="ID du Test" styleClass="form-label"/>
+                        <TextField fx:id="idField" editable="false" styleClass="input-large"/>
+                    </VBox>
+                    <VBox spacing="6">
+                        <Label text="Créé le" styleClass="form-label"/>
+                        <TextField fx:id="createdDateField" editable="false" styleClass="input-large"/>
+                    </VBox>
+                </HBox>
+
+                <Separator/>
+
+                <VBox spacing="12">
+                    <Label text="📝 Informations Générales" styleClass="section-title"/>
+
+                    <VBox spacing="6">
+                        <Label text="Titre du Test *" styleClass="form-label"/>
+                        <TextField fx:id="titleField" promptText="Titre du test" styleClass="input-large"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Description" styleClass="form-label"/>
+                        <TextArea fx:id="descriptionField" promptText="Description..." prefRowCount="4" wrapText="true" styleClass="input-large"/>
+                    </VBox>
+
+                </VBox>
+
+                <Separator/>
+
+                <VBox spacing="12" VBox.vgrow="ALWAYS">
+                    <Label text="❓ Questions du Test" styleClass="section-title"/>
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="addQuestionBtn" text="➕ Ajouter Question" styleClass="button"/>
+                    </HBox>
+                    <ListView fx:id="questionsList" VBox.vgrow="ALWAYS" styleClass="input-large" prefHeight="200"/>
+                </VBox>
+
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="deleteBtn" text="🗑️ Supprimer" styleClass="button delete"/>
+                <Button fx:id="cancelBtn" text="← Retour" styleClass="button ghost"/>
+                <Button fx:id="updateBtn" text="✅ Mettre à jour" styleClass="button"/>
+            </HBox>
+
+        </VBox>
+    </center>
+</BorderPane>

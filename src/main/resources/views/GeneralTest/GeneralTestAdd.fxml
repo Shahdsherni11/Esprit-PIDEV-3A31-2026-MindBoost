@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.GeneralTestAddController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard">
+
+            <!-- Header avec retour -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Button fx:id="backBtn" text="← Retour" styleClass="button"/>
+                <Label text="➕ Créer un Test Général" styleClass="page-title"/>
+            </HBox>
+
+            <!-- Formulaire -->
+            <VBox spacing="16" styleClass="card" VBox.vgrow="ALWAYS">
+
+                <!-- Section 1: Infos Générales -->
+                <VBox spacing="12">
+                    <Label text="📝 Informations Générales" styleClass="section-title"/>
+                    <Separator/>
+
+                    <VBox spacing="6">
+                        <Label text="Titre du Test *" styleClass="form-label"/>
+                        <TextField fx:id="testTitleField" promptText="Ex: Test d'anxiété généralisée" styleClass="input-large"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Description" styleClass="form-label"/>
+                        <TextArea fx:id="testDescriptionArea" promptText="Décrivez l'objectif du test..." prefRowCount="4" wrapText="true" styleClass="input-large"/>
+                    </VBox>
+
+                </VBox>
+
+                <Separator/>
+
+                <!-- Section 2: Questions -->
+                <VBox spacing="12" VBox.vgrow="ALWAYS">
+                    <Label text="❓ Questions du Test" styleClass="section-title"/>
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button fx:id="addQuestionButton" text="➕ Ajouter Question" styleClass="button"/>
+                        <Button fx:id="removeQuestionButton" text="➖ Supprimer Question" styleClass="button"/>
+                        <Button fx:id="editQuestionButton" text="✏️ Modifier Question" styleClass="button"/>
+                    </HBox>
+
+                    <!-- Compteur de questions -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Nombre de questions:" styleClass="form-label"/>
+                        <Label text="0" styleClass="info-value"/>
+                    </HBox>
+
+                    <!-- Liste des questions -->
+                    <ListView fx:id="questionsListView" VBox.vgrow="ALWAYS" styleClass="input-large" prefHeight="200"/>
+                </VBox>
+
+            </VBox>
+
+            <!-- Boutons d'action -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Button fx:id="cancelButton" text="Annuler" styleClass="button ghost"/>
+                <Button fx:id="saveTestButton" text="💾 Enregistrer" styleClass="button"/>
+            </HBox>
+
+        </VBox>
+    </center>
+</BorderPane>
