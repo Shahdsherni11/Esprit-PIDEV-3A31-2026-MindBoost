@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.SpecificTestViewController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-border-color: transparent;">
+            <VBox spacing="16" styleClass="dashboard">
+
+                <!-- Header -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Button fx:id="backBtn" text="← Retour" styleClass="button"/>
+                    <Label text="👁️ Détails du Test Spécifique" styleClass="page-title"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="editBtn" text="✏️ Modifier" styleClass="button"/>
+                </HBox>
+
+                <!-- Infos principales -->
+                <VBox spacing="16" styleClass="card">
+
+                    <VBox spacing="12">
+                        <Label text="📋 Informations du Test" styleClass="section-title"/>
+                        <Separator/>
+
+                        <HBox spacing="40">
+                            <VBox spacing="6">
+                                <Label text="ID" styleClass="form-label"/>
+                                <Label fx:id="idLabel" text="--" styleClass="info-value"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="Catégorie" styleClass="form-label"/>
+                                <Label fx:id="categoryLabel" text="--" styleClass="info-value"/>
+                            </VBox>
+                            <VBox spacing="6">
+                                <Label text="Statut" styleClass="form-label"/>
+                                <Label fx:id="statusLabel" text="--" styleClass="info-value"/>
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="6">
+                            <Label text="Titre" styleClass="form-label"/>
+                            <Label fx:id="titleLabel" text="--" styleClass="info-value"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Test Général Parent" styleClass="form-label"/>
+                            <Label fx:id="generalTestLabel" text="--" styleClass="info-value"/>
+                        </VBox>
+
+                        <VBox spacing="6">
+                            <Label text="Description" styleClass="form-label"/>
+                            <Label fx:id="descriptionLabel" text="--" styleClass="info-value"/>
+                        </VBox>
+                    </VBox>
+
+                    <Separator/>
+
+                    <!-- Questions -->
+                    <VBox spacing="12" VBox.vgrow="ALWAYS">
+                        <Label text="❓ Questions du Test" styleClass="section-title"/>
+                        <ListView fx:id="questionsList" VBox.vgrow="ALWAYS" styleClass="input-large" prefHeight="300"/>
+                    </VBox>
+
+                </VBox>
+
+                <!-- Boutons -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="editBtn2" text="✏️ Modifier" styleClass="button"/>
+                    <Button fx:id="backBtn2" text="Retour" styleClass="button ghost"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

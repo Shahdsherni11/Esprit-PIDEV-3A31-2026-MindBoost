@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+  xmlns:fx="http://javafx.com/fxml"
+  fx:controller="com.gestion_test.controllers.SidebarController"
+  styleClass="sidebar">
+
+    <Label text="MindBoost" styleClass="sidebar-title"/>
+    <Separator/>
+
+    <!-- Menu Tests -->
+    <Label text="GESTION DES TESTS" styleClass="sidebar-subtitle"/>
+    <Button fx:id="sidebarGeneralBtn" text="📋 Tests Généraux" styleClass="sidebar-btn" onAction="#handleOpenGeneralTests"/>
+    <Button fx:id="sidebarSpecificBtn" text="🎯 Tests Spécifiques" styleClass="sidebar-btn" onAction="#handleOpenSpecificTests"/>
+
+    <Separator style="-fx-padding: 8 0;"/>
+
+    <!-- Autres -->
+    <Label text="PARAMÈTRES" styleClass="sidebar-subtitle"/>
+    <Button text="👤 Profile" styleClass="sidebar-btn"/>
+    <Button text="⚙️ Paramètres" styleClass="sidebar-btn"/>
+    <Button text="🚪 Déconnexion" styleClass="sidebar-btn"/>
+
+    <Region VBox.vgrow="ALWAYS"/>
+    <Label text="v1.0" styleClass="sidebar-version"/>
+
+</VBox>

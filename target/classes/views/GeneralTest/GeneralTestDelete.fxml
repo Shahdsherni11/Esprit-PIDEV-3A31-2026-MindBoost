@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.GeneralTestDeleteController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+
+            <!-- Alert Box -->
+            <VBox styleClass="card" spacing="20" maxWidth="500" alignment="CENTER">
+
+                <Label text="⚠️ Confirmation de Suppression" styleClass="page-title"/>
+
+                <VBox spacing="12" alignment="CENTER">
+                    <Label text="Êtes-vous sûr de vouloir supprimer ce test ?" styleClass="form-label"/>
+                    <Label fx:id="testTitleLabel" text="Test: --" styleClass="info-value"/>
+                    <Label text="Cette action est irréversible !" styleClass="warning-text"/>
+                </VBox>
+
+                <Separator/>
+
+                <!-- Details -->
+                <VBox spacing="6" alignment="CENTER">
+                    <Label text="ID: " styleClass="form-label"/>
+                    <Label fx:id="testIdLabel" text="--" styleClass="info-value"/>
+                </VBox>
+
+                <!-- Boutons -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="cancelBtn" text="Annuler" styleClass="button ghost" prefWidth="120"/>
+                    <Button fx:id="deleteBtn" text="🗑️ Supprimer" styleClass="button delete" prefWidth="120"/>
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </center>
+</BorderPane>

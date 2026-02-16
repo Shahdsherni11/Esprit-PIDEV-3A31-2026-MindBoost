@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.SpecificTestListController">
+
+    <top><fx:include source="../Topbar.fxml"/></top>
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <VBox spacing="16" styleClass="dashboard">
+
+            <!-- Header -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="🎯 Tests Spécifiques" styleClass="page-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="categoryFilterCombo" prefWidth="150" promptText="Filtrer par catégorie..."/>
+                <TextField fx:id="searchField" promptText="🔍 Chercher un test..." styleClass="search-field" prefWidth="250"/>
+                <Button fx:id="addBtn" text="➕ Ajouter Test" styleClass="button"/>
+            </HBox>
+
+            <!-- Stats Cards -->
+            <HBox spacing="14">
+                <VBox styleClass="stat-card">
+                    <Label text="Total Tests" styleClass="stat-title"/>
+                    <Label fx:id="totalLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label text="Catégories" styleClass="stat-title"/>
+                    <Label fx:id="categoriesLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+                <VBox styleClass="stat-card">
+                    <Label text="Tests Actifs" styleClass="stat-title"/>
+                    <Label fx:id="activeLabel" text="0" styleClass="stat-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Liste des tests avec ListView -->
+            <VBox spacing="12" styleClass="card" VBox.vgrow="ALWAYS">
+                <Label text="Liste des Tests Spécifiques" styleClass="section-title"/>
+
+                <!-- ✅ ListView AU LIEU DE TableView -->
+                <ListView fx:id="testsList" VBox.vgrow="ALWAYS" styleClass="tests-list-view"/>
+
+            </VBox>
+
+        </VBox>
+    </center>
+</BorderPane>
