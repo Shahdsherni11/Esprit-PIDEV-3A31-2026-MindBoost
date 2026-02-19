@@ -6,14 +6,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
+import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import com.gestion_test.entities.SpecificTest;
 import com.gestion_test.services.SpecificTestService;
 import com.gestion_test.services.AuthContext;
 import com.gestion_test.utils.PermissionUtils;
-import com.gestion_test.utils.SpecificTestData;
+import com.gestion_test.utils.TestDataHolder;
 import com.gestion_test.App;
 
 import java.net.URL;
@@ -23,236 +24,149 @@ import java.util.ResourceBundle;
 
 public class SpecificTestListController implements Initializable {
 
-    @FXML private ListView<SpecificTest> testsList;
-    @FXML private ComboBox<String> categoryFilterCombo;
+    @FXML private ListView<SpecificTest> testsListView;
+    @FXML private VBox emptyMessage;
     @FXML private TextField searchField;
+    @FXML private ComboBox<String> categoryFilterCombo;
     @FXML private Button addBtn;
     @FXML private Label totalLabel;
-    @FXML private Label categoriesLabel;
-    @FXML private Label activeLabel;
+    @FXML private Label userLabel;
+    @FXML private Label roleLabel;
 
     private ObservableList<SpecificTest> allTests = FXCollections.observableArrayList();
     private ObservableList<SpecificTest> displayedTests = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        checkPermissions();
+        System.out.println("✅ SpecificTestListController initialisé");
+
+        displayUserInfo();
+        setupComboBoxes();
         setupListView();
-        setupCategoryFilter();
         loadTests();
         setupActions();
+        checkPermissions();
     }
 
-    private void checkPermissions() {
-        if (!AuthContext.isAuthenticated()) {
-            showError("Erreur", "Vous devez être connecté");
-            return;
-        }
+    /**
+     * ✅ AFFICHER LES INFOS UTILISATEUR
+     */
+    private void displayUserInfo() {
+        String userName = AuthContext.getCurrentUserName();
+        String role = AuthContext.getCurrentRole();
 
-        if (!PermissionUtils.canCreateTests()) {
-            addBtn.setDisable(true);
-            addBtn.setTooltip(new Tooltip("Seuls les psychologues peuvent créer"));
-        }
+        userLabel.setText("👤 " + userName);
+        roleLabel.setText("📂 " + formatRole(role));
+
+        System.out.println("👤 Utilisateur: " + userName);
+        System.out.println("📂 Rôle: " + role);
     }
 
-    private void setupListView() {
-        testsList.setItems(displayedTests);
-        testsList.setCellFactory(param -> new ListCell<SpecificTest>() {
-            @Override
-            protected void updateItem(SpecificTest test, boolean empty) {
-                super.updateItem(test, empty);
-                if (empty || test == null) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(createTestCard(test));
-                }
-            }
-        });
-    }
-
-    private VBox createTestCard(SpecificTest test) {
-        VBox card = new VBox(10);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);");
-        card.setPrefWidth(400);
-
-        HBox headerBox = new HBox(15);
-        headerBox.setAlignment(Pos.CENTER_LEFT);
-
-        Label idLabel = new Label("ID: " + test.getId());
-        idLabel.setStyle("-fx-font-size: 11; -fx-text-fill: #6b7280;");
-
-        Label statusLabel = new Label(test.getStatus());
-        statusLabel.setStyle(getStatusStyle(test.getStatus()));
-
-        Label dateLabel = new Label(test.getCreatedAt().toString().substring(0, 10));
-        dateLabel.setStyle("-fx-font-size: 11; -fx-text-fill: #6b7280;");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
-
-        headerBox.getChildren().addAll(idLabel, statusLabel, spacer, dateLabel);
-
-        HBox categoryBox = new HBox(8);
-        Label categoryLabel = new Label(test.getCategory());
-        categoryLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5b8def; -fx-font-weight: bold;");
-        categoryBox.getChildren().add(categoryLabel);
-
-        Label titleLabel = new Label(test.getTitle());
-        titleLabel.setStyle("-fx-font-size: 16; -fx-font-weight: bold;");
-        titleLabel.setWrapText(true);
-
-        Label descLabel = new Label(test.getDescription() != null ? test.getDescription() : "Aucune description");
-        descLabel.setStyle("-fx-font-size: 13; -fx-text-fill: #6b7280;");
-        descLabel.setWrapText(true);
-
-        int qCount = test.getQuestions() != null ? test.getQuestions().size() : 0;
-        Label questionsLabel = new Label("❓ " + qCount + " questions");
-        questionsLabel.setStyle("-fx-font-size: 12; -fx-text-fill: #5b8def; -fx-font-weight: bold;");
-
-        HBox buttonsBox = new HBox(8);
-        buttonsBox.setAlignment(Pos.CENTER_RIGHT);
-
-        if (AuthContext.isUser() && "ACTIVE".equals(test.getStatus())) {
-            Button takeBtn = new Button("🎯 Passer le test");
-            takeBtn.setStyle("-fx-padding: 8 16; -fx-background-color: #10b981; -fx-text-fill: white; " +
-                    "-fx-background-radius: 10; -fx-font-weight: bold;");
-            takeBtn.setOnAction(e -> takeTest(test));
-            buttonsBox.getChildren().add(takeBtn);
-        }
-
-        Button viewBtn = new Button("👁️ Voir");
-        viewBtn.setStyle("-fx-padding: 8 16; -fx-background-color: #5b8def; -fx-text-fill: white; " +
-                "-fx-background-radius: 10; -fx-font-weight: bold;");
-        viewBtn.setOnAction(e -> viewTest(test));
-
-        Button editBtn = new Button("✏️ Modifier");
-        editBtn.setStyle("-fx-padding: 8 16; -fx-background-color: #5b8def; -fx-text-fill: white; " +
-                "-fx-background-radius: 10; -fx-font-weight: bold;");
-        editBtn.setOnAction(e -> editTest(test));
-
-        Button deleteBtn = new Button("🗑️ Supprimer");
-        deleteBtn.setStyle("-fx-padding: 8 16; -fx-background-color: #dc2626; -fx-text-fill: white; " +
-                "-fx-background-radius: 10; -fx-font-weight: bold;");
-        deleteBtn.setOnAction(e -> deleteTest(test));
-
-        if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
-            editBtn.setDisable(true);
-            deleteBtn.setDisable(true);
-        }
-
-        buttonsBox.getChildren().addAll(viewBtn, editBtn, deleteBtn);
-        card.getChildren().addAll(headerBox, categoryBox, titleLabel, descLabel, questionsLabel, buttonsBox);
-
-        return card;
-    }
-
-    private String getStatusStyle(String status) {
-        return switch (status) {
-            case "ACTIVE" -> "-fx-background-color: #10b981; -fx-text-fill: white; -fx-padding: 4 8; " +
-                    "-fx-background-radius: 6; -fx-font-size: 11; -fx-font-weight: bold;";
-            case "DRAFT" -> "-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-padding: 4 8; " +
-                    "-fx-background-radius: 6; -fx-font-size: 11; -fx-font-weight: bold;";
-            case "INACTIVE" -> "-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 4 8; " +
-                    "-fx-background-radius: 6; -fx-font-size: 11; -fx-font-weight: bold;";
-            default -> "-fx-text-fill: #6b7280;";
+    /**
+     * ✅ FORMATER LE RÔLE POUR L'AFFICHAGE
+     */
+    private String formatRole(String role) {
+        if (role == null) return "Inconnu";
+        return switch (role.toLowerCase()) {
+            case "psychologist" -> "Psychologue";
+            case "student", "user" -> "Étudiant";
+            case "admin" -> "Administrateur";
+            default -> role;
         };
     }
 
-    private void setupCategoryFilter() {
-        ObservableList<String> categories = FXCollections.observableArrayList("Toutes les catégories");
-        categories.addAll(SpecificTestData.getAllCategories());
-        categoryFilterCombo.setItems(categories);
-        categoryFilterCombo.setValue("Toutes les catégories");
+    /**
+     * ✅ CONFIGURER LES COMBOBOX
+     */
+    private void setupComboBoxes() {
+        categoryFilterCombo.setItems(FXCollections.observableArrayList(
+                "Tous", "Anxiété", "Dépression", "Stress", "Trouble du Sommeil"
+        ));
+        categoryFilterCombo.setValue("Tous");
         categoryFilterCombo.setOnAction(e -> filterTests());
     }
 
+    /**
+     * ✅ CONFIGURER LE LISTVIEW
+     */
+    private void setupListView() {
+        testsListView.setCellFactory(param -> new SpecificTestCell());
+        testsListView.setItems(displayedTests);
+
+        System.out.println("✅ ListView configuré");
+    }
+
+    /**
+     * ✅ CHARGER LES TESTS
+     */
     private void loadTests() {
         try {
-            List<SpecificTest> tests = AuthContext.isPsychologist() ?
-                    SpecificTestService.getMySpecificTests() :
-                    SpecificTestService.getAllSpecificTests();
+            System.out.println("🔄 Chargement des tests spécifiques...");
+            List<SpecificTest> tests = SpecificTestService.getAllSpecificTests();
 
             allTests.clear();
             allTests.addAll(tests);
             displayedTests.clear();
             displayedTests.addAll(tests);
+
+            System.out.println("✅ " + tests.size() + " test(s) chargé(s)");
             updateStats();
+
+            if (tests.isEmpty()) {
+                emptyMessage.setVisible(true);
+                testsListView.setVisible(false);
+            } else {
+                emptyMessage.setVisible(false);
+                testsListView.setVisible(true);
+            }
+
         } catch (SQLException e) {
-            showError("Erreur", "Erreur: " + e.getMessage());
+            System.err.println("❌ Erreur: " + e.getMessage());
+            showError("Erreur", "Erreur lors du chargement: " + e.getMessage());
         }
     }
 
+    /**
+     * ✅ METTRE À JOUR LES STATS
+     */
     private void updateStats() {
-        long total = allTests.size();
-        long active = allTests.stream().filter(t -> "ACTIVE".equals(t.getStatus())).count();
-        long categories = allTests.stream().map(SpecificTest::getCategory).distinct().count();
-
-        totalLabel.setText(String.valueOf(total));
-        activeLabel.setText(String.valueOf(active));
-        categoriesLabel.setText(String.valueOf(categories));
+        totalLabel.setText(String.valueOf(allTests.size()));
     }
 
+    /**
+     * ✅ CONFIGURER LES ACTIONS
+     */
     private void setupActions() {
-        addBtn.setOnAction(e -> openAddForm());
+        addBtn.setOnAction(e -> addTest());
         searchField.textProperty().addListener((obs, old, newVal) -> filterTests());
     }
 
-    private void openAddForm() {
+    /**
+     * ✅ VÉRIFIER LES PERMISSIONS
+     */
+    private void checkPermissions() {
         if (!PermissionUtils.canCreateTests()) {
-            showError("Accès Refusé", PermissionUtils.getAccessDeniedMessage());
+            addBtn.setDisable(true);
+        }
+    }
+
+    /**
+     * ✅ AJOUTER UN TEST
+     */
+    private void addTest() {
+        if (!PermissionUtils.canCreateTests()) {
+            showError("Accès refusé", PermissionUtils.getAccessDeniedMessage());
             return;
         }
-        App.loadScene("/com/gestion_test/views/SpecificTest/SpecificTestAdd.fxml", "➕ Ajouter Test");
+        // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
+        App.loadScene("/views/SpecificTest/SpecificTestAdd.fxml", "➕ Nouveau Test Spécifique");
     }
 
-    private void viewTest(SpecificTest test) {
-        if (test == null) return;
-        App.loadScene("/com/gestion_test/views/SpecificTest/SpecificTestView.fxml", "👁️ " + test.getTitle());
-    }
-
-    private void editTest(SpecificTest test) {
-        if (test == null) return;
-        if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
-            showError("Erreur", "Accès refusé");
-            return;
-        }
-        App.loadScene("/com/gestion_test/views/SpecificTest/SpecificTestEdit.fxml", "✏️ " + test.getTitle());
-    }
-
-    private void deleteTest(SpecificTest test) {
-        if (test == null) return;
-        if (!PermissionUtils.canDeleteTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
-            showError("Erreur", "Accès refusé");
-            return;
-        }
-
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setContentText("Êtes-vous sûr de vouloir supprimer ce test ?");
-        alert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                try {
-                    SpecificTestService.deleteSpecificTest(test.getId());
-                    showSuccess("Succès", "Test supprimé!");
-                    loadTests();
-                } catch (SQLException e) {
-                    showError("Erreur", "Erreur: " + e.getMessage());
-                }
-            }
-        });
-    }
-
-    private void takeTest(SpecificTest test) {
-        if (test == null || !"ACTIVE".equals(test.getStatus())) {
-            showError("Erreur", "Test non disponible");
-            return;
-        }
-        App.loadScene("/com/gestion_test/views/SpecificTest/SpecificTestTake.fxml", "✏️ " + test.getTitle());
-    }
-
+    /**
+     * ✅ FILTRER LES TESTS
+     */
     private void filterTests() {
-        String searchQuery = searchField.getText() != null ? searchField.getText().toLowerCase() : "";
+        String searchQuery = searchField.getText().trim().toLowerCase();
         String selectedCategory = categoryFilterCombo.getValue();
 
         ObservableList<SpecificTest> filtered = allTests.filtered(test -> {
@@ -260,8 +174,8 @@ public class SpecificTestListController implements Initializable {
                     test.getTitle().toLowerCase().contains(searchQuery) ||
                     (test.getDescription() != null && test.getDescription().toLowerCase().contains(searchQuery));
 
-            boolean matchesCategory = "Toutes les catégories".equals(selectedCategory) ||
-                    test.getCategory().equals(selectedCategory);
+            boolean matchesCategory = "Tous".equals(selectedCategory) ||
+                    test.getCategory().equalsIgnoreCase(selectedCategory);
 
             return matchesSearch && matchesCategory;
         });
@@ -277,10 +191,165 @@ public class SpecificTestListController implements Initializable {
         alert.showAndWait();
     }
 
-    private void showSuccess(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /**
+     * ✅ CELLULE PERSONNALISÉE POUR LE LISTVIEW
+     */
+    private class SpecificTestCell extends ListCell<SpecificTest> {
+
+        @Override
+        protected void updateItem(SpecificTest test, boolean empty) {
+            super.updateItem(test, empty);
+
+            if (empty || test == null) {
+                setGraphic(null);
+                return;
+            }
+
+            // ===== CRÉER LE CONTENU DE LA CELLULE =====
+            VBox cell = new VBox(8);
+            cell.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-padding: 12; " +
+                    "-fx-background-color: #f9fafb; -fx-border-width: 1; -fx-spacing: 8;");
+
+            // ===== EN-TÊTE: ID + TITRE + ACTIONS =====
+            HBox header = new HBox(12);
+            header.setAlignment(Pos.CENTER_LEFT);
+
+            Label idLabel = new Label("ID: " + test.getId());
+            idLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9ca3af; -fx-font-weight: bold;");
+
+            Label titleLabel = new Label(test.getTitle());
+            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;");
+
+            Label categoryBadge = new Label(test.getCategory());
+            categoryBadge.setStyle("-fx-padding: 2 8; -fx-background-color: #dbeafe; " +
+                    "-fx-text-fill: #0c4a6e; -fx-background-radius: 12; " +
+                    "-fx-font-size: 10px; -fx-font-weight: bold;");
+
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            // ===== BOUTONS D'ACTION AVEC LABELS =====
+            HBox actions = new HBox(6);
+            actions.setAlignment(Pos.CENTER_RIGHT);
+
+            Button viewBtn = new Button("👁️ Voir");
+            viewBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #3b82f6; " +
+                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+            viewBtn.setOnAction(e -> viewTest(test));
+
+            Button editBtn = new Button("✏️ Modifier");
+            editBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #5b8def; " +
+                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+            editBtn.setOnAction(e -> editTest(test));
+
+            Button deleteBtn = new Button("🗑️ Supprimer");
+            deleteBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #dc2626; " +
+                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+            deleteBtn.setOnAction(e -> deleteTest(test));
+
+            // Désactiver edit/delete si pas propriétaire
+            if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
+                editBtn.setDisable(true);
+                deleteBtn.setDisable(true);
+            }
+
+            actions.getChildren().addAll(viewBtn, editBtn, deleteBtn);
+            header.getChildren().addAll(idLabel, titleLabel, categoryBadge, spacer, actions);
+
+            // ===== CONTENU: DESCRIPTION + STATS =====
+            VBox content = new VBox(6);
+
+            String description = test.getDescription();
+            if (description != null && !description.isEmpty()) {
+                Label descLabel = new Label(description.length() > 100 ?
+                        description.substring(0, 100) + "..." : description);
+                descLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6b7280; -fx-wrap-text: true;");
+                content.getChildren().add(descLabel);
+            }
+
+            // ===== FOOTER: STATISTIQUES =====
+            HBox footer = new HBox(20);
+            footer.setStyle("-fx-padding: 8 0; -fx-background-color: transparent;");
+
+            int questionCount = test.getQuestions() != null ? test.getQuestions().size() : 0;
+            String status = test.getStatus() != null ? test.getStatus() : "UNKNOWN";
+
+            Label statsLabel = new Label("❓ " + questionCount + " questions | " +
+                    "📊 " + status + " | " +
+                    "📅 " + (test.getCreatedAt() != null ? test.getCreatedAt().toString().substring(0, 10) : "N/A"));
+            statsLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #9ca3af;");
+
+            footer.getChildren().add(statsLabel);
+            content.getChildren().add(footer);
+
+            // ===== ASSEMBLAGE =====
+            cell.getChildren().addAll(header, content);
+            setGraphic(cell);
+        }
+
+        /**
+         * ✅ Voir un test
+         */
+        private void viewTest(SpecificTest test) {
+            if (test == null) return;
+
+            // ✅ PASSER L'ID VIA TestDataHolder
+            TestDataHolder.setSelectedSpecificTestId(test.getId());
+            // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
+            App.loadScene("/views/SpecificTest/SpecificTestView.fxml", "👁️ " + test.getTitle());
+        }
+
+        /**
+         * ✅ Modifier un test
+         */
+        private void editTest(SpecificTest test) {
+            if (test == null) return;
+            if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
+                showError("Erreur", "Accès refusé");
+                return;
+            }
+
+            TestDataHolder.setSelectedSpecificTestId(test.getId());
+            // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
+            App.loadScene("/views/SpecificTest/SpecificTestEdit.fxml", "✏️ Modifier");
+        }
+
+        /**
+         * ✅ Supprimer un test
+         */
+        private void deleteTest(SpecificTest test) {
+            if (test == null) return;
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("⚠️ Êtes-vous sûr?");
+            alert.setContentText("Êtes-vous sûr de vouloir supprimer ce test?\n\nCette action est irréversible!");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        SpecificTestService.deleteSpecificTest(test.getId());
+                        loadTests();
+                        showSuccess("Succès", "Test supprimé!");
+                    } catch (SQLException e) {
+                        showError("Erreur", "Erreur: " + e.getMessage());
+                    }
+                }
+            });
+        }
+
+        private void showError(String title, String message) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setContentText(message);
+            alert.showAndWait();
+        }
+
+        private void showSuccess(String title, String message) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setContentText(message);
+            alert.showAndWait();
+        }
     }
 }

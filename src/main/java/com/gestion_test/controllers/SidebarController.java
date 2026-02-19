@@ -7,11 +7,20 @@ public class SidebarController {
 
     @FXML
     private void handleOpenGeneralTests() {
-        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "Tests Généraux - MindBoost");
+        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "📋 Tests Généraux - MindBoost");
     }
 
     @FXML
     private void handleOpenSpecificTests() {
-        App.loadScene("/views/SpecificTest/specificTestList.fxml", "Tests Spécifiques - MindBoost");
+        System.out.println("🔄 Navigation vers Tests Spécifiques");
+        // ✅ CHANGÉ: specificTestList.fxml → SpecificTestList.fxml (AVEC MAJUSCULE S)
+        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "🎯 Tests Spécifiques - MindBoost");
+    }
+
+    @FXML
+    private void handleLogout() {
+        System.out.println("🔓 DÉCONNEXION");
+        com.gestion_test.services.AuthContext.logout();
+        App.loadScene("/views/Login.fxml", "🧠 MindBoost - Connexion");
     }
 }

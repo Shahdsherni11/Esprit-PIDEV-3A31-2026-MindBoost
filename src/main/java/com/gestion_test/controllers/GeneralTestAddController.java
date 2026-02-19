@@ -62,49 +62,43 @@ public class GeneralTestAddController {
             backBtn.setOnAction(e -> goBack());
         }
 
+        // Setup ListView
+        questionsListView.setItems(javafx.collections.FXCollections.observableArrayList(questions));
+
         System.out.println("✅ GeneralTestAddController initialisé");
     }
 
     /**
-     * ✅ Ajouter une question via Dialog
+     * ✅ Ajouter une question QCM via Dialog
      */
     private void addQuestion() {
         Dialog<GeneralQuestion> dialog = new Dialog<>();
-        dialog.setTitle("Ajouter une Question");
-        dialog.setHeaderText("Créer une nouvelle question");
+        dialog.setTitle("➕ Ajouter une Question QCM");
+        dialog.setHeaderText("Créer une nouvelle question avec 4 options (A, B, C, D)");
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         VBox content = createQuestionForm(null);
         dialog.getDialogPane().setContent(content);
-
-        TextField questionTextField = (TextField) ((VBox) content).getChildren().get(1);
-        Spinner<Integer> orderSpinner = (Spinner<Integer>) ((VBox) content).getChildren().get(3);
-        ListView<GeneralAnswer> answersListView = (ListView<GeneralAnswer>) ((VBox) content).getChildren().get(5);
+        dialog.getDialogPane().setPrefWidth(700);
+        dialog.getDialogPane().setPrefHeight(600);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
-                if (questionTextField.getText().trim().isEmpty()) {
-                    showAlert("❌ Le texte de la question ne peut pas être vide", Alert.AlertType.WARNING);
-                    return null;
-                }
-
-                GeneralQuestion question = new GeneralQuestion();
-                question.setQuestionText(questionTextField.getText());
-                question.setQuestionOrder(orderSpinner.getValue());
-                question.setAnswers(new ArrayList<>(answersListView.getItems()));
-
-                return question;
+                return extractQuestionFromForm(content, null);
             }
             return null;
         });
 
         Optional<GeneralQuestion> result = dialog.showAndWait();
         result.ifPresent(question -> {
-            if (question != null) {
+            if (question != null && question.getAnswers().size() == 4) {
                 questions.add(question);
                 questionsListView.getItems().add(question);
+                questionsListView.refresh();
                 System.out.println("✅ Question ajoutée");
+            } else {
+                showAlert("❌ Chaque question doit avoir exactement 4 réponses (A, B, C, D)", Alert.AlertType.WARNING);
             }
         });
     }
@@ -122,37 +116,26 @@ public class GeneralTestAddController {
         GeneralQuestion selectedQuestion = questionsListView.getItems().get(selectedIndex);
 
         Dialog<GeneralQuestion> dialog = new Dialog<>();
-        dialog.setTitle("Modifier une Question");
+        dialog.setTitle("✏️ Modifier une Question QCM");
         dialog.setHeaderText("Modifier la question sélectionnée");
 
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         VBox content = createQuestionForm(selectedQuestion);
         dialog.getDialogPane().setContent(content);
-
-        TextField questionTextField = (TextField) ((VBox) content).getChildren().get(1);
-        Spinner<Integer> orderSpinner = (Spinner<Integer>) ((VBox) content).getChildren().get(3);
-        ListView<GeneralAnswer> answersListView = (ListView<GeneralAnswer>) ((VBox) content).getChildren().get(5);
+        dialog.getDialogPane().setPrefWidth(700);
+        dialog.getDialogPane().setPrefHeight(600);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == ButtonType.OK) {
-                if (questionTextField.getText().trim().isEmpty()) {
-                    showAlert("❌ Le texte de la question ne peut pas être vide", Alert.AlertType.WARNING);
-                    return null;
-                }
-
-                selectedQuestion.setQuestionText(questionTextField.getText());
-                selectedQuestion.setQuestionOrder(orderSpinner.getValue());
-                selectedQuestion.setAnswers(new ArrayList<>(answersListView.getItems()));
-
-                return selectedQuestion;
+                return extractQuestionFromForm(content, selectedQuestion);
             }
             return null;
         });
 
         Optional<GeneralQuestion> result = dialog.showAndWait();
         result.ifPresent(question -> {
-            if (question != null) {
+            if (question != null && question.getAnswers().size() == 4) {
                 questionsListView.refresh();
                 System.out.println("✅ Question modifiée");
             }
@@ -178,18 +161,21 @@ public class GeneralTestAddController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             questions.remove(selectedIndex);
             questionsListView.getItems().remove(selectedIndex);
+            questionsListView.refresh();
             showAlert("✅ Question supprimée", Alert.AlertType.INFORMATION);
         }
     }
 
     /**
-     * ✅ Créer le formulaire de question
+     * ✅ Créer le formulaire de question QCM avec 4 options
      */
     private VBox createQuestionForm(GeneralQuestion question) {
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(15));
 
-        Label questionLabel = new Label("Texte de la question:");
+        // Texte de la question
+        Label questionLabel = new Label("📝 Texte de la question:");
+        questionLabel.setStyle("-fx-font-weight: bold;");
         TextField questionTextField = new TextField();
         questionTextField.setPromptText("Entrez la question...");
         questionTextField.setStyle("-fx-font-size: 12;");
@@ -197,114 +183,122 @@ public class GeneralTestAddController {
             questionTextField.setText(question.getQuestionText());
         }
 
-        Label orderLabel = new Label("Ordre de la question:");
+        // Ordre de la question
+        Label orderLabel = new Label("🔢 Ordre de la question:");
+        orderLabel.setStyle("-fx-font-weight: bold;");
         Spinner<Integer> orderSpinner = new Spinner<>(1, 100, question != null ? question.getQuestionOrder() : 1);
         orderSpinner.setPrefWidth(200);
 
-        Label answersLabel = new Label("Réponses:");
-        ListView<GeneralAnswer> answersListView = new ListView<>();
-        answersListView.setPrefHeight(150);
-        if (question != null && question.getAnswers() != null) {
-            answersListView.getItems().addAll(question.getAnswers());
+        // Séparateur
+        Separator separator1 = new Separator();
+        separator1.setPadding(new Insets(10, 0, 10, 0));
+
+        // Options QCM
+        Label optionsLabel = new Label("📋 Options de réponse (A, B, C, D):");
+        optionsLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 13;");
+
+        // Options A, B, C, D
+        TextField[] answerFields = new TextField[4];
+        Spinner<Integer>[] scoreSpinners = new Spinner[4];
+        String[] labels = {"A", "B", "C", "D"};
+        int[] defaultScores = {100, 75, 50, 25};
+
+        VBox optionsBox = new VBox(10);
+        optionsBox.setStyle("-fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 10;");
+
+        for (int i = 0; i < 4; i++) {
+            HBox optionRow = new HBox(10);
+            optionRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+            // Label (A, B, C, D)
+            Label optionLabel = new Label(labels[i] + ")");
+            optionLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-min-width: 30;");
+
+            // Champ texte de la réponse
+            answerFields[i] = new TextField();
+            answerFields[i].setPromptText("Texte de l'option " + labels[i]);
+            answerFields[i].setPrefWidth(300);
+
+            // Score
+            Label scoreLabel = new Label("Score:");
+            scoreLabel.setStyle("-fx-font-weight: bold;");
+
+            scoreSpinners[i] = new Spinner<>(0, 100, defaultScores[i]);
+            scoreSpinners[i].setPrefWidth(80);
+
+            // Pré-remplir avec les données existantes
+            if (question != null && question.getAnswers() != null && question.getAnswers().size() > i) {
+                GeneralAnswer answer = question.getAnswers().get(i);
+                answerFields[i].setText(answer.getAnswerText());
+                scoreSpinners[i].getValueFactory().setValue(answer.getScore());
+            }
+
+            optionRow.getChildren().addAll(optionLabel, answerFields[i], scoreLabel, scoreSpinners[i]);
+            optionsBox.getChildren().add(optionRow);
         }
 
-        Button addAnswerButton = new Button("+ Ajouter Réponse");
-        Button removeAnswerButton = new Button("- Supprimer Réponse");
-
-        addAnswerButton.setOnAction(e -> {
-            Dialog<GeneralAnswer> answerDialog = new Dialog<>();
-            answerDialog.setTitle("Ajouter une Réponse");
-            answerDialog.setHeaderText("Créer une nouvelle réponse");
-
-            answerDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-            VBox answerContent = createAnswerForm(null);
-            answerDialog.getDialogPane().setContent(answerContent);
-
-            TextField answerTextField = (TextField) ((VBox) answerContent).getChildren().get(1);
-            Spinner<Integer> scoreSpinner = (Spinner<Integer>) ((VBox) answerContent).getChildren().get(3);
-            Spinner<Integer> answerOrderSpinner = (Spinner<Integer>) ((VBox) answerContent).getChildren().get(5);
-
-            answerDialog.setResultConverter(dialogButton -> {
-                if (dialogButton == ButtonType.OK) {
-                    if (answerTextField.getText().trim().isEmpty()) {
-                        showAlert("❌ Le texte de la réponse ne peut pas être vide", Alert.AlertType.WARNING);
-                        return null;
-                    }
-
-                    GeneralAnswer answer = new GeneralAnswer();
-                    answer.setAnswerText(answerTextField.getText());
-                    answer.setScore(scoreSpinner.getValue());
-                    answer.setAnswerOrder(answerOrderSpinner.getValue());
-
-                    return answer;
-                }
-                return null;
-            });
-
-            Optional<GeneralAnswer> answerResult = answerDialog.showAndWait();
-            answerResult.ifPresent(answer -> {
-                if (answer != null) {
-                    answersListView.getItems().add(answer);
-                }
-            });
-        });
-
-        removeAnswerButton.setOnAction(e -> {
-            int selectedIndex = answersListView.getSelectionModel().getSelectedIndex();
-            if (selectedIndex >= 0) {
-                answersListView.getItems().remove(selectedIndex);
-            } else {
-                showAlert("❌ Sélectionnez une réponse à supprimer", Alert.AlertType.WARNING);
-            }
-        });
-
-        HBox answersButtonBox = new HBox(10);
-        answersButtonBox.getChildren().addAll(addAnswerButton, removeAnswerButton);
-
+        // Assemblage final
         vbox.getChildren().addAll(
                 questionLabel, questionTextField,
                 orderLabel, orderSpinner,
-                answersLabel, answersListView,
-                answersButtonBox
+                separator1,
+                optionsLabel,
+                optionsBox
         );
+
+        // Stocker les références pour extraction
+        vbox.setUserData(new Object[]{questionTextField, orderSpinner, answerFields, scoreSpinners});
 
         return vbox;
     }
 
     /**
-     * ✅ Créer le formulaire de réponse
+     * ✅ Extraire la question depuis le formulaire
      */
-    private VBox createAnswerForm(GeneralAnswer answer) {
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(15));
+    private GeneralQuestion extractQuestionFromForm(VBox form, GeneralQuestion existingQuestion) {
+        Object[] data = (Object[]) form.getUserData();
+        TextField questionTextField = (TextField) data[0];
+        Spinner<Integer> orderSpinner = (Spinner<Integer>) data[1];
+        TextField[] answerFields = (TextField[]) data[2];
+        Spinner<Integer>[] scoreSpinners = (Spinner<Integer>[]) data[3];
 
-        Label answerLabel = new Label("Texte de la réponse:");
-        TextField answerTextField = new TextField();
-        answerTextField.setPromptText("Entrez la réponse...");
-        if (answer != null && answer.getAnswerText() != null) {
-            answerTextField.setText(answer.getAnswerText());
+        // Validation
+        if (questionTextField.getText().trim().isEmpty()) {
+            showAlert("❌ Le texte de la question ne peut pas être vide", Alert.AlertType.WARNING);
+            return null;
         }
 
-        Label scoreLabel = new Label("Score:");
-        Spinner<Integer> scoreSpinner = new Spinner<>(0, 10, answer != null ? answer.getScore() : 5);
-        scoreSpinner.setPrefWidth(200);
+        for (int i = 0; i < 4; i++) {
+            if (answerFields[i].getText().trim().isEmpty()) {
+                showAlert("❌ Toutes les options (A, B, C, D) doivent avoir un texte", Alert.AlertType.WARNING);
+                return null;
+            }
+        }
 
-        Label orderLabel = new Label("Ordre de la réponse:");
-        Spinner<Integer> orderSpinner = new Spinner<>(1, 100, answer != null ? answer.getAnswerOrder() : 1);
-        orderSpinner.setPrefWidth(200);
+        // Créer la question
+        GeneralQuestion question = existingQuestion != null ? existingQuestion : new GeneralQuestion();
+        question.setQuestionText(questionTextField.getText());
+        question.setQuestionOrder(orderSpinner.getValue());
 
-        vbox.getChildren().addAll(
-                answerLabel, answerTextField,
-                scoreLabel, scoreSpinner,
-                orderLabel, orderSpinner
-        );
+        // Créer les 4 réponses
+        List<GeneralAnswer> answers = new ArrayList<>();
+        String[] labels = {"A", "B", "C", "D"};
+        for (int i = 0; i < 4; i++) {
+            GeneralAnswer answer = new GeneralAnswer(
+                    answerFields[i].getText(),
+                    labels[i],
+                    scoreSpinners[i].getValue(),
+                    i + 1
+            );
+            answers.add(answer);
+        }
 
-        return vbox;
+        question.setAnswers(answers);
+        return question;
     }
 
     /**
-     * ✅ Sauvegarder le test (SANS STATUS)
+     * ✅ Sauvegarder le test
      */
     private void saveTest() {
         try {
@@ -321,13 +315,12 @@ public class GeneralTestAddController {
             GeneralTest test = new GeneralTest();
             test.setTitle(testTitleField.getText());
             test.setDescription(testDescriptionArea.getText());
-            // ✅ SUPPRESSION: test.setStatus()
             test.setQuestions(questions);
 
             int testId = testService.create(test);
 
-            System.out.println("✅ Test créé: " + test.getTitle() + " (ID: " + testId + ")");
-            showAlert("✅ Test créé avec succès ! ID: " + testId, Alert.AlertType.INFORMATION);
+            System.out.println("✅ Test QCM créé: " + test.getTitle() + " (ID: " + testId + ")");
+            showAlert("✅ Test QCM créé avec succès ! ID: " + testId, Alert.AlertType.INFORMATION);
             clearForm();
             goBack();
 
@@ -339,7 +332,7 @@ public class GeneralTestAddController {
     }
 
     /**
-     * ✅ Annuler et réinitialiser le formulaire
+     * ✅ Annuler et réinitialiser
      */
     private void cancelForm() {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -377,7 +370,7 @@ public class GeneralTestAddController {
      */
     private void showAlert(String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
-        alert.setTitle("Gestion des Tests");
+        alert.setTitle("Gestion des Tests QCM");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

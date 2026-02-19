@@ -7,7 +7,6 @@ public class GeneralTest {
     private int id;
     private String title;
     private String description;
-    // ✅ SUPPRESSION: private String status;
     private int createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -18,7 +17,6 @@ public class GeneralTest {
     public GeneralTest(String title, String description, int createdBy) {
         this.title = title;
         this.description = description;
-        // ✅ SUPPRESSION: this.status
         this.createdBy = createdBy;
     }
 
@@ -31,8 +29,6 @@ public class GeneralTest {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
-    // ✅ SUPPRESSION: getStatus() et setStatus()
 
     public int getCreatedBy() { return createdBy; }
     public void setCreatedBy(int createdBy) { this.createdBy = createdBy; }
@@ -51,13 +47,13 @@ public class GeneralTest {
         return "GeneralTest{id=" + id + ", title='" + title + "'}";
     }
 
-    // ===== CLASSE INTERNE : GeneralQuestion =====
+    // ===== CLASSE INTERNE : GeneralQuestion (QCM) =====
     public static class GeneralQuestion {
         private int id;
         private int testId;
         private String questionText;
         private int questionOrder;
-        private List<GeneralAnswer> answers;
+        private List<GeneralAnswer> answers; // Options A, B, C, D
 
         public GeneralQuestion() {}
 
@@ -88,18 +84,20 @@ public class GeneralTest {
         }
     }
 
-    // ===== CLASSE INTERNE : GeneralAnswer =====
+    // ===== CLASSE INTERNE : GeneralAnswer (Option A, B, C, D) =====
     public static class GeneralAnswer {
         private int id;
         private int questionId;
-        private String answerText;
-        private int score;
-        private int answerOrder;
+        private String answerText;          // Texte de la réponse
+        private String answerLabel;         // A, B, C, D
+        private int score;                  // 100, 75, 50, 25
+        private int answerOrder;            // Ordre d'affichage
 
         public GeneralAnswer() {}
 
-        public GeneralAnswer(String answerText, int score, int answerOrder) {
+        public GeneralAnswer(String answerText, String answerLabel, int score, int answerOrder) {
             this.answerText = answerText;
+            this.answerLabel = answerLabel;
             this.score = score;
             this.answerOrder = answerOrder;
         }
@@ -114,6 +112,9 @@ public class GeneralTest {
         public String getAnswerText() { return answerText; }
         public void setAnswerText(String answerText) { this.answerText = answerText; }
 
+        public String getAnswerLabel() { return answerLabel; }
+        public void setAnswerLabel(String answerLabel) { this.answerLabel = answerLabel; }
+
         public int getScore() { return score; }
         public void setScore(int score) { this.score = score; }
 
@@ -122,7 +123,7 @@ public class GeneralTest {
 
         @Override
         public String toString() {
-            return "[A" + answerOrder + "] " + answerText + " (Score: " + score + ")";
+            return answerLabel + ") " + answerText + " (Score: " + score + ")";
         }
     }
 }

@@ -10,6 +10,7 @@ import com.gestion_test.entities.GeneralTest.GeneralQuestion;
 import com.gestion_test.services.GeneralTestService;
 import com.gestion_test.services.AuthContext;
 import com.gestion_test.utils.PermissionUtils;
+import com.gestion_test.utils.TestDataHolder;
 import com.gestion_test.App;
 
 import java.net.URL;
@@ -34,6 +35,17 @@ public class GeneralTestViewController implements Initializable {
         System.out.println("✅ GeneralTestViewController initialisé");
         setupActions();
         questionsList.setItems(questions);
+
+        // ✅ CHARGER LE TEST DEPUIS TestDataHolder
+        int testId = TestDataHolder.getSelectedGeneralTestId();
+        System.out.println("🔄 ID du test récupéré: " + testId);
+
+        if (testId > 0) {
+            loadTest(testId);
+        } else {
+            System.err.println("❌ Aucun ID de test trouvé!");
+            showError("Erreur", "Aucun test sélectionné");
+        }
     }
 
     /**
@@ -139,6 +151,10 @@ public class GeneralTestViewController implements Initializable {
         }
 
         System.out.println("🔄 Navigation vers l'édition du test: " + currentTest.getTitle());
+
+        // ✅ PASSER L'ID VIA TestDataHolder
+        TestDataHolder.setSelectedGeneralTestId(currentTest.getId());
+        // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
         App.loadScene("/views/GeneralTest/GeneralTestEdit.fxml",
                 "✏️ Modifier - " + currentTest.getTitle());
     }
@@ -148,6 +164,7 @@ public class GeneralTestViewController implements Initializable {
      */
     private void goBack() {
         System.out.println("🔄 Retour à la liste des tests généraux");
+        TestDataHolder.resetGeneralTestId();
         App.loadScene("/views/GeneralTest/GeneralTestList.fxml",
                 "📋 Tests Généraux");
     }

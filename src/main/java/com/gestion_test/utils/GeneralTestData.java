@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Données pré-remplies pour les questions sur le stress et mood
- * Contient 10 questions standard pour les tests généraux
+ * ✅ Données pré-remplies pour les questions sur le stress et mood
+ * Contient 10 questions standard pour les tests généraux QCM
+ * IMPORTANT: Chaque question = 4 réponses (A, B, C, D) avec scores (100, 75, 50, 25)
  */
 public class GeneralTestData {
 
     /**
-     * ✅ Créer les 10 questions de base sur le stress et mood
+     * ✅ Créer les 10 questions de base sur le stress et mood (FORMAT QCM: 4 OPTIONS)
      */
     public static List<GeneralQuestion> getDefaultQuestions() {
         List<GeneralQuestion> questions = new ArrayList<>();
@@ -20,170 +21,111 @@ public class GeneralTestData {
         // ===== QUESTION 1 : Stress général =====
         questions.add(createQuestion(1,
                 "Comment décrivez-vous votre niveau de stress actuel ?",
-                new String[]{
-                        "Pas du tout stressé",
-                        "Légèrement stressé",
-                        "Modérément stressé",
-                        "Très stressé",
-                        "Extrêmement stressé"
-                },
-                new int[]{0, 25, 50, 75, 100}
+                new String[]{"Pas du tout stressé", "Légèrement stressé", "Modérément stressé", "Très stressé"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 2 : Mood général =====
         questions.add(createQuestion(2,
                 "Comment vous sentez-vous émotionnellement en ce moment ?",
-                new String[]{
-                        "Très bien",
-                        "Bien",
-                        "Neutre",
-                        "Pas bien",
-                        "Très mal"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Très bien", "Bien", "Neutre", "Pas bien"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 3 : Qualité du sommeil =====
         questions.add(createQuestion(3,
                 "Comment est votre qualité de sommeil dernièrement ?",
-                new String[]{
-                        "Excellente",
-                        "Bonne",
-                        "Correcte",
-                        "Mauvaise",
-                        "Très mauvaise"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Excellente", "Bonne", "Correcte", "Mauvaise"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 4 : Capacité de concentration =====
         questions.add(createQuestion(4,
                 "Avez-vous des difficultés à vous concentrer ?",
-                new String[]{
-                        "Aucune difficulté",
-                        "Peu de difficultés",
-                        "Difficultés modérées",
-                        "Grandes difficultés",
-                        "Impossibilité de se concentrer"
-                },
-                new int[]{0, 25, 50, 75, 100}
+                new String[]{"Aucune difficulté", "Peu de difficultés", "Difficultés modérées", "Grandes difficultés"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 5 : Irritabilité =====
         questions.add(createQuestion(5,
                 "À quelle fréquence vous sentez-vous irritable ?",
-                new String[]{
-                        "Jamais",
-                        "Rarement",
-                        "Parfois",
-                        "Souvent",
-                        "Très souvent"
-                },
-                new int[]{0, 25, 50, 75, 100}
+                new String[]{"Jamais", "Rarement", "Parfois", "Souvent"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 6 : Anxiété =====
         questions.add(createQuestion(6,
                 "Ressentez-vous de l'anxiété ?",
-                new String[]{
-                        "Jamais",
-                        "Rarement",
-                        "Parfois",
-                        "Souvent",
-                        "Constamment"
-                },
-                new int[]{0, 25, 50, 75, 100}
+                new String[]{"Jamais", "Rarement", "Parfois", "Souvent"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 7 : Niveau d'énergie =====
         questions.add(createQuestion(7,
                 "Quel est votre niveau d'énergie actuel ?",
-                new String[]{
-                        "Très élevé",
-                        "Élevé",
-                        "Normal",
-                        "Faible",
-                        "Très faible"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Très élevé", "Élevé", "Normal", "Faible"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 8 : Motivation =====
         questions.add(createQuestion(8,
                 "Comment est votre motivation pour accomplir vos tâches ?",
-                new String[]{
-                        "Très motivé",
-                        "Motivé",
-                        "Neutre",
-                        "Peu motivé",
-                        "Pas motivé du tout"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Très motivé", "Motivé", "Neutre", "Peu motivé"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 9 : Relations sociales =====
         questions.add(createQuestion(9,
                 "Comment vous entendez-vous avec les autres ?",
-                new String[]{
-                        "Très bien",
-                        "Bien",
-                        "Acceptable",
-                        "Mal",
-                        "Très mal"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Très bien", "Bien", "Acceptable", "Mal"},
+                new int[]{100, 75, 50, 25}
         ));
 
         // ===== QUESTION 10 : Bien-être global =====
         questions.add(createQuestion(10,
                 "Comment évaluez-vous votre bien-être global ?",
-                new String[]{
-                        "Excellent",
-                        "Bon",
-                        "Satisfaisant",
-                        "Insatisfaisant",
-                        "Mauvais"
-                },
-                new int[]{100, 75, 50, 25, 0}
+                new String[]{"Excellent", "Bon", "Satisfaisant", "Insatisfaisant"},
+                new int[]{100, 75, 50, 25}
         ));
 
         return questions;
     }
 
     /**
-     * ✅ Créer une question avec ses réponses
+     * ✅ Créer une question avec ses 4 réponses QCM
      *
-     * @param order Ordre de la question (1, 2, 3, ...)
+     * @param order Ordre de la question (1-10)
      * @param questionText Texte de la question
-     * @param answerTexts Tableau des textes de réponses
-     * @param scores Tableau des scores correspondants (0-100)
-     * @return GeneralQuestion avec toutes ses réponses
+     * @param answerTexts Tableau des 4 textes de réponses (A, B, C, D)
+     * @param scores Tableau des 4 scores [100, 75, 50, 25]
+     * @return GeneralQuestion avec 4 réponses
      */
     private static GeneralQuestion createQuestion(int order, String questionText, String[] answerTexts, int[] scores) {
-        // Créer la question
+        if (answerTexts.length != 4 || scores.length != 4) {
+            throw new IllegalArgumentException("❌ Chaque question QCM doit avoir exactement 4 réponses (A, B, C, D)");
+        }
+
         GeneralQuestion question = new GeneralQuestion(questionText, order);
 
-        // Créer les réponses
         List<GeneralAnswer> answers = new ArrayList<>();
-        for (int i = 0; i < answerTexts.length; i++) {
+        String[] labels = {"A", "B", "C", "D"};
+
+        for (int i = 0; i < 4; i++) {
             GeneralAnswer answer = new GeneralAnswer(
                     answerTexts[i],  // Texte de la réponse
-                    scores[i],       // Score (0-100)
-                    i + 1            // Ordre (1, 2, 3, ...)
+                    labels[i],       // Label (A, B, C, D)
+                    scores[i],       // Score (100, 75, 50, 25)
+                    i + 1            // Ordre (1, 2, 3, 4)
             );
             answers.add(answer);
         }
 
-        // Ajouter les réponses à la question
         question.setAnswers(answers);
         return question;
     }
 
     /**
      * ✅ Vérifier si une liste de questions a au moins 10 questions
-     *
-     * @param questions Liste des questions
-     * @return true si >= 10 questions, false sinon
      */
     public static boolean hasMinimumQuestions(List<GeneralQuestion> questions) {
         return questions != null && questions.size() >= 10;
@@ -191,8 +133,6 @@ public class GeneralTestData {
 
     /**
      * ✅ Obtenir le nombre minimum de questions requises
-     *
-     * @return 10 (nombre minimum obligatoire)
      */
     public static int getMinimumQuestionsRequired() {
         return 10;
@@ -200,9 +140,6 @@ public class GeneralTestData {
 
     /**
      * ✅ Message d'erreur pour nombre de questions insuffisant
-     *
-     * @param current Nombre de questions actuellement
-     * @return Message d'erreur formaté
      */
     public static String getMinimumQuestionsMessage(int current) {
         int needed = getMinimumQuestionsRequired() - current;
@@ -214,21 +151,18 @@ public class GeneralTestData {
 
     /**
      * ✅ Message pour confirmer le chargement des questions standards
-     *
-     * @return Message de confirmation
      */
     public static String getLoadStandardQuestionsMessage() {
         return "Cela ajoutera 10 questions standard sur le stress et mood.\n\n" +
+                "Format QCM: 4 options par question (A, B, C, D)\n\n" +
                 "Les questions existantes seront conservées.";
     }
 
     /**
      * ✅ Obtenir les catégories de questions
-     *
-     * @return Catégories des questions du test
      */
     public static String getQuestionsCategories() {
-        return "📊 Catégories des questions:\n" +
+        return "📊 Catégories des questions (TEST GÉNÉRAL QCM):\n" +
                 "• Stress général\n" +
                 "• Mood/Humeur\n" +
                 "• Sommeil\n" +
@@ -242,11 +176,7 @@ public class GeneralTestData {
     }
 
     /**
-     * ✅ Valider les questions pour un test
-     * Vérifie que chaque question a au moins une réponse
-     *
-     * @param questions Liste des questions à valider
-     * @return Liste des erreurs (vide si valide)
+     * ✅ Valider les questions pour un test général
      */
     public static List<String> validateQuestions(List<GeneralQuestion> questions) {
         List<String> errors = new ArrayList<>();
@@ -259,16 +189,17 @@ public class GeneralTestData {
         for (int i = 0; i < questions.size(); i++) {
             GeneralQuestion q = questions.get(i);
 
-            if (q.getAnswers() == null || q.getAnswers().isEmpty()) {
-                errors.add("Question " + (i + 1) + ": doit avoir au minimum une réponse");
-            } else if (q.getAnswers().size() > 10) {
-                errors.add("Question " + (i + 1) + ": ne peut pas avoir plus de 10 réponses");
+            // ✅ IMPORTANT: Vérifier exactement 4 réponses
+            if (q.getAnswers() == null || q.getAnswers().size() != 4) {
+                errors.add("Question " + (i + 1) + ": doit avoir exactement 4 réponses (A, B, C, D)");
             }
 
-            for (GeneralAnswer a : q.getAnswers()) {
-                if (!ValidationUtils.isInRange(a.getScore(), 0, 100)) {
-                    errors.add("Question " + (i + 1) + ": score invalide (doit être 0-100)");
-                    break;
+            if (q.getAnswers() != null) {
+                for (GeneralAnswer a : q.getAnswers()) {
+                    if (!ValidationUtils.isInRange(a.getScore(), 0, 100)) {
+                        errors.add("Question " + (i + 1) + ": score invalide (doit être 0-100)");
+                        break;
+                    }
                 }
             }
         }
@@ -278,9 +209,6 @@ public class GeneralTestData {
 
     /**
      * ✅ Obtenir des statistiques sur les questions
-     *
-     * @param questions Liste des questions
-     * @return Statistiques formatées
      */
     public static String getQuestionsStats(List<GeneralQuestion> questions) {
         if (questions == null || questions.isEmpty()) {
@@ -299,12 +227,11 @@ public class GeneralTestData {
         }
 
         return String.format(
-                "📊 Statistiques:\n" +
+                "📊 Statistiques (TEST GÉNÉRAL):\n" +
                         "• Nombre de questions: %d\n" +
-                        "• Nombre total de réponses: %d\n" +
+                        "• Format: QCM (4 options par question)\n" +
                         "• Réponses par question: Min=%d, Max=%d, Moy=%.1f",
                 questions.size(),
-                totalAnswers,
                 minAnswers,
                 maxAnswers,
                 (double) totalAnswers / questions.size()
@@ -312,9 +239,7 @@ public class GeneralTestData {
     }
 
     /**
-     * ✅ Cloner les questions standards (utile pour copier un test)
-     *
-     * @return Copie des 10 questions standards
+     * ✅ Cloner les questions standards
      */
     public static List<GeneralQuestion> cloneDefaultQuestions() {
         return new ArrayList<>(getDefaultQuestions());
@@ -322,9 +247,6 @@ public class GeneralTestData {
 
     /**
      * ✅ Obtenir une question standard par son index (1-10)
-     *
-     * @param index Index de la question (1-10)
-     * @return GeneralQuestion ou null si index invalide
      */
     public static GeneralQuestion getDefaultQuestion(int index) {
         if (index < 1 || index > 10) {

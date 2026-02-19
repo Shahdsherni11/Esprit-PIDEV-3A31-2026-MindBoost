@@ -3,6 +3,9 @@ package com.gestion_test.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * ✅ Entité pour les Tests Spécifiques (QCM sans scores)
+ */
 public class SpecificTest {
     private int id;
     private int generalTestId;
@@ -58,7 +61,7 @@ public class SpecificTest {
 
     @Override
     public String toString() {
-        return "SpecificTest{id=" + id + ", category='" + category + "', title='" + title + "', status='" + status + "'}";
+        return "SpecificTest{id=" + id + ", category='" + category + "', title='" + title + "'}";
     }
 
     // ===== CLASSE INTERNE : SpecificQuestion =====
@@ -76,7 +79,6 @@ public class SpecificTest {
             this.questionOrder = questionOrder;
         }
 
-        // Getters et Setters
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
 
@@ -98,23 +100,22 @@ public class SpecificTest {
         }
     }
 
-    // ===== CLASSE INTERNE : SpecificAnswer =====
+    // ===== CLASSE INTERNE : SpecificAnswer (AVEC LABEL) =====
     public static class SpecificAnswer {
         private int id;
         private int questionId;
         private String answerText;
-        private int score;
         private int answerOrder;
+        private String answerLabel;  // ✅ LABEL A, B, C, D
 
         public SpecificAnswer() {}
 
-        public SpecificAnswer(String answerText, int score, int answerOrder) {
+        public SpecificAnswer(String answerText, int answerOrder) {
             this.answerText = answerText;
-            this.score = score;
             this.answerOrder = answerOrder;
+            this.answerLabel = String.valueOf((char) ('A' + answerOrder - 1));
         }
 
-        // Getters et Setters
         public int getId() { return id; }
         public void setId(int id) { this.id = id; }
 
@@ -124,15 +125,29 @@ public class SpecificTest {
         public String getAnswerText() { return answerText; }
         public void setAnswerText(String answerText) { this.answerText = answerText; }
 
-        public int getScore() { return score; }
-        public void setScore(int score) { this.score = score; }
-
         public int getAnswerOrder() { return answerOrder; }
         public void setAnswerOrder(int answerOrder) { this.answerOrder = answerOrder; }
 
+        /**
+         * ✅ GETTER: Obtenir le label (A, B, C, D)
+         */
+        public String getAnswerLabel() {
+            if (answerLabel == null || answerLabel.isEmpty()) {
+                answerLabel = String.valueOf((char) ('A' + answerOrder - 1));
+            }
+            return answerLabel;
+        }
+
+        /**
+         * ✅ SETTER: Définir le label (A, B, C, D)
+         */
+        public void setAnswerLabel(String answerLabel) {
+            this.answerLabel = answerLabel;
+        }
+
         @Override
         public String toString() {
-            return "[A" + answerOrder + "] " + answerText + " (Score: " + score + ")";
+            return getAnswerLabel() + ". " + answerText;
         }
     }
 }

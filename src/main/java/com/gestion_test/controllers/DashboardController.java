@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import com.gestion_test.App;
 import com.gestion_test.services.GeneralTestService;
+import com.gestion_test.services.SpecificTestService;
 import com.gestion_test.services.AuthContext;
 
 import java.net.URL;
@@ -22,12 +23,14 @@ public class DashboardController implements Initializable {
     @FXML
     private Label usersLabel;
 
-    private GeneralTestService testService;
+    private GeneralTestService generalTestService;
+    private SpecificTestService specificTestService;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         System.out.println("✅ DashboardController initialisé");
-        testService = new GeneralTestService();
+        generalTestService = new GeneralTestService();
+        specificTestService = new SpecificTestService();
         loadStatistics();
     }
 
@@ -37,15 +40,22 @@ public class DashboardController implements Initializable {
     private void loadStatistics() {
         try {
             // Charger le nombre de tests généraux
-            int generalTests = testService.getAll().size();
+            int generalTests = generalTestService.getAll().size();
             generalTestsLabel.setText(String.valueOf(generalTests));
             System.out.println("📊 Tests Généraux: " + generalTests);
 
-            // TODO: Charger le nombre de tests spécifiques
-            // Pour l'instant, afficher 0
-            specificTestsLabel.setText("0");
+            // ✅ CHARGER le nombre de tests spécifiques
+            int specificTests = 0;
+            try {
+                specificTests = SpecificTestService.getAllSpecificTests().size();
+            } catch (SQLException e) {
+                System.err.println("⚠️ Erreur lors du chargement des tests spécifiques: " + e.getMessage());
+                specificTests = 0;
+            }
+            specificTestsLabel.setText(String.valueOf(specificTests));
+            System.out.println("📊 Tests Spécifiques: " + specificTests);
 
-            // TODO: Charger le nombre d'utilisateurs
+            // TODO: Charger le nombre d'utilisateurs (si applicable)
             // Pour l'instant, afficher 0
             usersLabel.setText("0");
 
@@ -72,6 +82,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void handleOpenSpecificTests() {
         System.out.println("🔄 Navigation vers Tests Spécifiques");
-        App.loadScene("/views/SpecificTest/specificTestList.fxml", "🎯 Tests Spécifiques");
+        // ✅ CHANGÉ: specificTestList.fxml → SpecificTestList.fxml (AVEC MAJUSCULE S)
+        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "🎯 Tests Spécifiques");
     }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
             xmlns="http://javafx.com/javafx"
@@ -13,38 +14,64 @@
     <center>
         <VBox spacing="16" styleClass="dashboard">
 
-            <!-- Header -->
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Label text="🎯 Tests Spécifiques" styleClass="page-title"/>
+            <!-- ===== HEADER ===== -->
+            <VBox spacing="8">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="🎯 Tests Spécifiques" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="userLabel" text="👤 Utilisateur" style="-fx-font-size: 12px;"/>
+                    <Label fx:id="roleLabel" text="📂 Rôle" style="-fx-font-size: 12px;"/>
+                </HBox>
+                <Label text="Gérez les tests spécifiques adaptés à chaque catégorie"
+                       style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
+            </VBox>
+
+            <!-- ===== STATISTIQUES ===== -->
+            <HBox spacing="12">
+                <VBox styleClass="stat-card" style="-fx-padding: 16; -fx-background-color: #eef2ff; -fx-border-color: #5b8def; -fx-border-width: 1;">
+                    <Label text="Total des Tests" style="-fx-font-size: 11px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
+                    <Label fx:id="totalLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="categoryFilterCombo" prefWidth="150" promptText="Filtrer par catégorie..."/>
-                <TextField fx:id="searchField" promptText="🔍 Chercher un test..." styleClass="search-field" prefWidth="250"/>
-                <Button fx:id="addBtn" text="➕ Ajouter Test" styleClass="button"/>
+                <Button fx:id="addBtn"
+                        text="➕ Nouveau Test"
+                        styleClass="button"
+                        style="-fx-padding: 10 20; -fx-font-weight: bold;"/>
             </HBox>
 
-            <!-- Stats Cards -->
-            <HBox spacing="14">
-                <VBox styleClass="stat-card">
-                    <Label text="Total Tests" styleClass="stat-title"/>
-                    <Label fx:id="totalLabel" text="0" styleClass="stat-value"/>
-                </VBox>
-                <VBox styleClass="stat-card">
-                    <Label text="Catégories" styleClass="stat-title"/>
-                    <Label fx:id="categoriesLabel" text="0" styleClass="stat-value"/>
-                </VBox>
-                <VBox styleClass="stat-card">
-                    <Label text="Tests Actifs" styleClass="stat-title"/>
-                    <Label fx:id="activeLabel" text="0" styleClass="stat-value"/>
-                </VBox>
+            <!-- ===== FILTRES ===== -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <ComboBox fx:id="categoryFilterCombo"
+                          prefWidth="200"
+                          promptText="Filtrer par catégorie..."
+                          styleClass="input-large"
+                          style="-fx-font-size: 12px; -fx-padding: 10 14;"/>
+
+                <TextField fx:id="searchField"
+                           promptText="🔍 Rechercher un test..."
+                           styleClass="search-field"
+                           style="-fx-font-size: 12px; -fx-padding: 10 14;"
+                           HBox.hgrow="ALWAYS"/>
             </HBox>
 
-            <!-- Liste des tests avec ListView -->
-            <VBox spacing="12" styleClass="card" VBox.vgrow="ALWAYS">
-                <Label text="Liste des Tests Spécifiques" styleClass="section-title"/>
+            <!-- ===== LISTE DES TESTS (LISTVIEW) ===== -->
+            <VBox spacing="2" styleClass="card" VBox.vgrow="ALWAYS">
+                <ListView fx:id="testsListView"
+                          VBox.vgrow="ALWAYS"
+                          styleClass="tests-list-view"
+                          style="-fx-font-size: 12px; -fx-border-radius: 8;"/>
+            </VBox>
 
-                <!-- ✅ ListView AU LIEU DE TableView -->
-                <ListView fx:id="testsList" VBox.vgrow="ALWAYS" styleClass="tests-list-view"/>
-
+            <!-- ===== MESSAGE AUCUN TEST ===== -->
+            <VBox fx:id="emptyMessage"
+                  spacing="12"
+                  alignment="CENTER"
+                  style="-fx-padding: 60 40; -fx-background-color: #f9fafb; -fx-background-radius: 8;"
+                  visible="false">
+                <Label text="📭" style="-fx-font-size: 48px;"/>
+                <Label text="Aucun test trouvé" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #6b7280;"/>
+                <Label text="Créez votre premier test spécifique en cliquant sur 'Nouveau Test'"
+                       style="-fx-font-size: 12px; -fx-text-fill: #9ca3af;"/>
             </VBox>
 
         </VBox>

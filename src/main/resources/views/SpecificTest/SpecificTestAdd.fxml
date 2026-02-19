@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 
-<?import java.lang.String?>
 <BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -13,75 +12,81 @@
     <left><fx:include source="../Sidebar.fxml"/></left>
 
     <center>
-        <VBox spacing="16" styleClass="dashboard">
+        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-border-color: transparent;">
+            <VBox spacing="20" styleClass="dashboard" style="-fx-padding: 20;">
 
-            <!-- Header -->
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <Button fx:id="backBtn" text="← Retour" styleClass="button"/>
-                <Label text="➕ Créer un Test Spécifique" styleClass="page-title"/>
-            </HBox>
-
-            <!-- Formulaire -->
-            <VBox spacing="16" styleClass="card" VBox.vgrow="ALWAYS">
-
-                <!-- Section 1: Infos Générales -->
-                <VBox spacing="12">
-                    <Label text="📝 Informations Générales" styleClass="section-title"/>
-                    <Separator/>
-
-                    <VBox spacing="6">
-                        <Label text="Test Général Parent *" styleClass="form-label"/>
-                        <ComboBox fx:id="generalTestCombo" prefWidth="300" styleClass="input-large"/>
+                <!-- HEADER -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Button fx:id="backBtn" text="← Retour" styleClass="button ghost" style="-fx-padding: 8 16;"/>
+                    <VBox spacing="4">
+                        <Label text="➕ CRÉER UN TEST SPÉCIFIQUE" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Label text="Configurez les questions et réponses du test" style="-fx-font-size: 12px;"/>
                     </VBox>
+                </HBox>
 
-                    <VBox spacing="6">
-                        <Label text="Catégorie *" styleClass="form-label"/>
-                        <TextField fx:id="categoryField" promptText="Ex: Anxiété, Dépression..." styleClass="input-large"/>
-                    </VBox>
+                <!-- SECTION 1: INFOS GÉNÉRALES -->
+                <VBox spacing="0" styleClass="card">
+                    <VBox spacing="12" style="-fx-padding: 20;">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label text="📝" style="-fx-font-size: 18px;"/>
+                            <Label text="INFORMATIONS GÉNÉRALES" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                        </HBox>
+                        <Separator/>
 
-                    <VBox spacing="6">
-                        <Label text="Titre du Test *" styleClass="form-label"/>
-                        <TextField fx:id="titleField" promptText="Ex: Test d'anxiété sociale" styleClass="input-large"/>
-                    </VBox>
+                        <!-- Test Général Parent -->
+                        <VBox spacing="6">
+                            <Label text="Test Général Parent" styleClass="form-label"/>
+                            <ComboBox fx:id="generalTestCombo" prefWidth="400"/>
+                        </VBox>
 
-                    <VBox spacing="6">
-                        <Label text="Description" styleClass="form-label"/>
-                        <TextArea fx:id="descriptionField" promptText="Décrivez l'objectif du test..." prefRowCount="4" wrapText="true" styleClass="input-large"/>
-                    </VBox>
+                        <!-- Catégorie -->
+                        <VBox spacing="6">
+                            <Label text="Catégorie" styleClass="form-label"/>
+                            <ComboBox fx:id="categoryCombo" prefWidth="400"/>
+                        </VBox>
 
-                    <VBox spacing="6">
-                        <Label text="Statut du Test *" styleClass="form-label"/>
-                        <ComboBox fx:id="statusCombo" prefWidth="200" styleClass="input-large">
-                            <items>
-                                <FXCollections fx:factory="observableArrayList">
-                                    <String fx:value="DRAFT"/>
-                                    <String fx:value="ACTIVE"/>
-                                    <String fx:value="INACTIVE"/>
-                                </FXCollections>
-                            </items>
-                        </ComboBox>
+                        <!-- Titre -->
+                        <VBox spacing="6">
+                            <Label text="Titre du Test" styleClass="form-label"/>
+                            <TextField fx:id="titleField" promptText="Titre du test"/>
+                        </VBox>
+
+                        <!-- Description -->
+                        <VBox spacing="6">
+                            <Label text="Description" styleClass="form-label"/>
+                            <TextArea fx:id="descriptionArea" promptText="Description..." prefRowCount="3" wrapText="true"/>
+                        </VBox>
+
+                        <!-- Statut -->
+                        <VBox spacing="6">
+                            <Label text="Statut" styleClass="form-label"/>
+                            <ComboBox fx:id="statusCombo" prefWidth="200"/>
+                        </VBox>
                     </VBox>
                 </VBox>
 
-                <Separator/>
+                <!-- SECTION 2: QUESTIONS -->
+                <VBox spacing="0" styleClass="card">
+                    <VBox spacing="12" style="-fx-padding: 20;">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label text="❓" style="-fx-font-size: 18px;"/>
+                            <Label text="QUESTIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold;"/>
+                            <Label fx:id="questionsCountLabel" text="0/13" style="-fx-font-size: 13px;"/>
+                        </HBox>
+                        <Separator/>
 
-                <!-- Section 2: Questions -->
-                <VBox spacing="12" VBox.vgrow="ALWAYS">
-                    <Label text="❓ Questions du Test" styleClass="section-title"/>
-                    <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <Button fx:id="addQuestionBtn" text="➕ Ajouter Question" styleClass="button"/>
-                    </HBox>
-                    <ListView fx:id="questionsList" VBox.vgrow="ALWAYS" styleClass="input-large" prefHeight="200"/>
+                        <Button fx:id="addQuestionBtn" text="➕ Ajouter une Question" styleClass="button"/>
+                        <VBox fx:id="questionsContainer" spacing="10" VBox.vgrow="ALWAYS"/>
+                    </VBox>
                 </VBox>
+
+                <!-- BOUTONS D'ACTION -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="cancelBtn" text="❌ Annuler" styleClass="button ghost"/>
+                    <Button fx:id="saveBtn" text="✅ Créer le Test" styleClass="button"/>
+                </HBox>
 
             </VBox>
-
-            <!-- Boutons d'action -->
-            <HBox spacing="10" alignment="CENTER_RIGHT">
-                <Button fx:id="cancelBtn" text="Annuler" styleClass="button ghost"/>
-                <Button fx:id="saveBtn" text="💾 Enregistrer" styleClass="button"/>
-            </HBox>
-
-        </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>

@@ -9,6 +9,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ✅ Service pour les tests spécifiques (SANS SCORES)
+ * Important: Les tests spécifiques n'ont PAS de scores comme les tests généraux
+ */
 public class SpecificTestService {
 
     private static final Connection connection = MyDataBase.getInstance().getConnection();
@@ -55,7 +59,7 @@ public class SpecificTestService {
                 }
             }
 
-            // 2. Insérer les questions et r��ponses (si liste non vide)
+            // 2. Insérer les questions et réponses (si liste non vide)
             if (questions != null && !questions.isEmpty()) {
                 for (SpecificQuestion question : questions) {
                     if (question.getQuestionText() != null && !question.getQuestionText().trim().isEmpty()) {
@@ -75,6 +79,8 @@ public class SpecificTestService {
 
             connection.commit();
             System.out.println("✅ Test spécifique créé avec succès (ID: " + test.getId() + ")");
+            System.out.println("   Catégorie: " + test.getCategory());
+            System.out.println("   Questions: " + (questions != null ? questions.size() : 0));
             return test.getId();
 
         } catch (SQLException e) {
@@ -126,6 +132,7 @@ public class SpecificTestService {
                     // Charger les questions et réponses
                     test.setQuestions(getQuestionsByTest(testId));
 
+                    System.out.println("✅ Test spécifique chargé: " + test.getTitle());
                     return test;
                 }
             }
@@ -134,7 +141,7 @@ public class SpecificTestService {
     }
 
     /**
-     * READ : Récupérer tous les tests spécifiques (sans questions/réponses)
+     * READ : Récupérer tous les tests spécifiques
      */
     public static List<SpecificTest> getAllSpecificTests() throws SQLException {
 
@@ -166,6 +173,7 @@ public class SpecificTestService {
             }
         }
 
+        System.out.println("✅ " + tests.size() + " test(s) spécifique(s) chargé(s)");
         return tests;
     }
 
@@ -209,13 +217,15 @@ public class SpecificTestService {
             }
         }
 
+        System.out.println("✅ " + tests.size() + " test(s) trouvé(s) pour l'utilisateur");
         return tests;
     }
 
     /**
      * UPDATE : Modifier un test spécifique
+     * ✅ CORRIGÉ: Accepte une List<SpecificQuestion> en paramètre
      */
-    public static boolean updateSpecificTest(SpecificTest test) throws SQLException {
+    public static boolean updateSpecificTest(SpecificTest test, List<SpecificQuestion> questions) throws SQLException {
 
         // ✅ Vérification: seul un psychologue peut modifier
         if (!AuthContext.isPsychologist()) {
@@ -233,25 +243,70 @@ public class SpecificTestService {
             throw new SQLException("❌ Vous ne pouvez modifier que vos propres tests");
         }
 
-        String sql = "UPDATE specific_tests SET category = ?, title = ?, description = ?, status = ?, updated_at = NOW() WHERE id = ?";
+        try {
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, test.getCategory() != null ? test.getCategory() : existing.getCategory());
-            pstmt.setString(2, test.getTitle() != null ? test.getTitle() : existing.getTitle());
-            pstmt.setString(3, test.getDescription() != null ? test.getDescription() : "");
-            pstmt.setString(4, test.getStatus() != null ? test.getStatus() : existing.getStatus());
-            pstmt.setInt(5, test.getId());
+            // Mettre à jour les infos du test
+            String sql = "UPDATE specific_tests SET category = ?, title = ?, description = ?, status = ?, updated_at = NOW() WHERE id = ?";
 
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                System.out.println("✅ Test modifié avec succès");
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setString(1, test.getCategory() != null ? test.getCategory() : existing.getCategory());
+                pstmt.setString(2, test.getTitle() != null ? test.getTitle() : existing.getTitle());
+                pstmt.setString(3, test.getDescription() != null ? test.getDescription() : "");
+                pstmt.setString(4, test.getStatus() != null ? test.getStatus() : existing.getStatus());
+                pstmt.setInt(5, test.getId());
+
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    // Supprimer les anciennes questions et réponses
+                    deleteQuestionsForTest(test.getId());
+
+                    // Insérer les nouvelles questions et réponses
+                    if (questions != null && !questions.isEmpty()) {
+                        for (SpecificQuestion question : questions) {
+                            if (question.getQuestionText() != null && !question.getQuestionText().trim().isEmpty()) {
+                                int questionId = insertQuestion(connection, test.getId(), question);
+
+                                if (question.getAnswers() != null && !question.getAnswers().isEmpty()) {
+                                    for (SpecificAnswer answer : question.getAnswers()) {
+                                        if (answer.getAnswerText() != null && !answer.getAnswerText().trim().isEmpty()) {
+                                            insertAnswer(connection, questionId, answer);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    connection.commit();
+                    System.out.println("✅ Test spécifique modifié avec succès");
+                    return true;
+                }
             }
-            return rowsAffected > 0;
+
+            connection.rollback();
+            return false;
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                System.err.println("❌ Erreur rollback: " + rollbackEx.getMessage());
+            }
+            System.err.println("�� Erreur modification: " + e.getMessage());
+            throw e;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                System.err.println("❌ Erreur setAutoCommit: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * DELETE : Supprimer un test spécifique (cascade sur questions/réponses)
+     * DELETE : Supprimer un test spécifique
      */
     public static boolean deleteSpecificTest(int testId) throws SQLException {
 
@@ -296,7 +351,7 @@ public class SpecificTestService {
 
                 if (rowsAffected > 0) {
                     connection.commit();
-                    System.out.println("✅ Test supprimé avec succès");
+                    System.out.println("✅ Test spécifique supprimé avec succès");
                     return true;
                 }
             }
@@ -308,9 +363,9 @@ public class SpecificTestService {
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
-                System.err.println("❌ Erreur lors du rollback: " + rollbackEx.getMessage());
+                System.err.println("❌ Erreur rollback: " + rollbackEx.getMessage());
             }
-            System.err.println("❌ Erreur lors de la suppression: " + e.getMessage());
+            System.err.println("❌ Erreur suppression: " + e.getMessage());
             throw e;
         } finally {
             try {
@@ -324,7 +379,7 @@ public class SpecificTestService {
     // ===== MÉTHODES PRIVÉES =====
 
     /**
-     * Insérer une question dans la BD
+     * ✅ Insérer une question dans la BD
      */
     private static int insertQuestion(Connection conn, int testId, SpecificQuestion question) throws SQLException {
         String sql = "INSERT INTO specific_questions (test_id, question_text, question_order) VALUES (?, ?, ?)";
@@ -346,23 +401,22 @@ public class SpecificTestService {
     }
 
     /**
-     * Insérer une réponse dans la BD
+     * ✅ Insérer une réponse dans la BD (SANS SCORE pour tests spécifiques)
      */
     private static void insertAnswer(Connection conn, int questionId, SpecificAnswer answer) throws SQLException {
-        String sql = "INSERT INTO specific_answers (question_id, answer_text, score, answer_order) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO specific_answers (question_id, answer_text, answer_order) VALUES (?, ?, ?)";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, questionId);
             pstmt.setString(2, answer.getAnswerText());
-            pstmt.setInt(3, answer.getScore());
-            pstmt.setInt(4, answer.getAnswerOrder());
+            pstmt.setInt(3, answer.getAnswerOrder());
 
             pstmt.executeUpdate();
         }
     }
 
     /**
-     * Récupérer les questions d'un test
+     * ✅ Récupérer les questions d'un test
      */
     private static List<SpecificQuestion> getQuestionsByTest(int testId) throws SQLException {
         List<SpecificQuestion> questions = new ArrayList<>();
@@ -378,6 +432,7 @@ public class SpecificTestService {
                     question.setTestId(rs.getInt("test_id"));
                     question.setQuestionText(rs.getString("question_text"));
                     question.setQuestionOrder(rs.getInt("question_order"));
+
                     // ✅ Charger les réponses pour cette question
                     question.setAnswers(getAnswersByQuestion(rs.getInt("id")));
 
@@ -390,11 +445,11 @@ public class SpecificTestService {
     }
 
     /**
-     * Récupérer les réponses d'une question
+     * ✅ Récupérer les réponses d'une question (SANS SCORES)
      */
     private static List<SpecificAnswer> getAnswersByQuestion(int questionId) throws SQLException {
         List<SpecificAnswer> answers = new ArrayList<>();
-        String sql = "SELECT id, question_id, answer_text, score, answer_order FROM specific_answers WHERE question_id = ? ORDER BY answer_order";
+        String sql = "SELECT id, question_id, answer_text, answer_order FROM specific_answers WHERE question_id = ? ORDER BY answer_order";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, questionId);
@@ -405,8 +460,8 @@ public class SpecificTestService {
                     answer.setId(rs.getInt("id"));
                     answer.setQuestionId(rs.getInt("question_id"));
                     answer.setAnswerText(rs.getString("answer_text"));
-                    answer.setScore(rs.getInt("score"));
                     answer.setAnswerOrder(rs.getInt("answer_order"));
+                    // ✅ PAS de score pour les tests spécifiques
 
                     answers.add(answer);
                 }
@@ -414,5 +469,22 @@ public class SpecificTestService {
         }
 
         return answers;
+    }
+
+    /**
+     * ✅ Supprimer les questions d'un test
+     */
+    private static void deleteQuestionsForTest(int testId) throws SQLException {
+        String sqlDeleteAnswers = "DELETE FROM specific_answers WHERE question_id IN (SELECT id FROM specific_questions WHERE test_id = ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sqlDeleteAnswers)) {
+            pstmt.setInt(1, testId);
+            pstmt.executeUpdate();
+        }
+
+        String sqlDeleteQuestions = "DELETE FROM specific_questions WHERE test_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sqlDeleteQuestions)) {
+            pstmt.setInt(1, testId);
+            pstmt.executeUpdate();
+        }
     }
 }
