@@ -8,19 +8,27 @@ import org.example.SceneManager;
 import org.example.entities.comment;
 import org.example.services.commentServices;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class CommentListController {
     @FXML private ListView<comment> commentListView;
+    @FXML private ComboBox<String> sortCombo;
+    @FXML private Label noResultLabel;
+
     private final commentServices commentServices = new commentServices();
+    private List<comment> allComments = new ArrayList<>();
+    private List<comment> currentComments = new ArrayList<>();
 
     @FXML
     public void initialize() {
         try {
-            int postId = PostContext.getPostId();
-            for (comment c : commentServices.afficher_comment()) {
-                if (c.getPost_id() == postId) {
-                    commentListView.getItems().add(c);
-                }
-            }
+            loadComments();
+            setList(allComments);
+
+            sortCombo.getItems().setAll("Plus de likes", "Plus de dislikes");
+            sortCombo.setOnAction(e -> applySort());
 
             commentListView.setCellFactory(list -> new ListCell<>() {
                 @Override
@@ -79,14 +87,49 @@ public class CommentListController {
         }
     }
 
+    private void loadComments() throws Exception {
+        allComments.clear();
+        int postId = PostContext.getPostId();
+        for (comment c : commentServices.afficher_comment()) {
+            if (c.getPost_id() == postId) {
+                allComments.add(c);
+            }
+        }
+    }
+
+    @FXML
+    private void resetList() {
+        sortCombo.getSelectionModel().clearSelection();
+        setList(allComments);
+    }
+
+    private void applySort() {
+        if (sortCombo.getValue() == null) return;
+
+        List<comment> sorted = new ArrayList<>(currentComments);
+        if (sortCombo.getValue().equals("Plus de likes")) {
+            sorted.sort(Comparator.comparingInt(comment::getLikes).reversed());
+        } else {
+            sorted.sort(Comparator.comparingInt(comment::getDislikes).reversed());
+        }
+        setList(sorted);
+    }
+
+    private void setList(List<comment> comments) {
+        currentComments = new ArrayList<>(comments);
+        commentListView.getItems().setAll(comments);
+        noResultLabel.setVisible(comments.isEmpty());
+        noResultLabel.setManaged(comments.isEmpty());
+    }
+
     private void updateLike(comment c, boolean like) {
         try {
             if (like) c.setLikes(c.getLikes() + 1);
             else c.setDislikes(c.getDislikes() + 1);
 
             commentServices.modifier_comment(c);
-            commentListView.getItems().clear();
-            initialize();
+            loadComments();
+            setList(allComments);
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }

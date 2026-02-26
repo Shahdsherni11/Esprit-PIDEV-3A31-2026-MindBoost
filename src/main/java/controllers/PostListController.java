@@ -8,14 +8,29 @@ import org.example.SceneManager;
 import org.example.entities.post;
 import org.example.services.postServices;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class PostListController {
     @FXML private ListView<post> postListView;
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> sortCombo;
+    @FXML private Label noResultLabel;
+
     private final postServices postServices = new postServices();
+    private List<post> allPosts = new ArrayList<>();
+    private List<post> currentPosts = new ArrayList<>();
 
     @FXML
     public void initialize() {
         try {
-            postListView.getItems().setAll(postServices.afficher_post());
+            allPosts = postServices.afficher_post();
+            setList(allPosts);
+
+            sortCombo.getItems().setAll("Plus de likes", "Plus de dislikes");
+            sortCombo.setOnAction(e -> applySort());
+
             postListView.setCellFactory(list -> new ListCell<>() {
                 @Override
                 protected void updateItem(post p, boolean empty) {
@@ -92,13 +107,59 @@ public class PostListController {
         }
     }
 
+    @FXML
+    private void searchPosts() {
+        String term = searchField.getText().trim().toLowerCase();
+        if (term.isEmpty()) {
+            setList(allPosts);
+            return;
+        }
+
+        List<post> filtered = new ArrayList<>();
+        for (post p : allPosts) {
+            String title = p.getTitle() == null ? "" : p.getTitle().toLowerCase();
+            String content = p.getContent() == null ? "" : p.getContent().toLowerCase();
+            if (title.contains(term) || content.contains(term)) {
+                filtered.add(p);
+            }
+        }
+        setList(filtered);
+    }
+
+    @FXML
+    private void resetList() {
+        searchField.clear();
+        sortCombo.getSelectionModel().clearSelection();
+        setList(allPosts);
+    }
+
+    private void applySort() {
+        if (sortCombo.getValue() == null) return;
+
+        List<post> sorted = new ArrayList<>(currentPosts);
+        if (sortCombo.getValue().equals("Plus de likes")) {
+            sorted.sort(Comparator.comparingInt(post::getPost_likes).reversed());
+        } else {
+            sorted.sort(Comparator.comparingInt(post::getPost_dislikes).reversed());
+        }
+        setList(sorted);
+    }
+
+    private void setList(List<post> posts) {
+        currentPosts = new ArrayList<>(posts);
+        postListView.getItems().setAll(posts);
+        noResultLabel.setVisible(posts.isEmpty());
+        noResultLabel.setManaged(posts.isEmpty());
+    }
+
     private void updateLike(post p, boolean like) {
         try {
             if (like) p.setPost_likes(p.getPost_likes() + 1);
             else p.setPost_dislikes(p.getPost_dislikes() + 1);
 
             postServices.updateReactions(p.getPost_id(), p.getPost_likes(), p.getPost_dislikes());
-            postListView.getItems().setAll(postServices.afficher_post());
+            allPosts = postServices.afficher_post();
+            setList(allPosts);
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }

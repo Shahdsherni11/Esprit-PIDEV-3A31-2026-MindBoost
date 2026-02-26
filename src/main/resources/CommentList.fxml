@@ -13,6 +13,15 @@
         <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
             <VBox styleClass="content-area" spacing="16" VBox.vgrow="ALWAYS">
                 <Label text="Commentaires" styleClass="page-title"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Trier" styleClass="form-label"/>
+                    <ComboBox fx:id="sortCombo" prefWidth="180"/>
+                    <Button text="Retour liste" styleClass="btn-primary" onAction="#resetList"/>
+                </HBox>
+
+                <Label fx:id="noResultLabel" text="Aucun résultat" styleClass="error-label" visible="false" managed="false"/>
+
                 <ListView fx:id="commentListView" styleClass="forum-list" VBox.vgrow="ALWAYS"/>
 
                 <HBox alignment="CENTER_RIGHT">

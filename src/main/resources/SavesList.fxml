@@ -13,6 +13,15 @@
         <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
             <VBox styleClass="content-area" spacing="16" VBox.vgrow="ALWAYS">
                 <Label text="Liste des saves" styleClass="page-title"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField" promptText="Rechercher Post ID..." styleClass="form-field" prefWidth="240"/>
+                    <Button text="Rechercher" styleClass="btn-primary" onAction="#searchSaves"/>
+                    <Button text="Retour liste" styleClass="btn-primary" onAction="#resetList"/>
+                </HBox>
+
+                <Label fx:id="noResultLabel" text="Aucun résultat" styleClass="error-label" visible="false" managed="false"/>
+
                 <ListView fx:id="listView" styleClass="forum-list" VBox.vgrow="ALWAYS"/>
 
                 <HBox alignment="CENTER_RIGHT">
