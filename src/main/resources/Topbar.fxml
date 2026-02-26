@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
 
-<HBox spacing="12" styleClass="topbar"
+<VBox styleClass="sidebar" prefWidth="230" spacing="0"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="controllers.TopbarController">
 
-    <Label text="MindCare" styleClass="topbar-title"/>
-    <TextField fx:id="searchField"
-               promptText="Search..."
-               styleClass="search-field"
-               focusTraversable="false"/>
-
-    <HBox spacing="8">
-        <Button text="Home" onAction="#goHome"/>
-        <Button text="Posts" onAction="#goPosts"/>
-        <Button text="Achievements" onAction="#goAchievements"/>
-        <Button text="Saves" onAction="#goSaves"/>
+    <HBox alignment="CENTER_LEFT" spacing="4" styleClass="sidebar-header">
+        <Text text="Mind" styleClass="logo-text"/>
+        <Text text="Boost" styleClass="logo-accent"/>
     </HBox>
-</HBox>
+
+    <Label text="MENU" styleClass="sidebar-section-label"/>
+
+    <Separator style="-fx-background-color:rgba(255,255,255,0.07);" />
+
+    <VBox spacing="2" style="-fx-padding:10 0;">
+        <Button text="🏠  Home" styleClass="nav-button" onAction="#goHome"/>
+        <Button text="📝  Posts" styleClass="nav-button" onAction="#goPosts"/>
+        <Button text="🏆  Achievements" styleClass="nav-button" onAction="#goAchievements"/>
+        <Button text="💾  Saves" styleClass="nav-button" onAction="#goSaves"/>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+</VBox>

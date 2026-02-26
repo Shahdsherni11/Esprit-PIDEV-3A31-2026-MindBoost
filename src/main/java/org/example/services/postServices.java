@@ -41,10 +41,9 @@ public class postServices implements CRUDpost<post> {
 
     @Override
     public void supprimer_post(int post_id) throws SQLException {
-        String sql = "DELETE FROM post WHERE user_id=?";
+        String sql = "DELETE FROM post WHERE post_id=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
-        //1 est l'indice de parametre 1 donc id 2 est nom...
-        preparedStatement.setInt(1,post_id);
+        preparedStatement.setInt(1, post_id);
         preparedStatement.executeUpdate();
         System.out.println("suppresion post avec succes!");
     }

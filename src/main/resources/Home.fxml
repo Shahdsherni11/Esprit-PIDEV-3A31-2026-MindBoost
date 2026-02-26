@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
 
-<BorderPane stylesheets="@styles/app.css" styleClass="root light"
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.HomeController">
 
-    <top>
-        <fx:include source="Topbar.fxml"/>
-    </top>
-
-    <left>
-        <VBox spacing="10" styleClass="card">
-            <Button text="Posts" onAction="#goToPosts"/>
-            <Button text="Acheivements" onAction="#goToAcheivements"/>
-            <Button text="Saves" onAction="#goToSaves"/>
-        </VBox>
-    </left>
+    <left><fx:include source="Topbar.fxml"/></left>
 
     <center>
-        <VBox spacing="20" alignment="CENTER">
-            <Text text="Forum CRUD" />
-        </VBox>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Forum CRUD" styleClass="page-title"/>
+
+                <VBox spacing="12" styleClass="form-container">
+                    <Button text="Posts" styleClass="btn-primary" onAction="#goToPosts"/>
+                    <Button text="Acheivements" styleClass="btn-primary" onAction="#goToAcheivements"/>
+                    <Button text="Saves" styleClass="btn-primary" onAction="#goToSaves"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
