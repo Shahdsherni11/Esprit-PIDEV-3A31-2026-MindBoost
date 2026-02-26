@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane stylesheets="@styles/app.css" styleClass="root light"
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.PostListController">
 
-    <top><fx:include source="Topbar.fxml"/></top>
+    <left><fx:include source="Topbar.fxml"/></left>
 
     <center>
-        <ListView fx:id="postListView" styleClass="forum-list"/>
-    </center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16" VBox.vgrow="ALWAYS">
+                <Label text="Liste des posts" styleClass="page-title"/>
+                <ListView fx:id="postListView" styleClass="forum-list" VBox.vgrow="ALWAYS" maxWidth="Infinity"/>
 
-    <bottom>
-        <HBox alignment="CENTER">
-            <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
-            </padding>
-            <Button text="Retour" onAction="#goBack"/>
-        </HBox>
-    </bottom>
+                <HBox alignment="CENTER_RIGHT">
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
 </BorderPane>

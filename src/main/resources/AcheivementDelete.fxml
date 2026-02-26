@@ -2,17 +2,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane stylesheets="@styles/app.css" styleClass="root light"
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.AcheivementDeleteController">
-    <top><fx:include source="Topbar.fxml"/></top>
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
     <center>
-        <VBox spacing="10" alignment="CENTER" styleClass="card">
-            <Label text="Acheivement ID"/>
-            <TextField fx:id="idField"/>
-            <Button text="Supprimer" onAction="#deleteAcheivement"/>
-            <Button text="Retour" onAction="#goBack"/>
-        </VBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Supprimer un acheivement" styleClass="page-title"/>
+
+                <VBox spacing="6" styleClass="form-container">
+                    <Label text="Acheivement ID" styleClass="form-label"/>
+                    <TextField fx:id="idField" styleClass="form-field"/>
+                    <Label fx:id="idError" styleClass="error-label"/>
+
+                    <HBox spacing="10">
+                        <Button text="Supprimer" styleClass="btn-danger" onAction="#deleteAcheivement"/>
+                        <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
