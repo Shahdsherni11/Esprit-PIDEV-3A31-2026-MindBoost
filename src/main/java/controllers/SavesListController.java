@@ -8,14 +8,24 @@ import org.example.SceneManager;
 import org.example.entities.saves;
 import org.example.services.savesServices;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SavesListController {
     @FXML private ListView<saves> listView;
+    @FXML private TextField searchField;
+    @FXML private Label noResultLabel;
+
     private final savesServices savesServices = new savesServices();
+    private List<saves> allSaves = new ArrayList<>();
+    private List<saves> currentSaves = new ArrayList<>();
 
     @FXML
     public void initialize() {
         try {
-            listView.getItems().setAll(savesServices.afficher_saves());
+            allSaves = savesServices.afficher_saves();
+            setList(allSaves);
+
             listView.setCellFactory(list -> new ListCell<>() {
                 @Override
                 protected void updateItem(saves s, boolean empty) {
@@ -47,6 +57,41 @@ public class SavesListController {
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }
+    }
+
+    @FXML
+    private void searchSaves() {
+        String text = searchField.getText().trim();
+        if (text.isEmpty()) {
+            setList(allSaves);
+            return;
+        }
+
+        try {
+            int postId = Integer.parseInt(text);
+            List<saves> filtered = new ArrayList<>();
+            for (saves s : allSaves) {
+                if (s.getPost_id() == postId) {
+                    filtered.add(s);
+                }
+            }
+            setList(filtered);
+        } catch (NumberFormatException e) {
+            setList(new ArrayList<>());
+        }
+    }
+
+    @FXML
+    private void resetList() {
+        searchField.clear();
+        setList(allSaves);
+    }
+
+    private void setList(List<saves> list) {
+        currentSaves = new ArrayList<>(list);
+        listView.getItems().setAll(list);
+        noResultLabel.setVisible(list.isEmpty());
+        noResultLabel.setManaged(list.isEmpty());
     }
 
     @FXML

@@ -235,3 +235,13 @@
     -fx-font-size: 11px;
     -fx-padding: 2 0 0 2;
 }
+/* ===== COMBOBOX DARK STYLE ===== */
+.combo-box, .combo-box-base {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 8;
+    -fx-text-fill: #E8E8F0;
+}
+.combo-box .list-cell {
+    -fx-text-fill: #E8E8F0;
+    -fx-background-color: #1A1A2E;
+}
