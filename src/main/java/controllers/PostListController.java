@@ -2,6 +2,8 @@ package controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.example.SceneManager;
@@ -46,14 +48,29 @@ public class PostListController {
                     Label meta = new Label("User ID: " + p.getUser_id() + " • Post ID: " + p.getPost_id());
                     meta.getStyleClass().add("post-meta");
 
+                    ImageView postImage = new ImageView();
+                    postImage.setFitWidth(520);
+                    postImage.setPreserveRatio(true);
+
+                    if (p.getImage_url() != null && !p.getImage_url().isBlank()) {
+                        try {
+                            Image img = new Image(p.getImage_url(), true);
+                            postImage.setImage(img);
+                        } catch (Exception e) {
+                            postImage.setImage(null);
+                        }
+                    }
+
+                    if (postImage.getImage() == null) {
+                        postImage.setVisible(false);
+                        postImage.setManaged(false);
+                    }
+
                     Label content = new Label(p.getContent());
                     content.getStyleClass().add("post-content");
 
                     Label stats = new Label("👍 " + p.getPost_likes() + "   👎 " + p.getPost_dislikes());
                     stats.getStyleClass().add("post-meta");
-
-                    Label image = new Label("Image: " + p.getImage_url());
-                    image.getStyleClass().add("post-meta");
 
                     Button like = new Button("👍 Like");
                     like.getStyleClass().add("post-action-btn");
@@ -89,10 +106,14 @@ public class PostListController {
                     deleteComment.getStyleClass().add("post-action-btn");
                     deleteComment.setOnAction(e -> openCommentPage("CommentDelete.fxml", p.getPost_id()));
 
-                    HBox actions = new HBox(8, like, dislike, addComment, showComments, editComment, deleteComment);
+                    Button viewStats = new Button("📊 Stats");
+                    viewStats.getStyleClass().add("post-action-btn");
+                    viewStats.setOnAction(e -> openStatsPage(p.getPost_id()));
+
+                    HBox actions = new HBox(8, like, dislike, addComment, showComments, editComment, deleteComment, viewStats);
                     actions.getStyleClass().add("post-actions");
 
-                    VBox card = new VBox(6, title, meta, content, stats, image, actions);
+                    VBox card = new VBox(6, title, meta, postImage, content, stats, actions);
                     card.getStyleClass().add("post-card");
                     card.setMaxWidth(800);
 
@@ -169,6 +190,15 @@ public class PostListController {
         try {
             PostContext.setPostId(postId);
             SceneManager.switchTo(fxml);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, e.getMessage());
+        }
+    }
+
+    private void openStatsPage(int postId) {
+        try {
+            PostContext.setPostId(postId);
+            SceneManager.switchTo("PostStats.fxml");
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, e.getMessage());
         }

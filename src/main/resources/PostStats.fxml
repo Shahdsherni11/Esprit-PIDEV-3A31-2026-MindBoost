@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PostStatsController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="24">
+                <Label text="📊 Statistiques du post" styleClass="page-title"/>
+                <Label fx:id="titleLabel" styleClass="post-title"/>
+
+                <!-- Top metrics cards -->
+                <FlowPane hgap="18" vgap="18" prefWrapLength="980">
+                    <VBox styleClass="metric-card">
+                        <Label text="👍 Likes" styleClass="metric-title"/>
+                        <Label fx:id="likesLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="👎 Dislikes" styleClass="metric-title"/>
+                        <Label fx:id="dislikesLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="💬 Commentaires" styleClass="metric-title"/>
+                        <Label fx:id="commentsLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="✨ Interactions" styleClass="metric-title"/>
+                        <Label fx:id="interactionsLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="🧮 Score net" styleClass="metric-title"/>
+                        <Label fx:id="netScoreLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="✅ Like ratio" styleClass="metric-title"/>
+                        <Label fx:id="likeRatioLabel" styleClass="metric-value"/>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="⚠️ Dislike ratio" styleClass="metric-title"/>
+                        <Label fx:id="dislikeRatioLabel" styleClass="metric-value"/>
+                    </VBox>
+                </FlowPane>
+
+                <!-- Chart cards -->
+                <HBox spacing="24" alignment="CENTER">
+                    <VBox styleClass="chart-card" spacing="8">
+                        <Label text="Réactions" styleClass="section-title"/>
+                        <PieChart fx:id="reactionsChart" prefWidth="300" prefHeight="260"/>
+                    </VBox>
+
+                    <VBox styleClass="chart-card" spacing="8">
+                        <Label text="Totaux" styleClass="section-title"/>
+                        <BarChart fx:id="totalsChart" prefWidth="420" prefHeight="260">
+                            <xAxis>
+                                <CategoryAxis label="Type"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Valeur"/>
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </HBox>
+
+                <!-- Bottom cards (descriptive) -->
+                <FlowPane hgap="18" vgap="18" prefWrapLength="980">
+                    <VBox styleClass="metric-card">
+                        <Label text="📈 Engagement" styleClass="metric-title"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="engagementWordLabel" styleClass="metric-word"/>
+                            <Label fx:id="engagementLabel" styleClass="metric-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="🔥 Popularité" styleClass="metric-title"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="popularityWordLabel" styleClass="metric-word"/>
+                            <Label fx:id="popularityLabel" styleClass="metric-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="⚖️ Controverse" styleClass="metric-title"/>
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label fx:id="controversyWordLabel" styleClass="metric-word"/>
+                            <Label fx:id="controversyLabel" styleClass="metric-value"/>
+                        </HBox>
+                    </VBox>
+
+                    <VBox styleClass="metric-card">
+                        <Label text="🙂 Mood" styleClass="metric-title"/>
+                        <Label fx:id="moodLabel" styleClass="metric-value"/>
+                    </VBox>
+                </FlowPane>
+
+                <HBox alignment="CENTER_RIGHT">
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
