@@ -18,7 +18,7 @@ package com.gestion_test.services;
 public class AuthContext {
 
     // ===== VARIABLES STATIQUES =====
-    private static int currentUserId = -1;
+    private static int currentUserId = 1;
     private static String currentEmail = null;
     private static String currentRole = null;
     private static String currentUserName = null;
@@ -109,7 +109,7 @@ public class AuthContext {
      * (Compatible avec "student" et "user")
      */
     public static boolean isStudent() {
-        return isAuthenticated && ("student".equals(currentRole) || "user".equals(currentRole));
+        return isAuthenticated && ( "user".equals(currentRole));
     }
 
     /**

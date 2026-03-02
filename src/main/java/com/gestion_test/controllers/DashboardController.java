@@ -14,75 +14,63 @@ import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
 
-    @FXML
-    private Label generalTestsLabel;
-
-    @FXML
-    private Label specificTestsLabel;
-
-    @FXML
-    private Label usersLabel;
+    @FXML private Label generalTestsLabel;
+    @FXML private Label specificTestsLabel;
+    @FXML private Label usersLabel;
 
     private GeneralTestService generalTestService;
-    private SpecificTestService specificTestService;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("✅ DashboardController initialisé");
+        System.out.println("DashboardController initialise");
         generalTestService = new GeneralTestService();
-        specificTestService = new SpecificTestService();
         loadStatistics();
     }
 
-    /**
-     * ✅ Charger les statistiques depuis la BD
-     */
     private void loadStatistics() {
         try {
-            // Charger le nombre de tests généraux
             int generalTests = generalTestService.getAll().size();
             generalTestsLabel.setText(String.valueOf(generalTests));
-            System.out.println("📊 Tests Généraux: " + generalTests);
 
-            // ✅ CHARGER le nombre de tests spécifiques
             int specificTests = 0;
             try {
                 specificTests = SpecificTestService.getAllSpecificTests().size();
             } catch (SQLException e) {
-                System.err.println("⚠️ Erreur lors du chargement des tests spécifiques: " + e.getMessage());
                 specificTests = 0;
             }
             specificTestsLabel.setText(String.valueOf(specificTests));
-            System.out.println("📊 Tests Spécifiques: " + specificTests);
 
-            // TODO: Charger le nombre d'utilisateurs (si applicable)
-            // Pour l'instant, afficher 0
             usersLabel.setText("0");
 
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors du chargement des statistiques: " + e.getMessage());
             generalTestsLabel.setText("0");
             specificTestsLabel.setText("0");
             usersLabel.setText("0");
         }
     }
 
-    /**
-     * ✅ Ouvrir la liste des tests généraux
-     */
     @FXML
     private void handleOpenGeneralTests() {
-        System.out.println("🔄 Navigation vers Tests Généraux");
-        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "📋 Tests Généraux");
+        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "Tests Generaux");
     }
 
-    /**
-     * ✅ Ouvrir la liste des tests spécifiques
-     */
     @FXML
     private void handleOpenSpecificTests() {
-        System.out.println("🔄 Navigation vers Tests Spécifiques");
-        // ✅ CHANGÉ: specificTestList.fxml → SpecificTestList.fxml (AVEC MAJUSCULE S)
-        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "🎯 Tests Spécifiques");
+        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "Tests Specifiques");
+    }
+
+    @FXML
+    private void handleOpenStatistics() {
+        if (AuthContext.isStudent() || AuthContext.isUser()) {
+            App.loadScene("/views/StudentStats.fxml", "Mes Statistiques");
+        } else {
+            App.loadScene("/views/Statistics.fxml", "Statistiques");
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        AuthContext.logout();
+        App.loadScene("/views/SelectRole.fxml", "MindBoost");
     }
 }

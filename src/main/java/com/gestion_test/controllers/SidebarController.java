@@ -1,26 +1,33 @@
 package com.gestion_test.controllers;
 
 import javafx.fxml.FXML;
+import com.gestion_test.services.AuthContext;
 import com.gestion_test.App;
 
 public class SidebarController {
 
     @FXML
     private void handleOpenGeneralTests() {
-        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "📋 Tests Généraux - MindBoost");
+        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "Tests Generaux");
     }
 
     @FXML
     private void handleOpenSpecificTests() {
-        System.out.println("🔄 Navigation vers Tests Spécifiques");
-        // ✅ CHANGÉ: specificTestList.fxml → SpecificTestList.fxml (AVEC MAJUSCULE S)
-        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "🎯 Tests Spécifiques - MindBoost");
+        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "Tests Specifiques");
+    }
+
+    @FXML
+    private void handleOpenStatistics() {
+        if (AuthContext.isStudent() || AuthContext.isUser()) {
+            App.loadScene("/views/StudentStats.fxml", "Mes Statistiques");
+        } else {
+            App.loadScene("/views/Statistics.fxml", "Statistiques");
+        }
     }
 
     @FXML
     private void handleLogout() {
-        System.out.println("🔓 DÉCONNEXION");
-        com.gestion_test.services.AuthContext.logout();
-        App.loadScene("/views/Login.fxml", "🧠 MindBoost - Connexion");
+        AuthContext.logout();
+        App.loadScene("/views/SelectRole.fxml", "MindBoost");
     }
 }

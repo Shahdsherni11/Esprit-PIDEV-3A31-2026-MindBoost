@@ -2,16 +2,24 @@ package com.gestion_test.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import com.gestion_test.entities.SpecificTest;
 import com.gestion_test.services.SpecificTestService;
+import com.gestion_test.services.ScoreService;
 import com.gestion_test.services.AuthContext;
 import com.gestion_test.utils.PermissionUtils;
 import com.gestion_test.utils.TestDataHolder;
@@ -24,21 +32,29 @@ import java.util.ResourceBundle;
 
 public class SpecificTestListController implements Initializable {
 
-    @FXML private ListView<SpecificTest> testsListView;
-    @FXML private VBox emptyMessage;
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> categoryFilterCombo;
-    @FXML private Button addBtn;
-    @FXML private Label totalLabel;
-    @FXML private Label userLabel;
-    @FXML private Label roleLabel;
+    @FXML
+    private ListView<SpecificTest> testsListView;
+    @FXML
+    private VBox emptyMessage;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> categoryFilterCombo;
+    @FXML
+    private Button addBtn;
+    @FXML
+    private Label totalLabel;
+    @FXML
+    private Label userLabel;
+    @FXML
+    private Label roleLabel;
 
     private ObservableList<SpecificTest> allTests = FXCollections.observableArrayList();
     private ObservableList<SpecificTest> displayedTests = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("✅ SpecificTestListController initialisé");
+        System.out.println("SpecificTestListController initialise");
 
         displayUserInfo();
         setupComboBoxes();
@@ -46,133 +62,166 @@ public class SpecificTestListController implements Initializable {
         loadTests();
         setupActions();
         checkPermissions();
+
+        if (AuthContext.isStudent()) {
+            searchField.setVisible(false);
+            searchField.setManaged(false);
+            categoryFilterCombo.setVisible(false);
+            categoryFilterCombo.setManaged(false);
+        }
     }
 
-    /**
-     * ✅ AFFICHER LES INFOS UTILISATEUR
-     */
     private void displayUserInfo() {
         String userName = AuthContext.getCurrentUserName();
         String role = AuthContext.getCurrentRole();
 
-        userLabel.setText("👤 " + userName);
-        roleLabel.setText("📂 " + formatRole(role));
-
-        System.out.println("👤 Utilisateur: " + userName);
-        System.out.println("📂 Rôle: " + role);
+        if (userLabel != null) {
+            userLabel.setText(userName != null ? userName : "Utilisateur");
+        }
+        if (roleLabel != null) {
+            roleLabel.setText(formatRole(role));
+        }
     }
 
-    /**
-     * ✅ FORMATER LE RÔLE POUR L'AFFICHAGE
-     */
     private String formatRole(String role) {
         if (role == null) return "Inconnu";
-        return switch (role.toLowerCase()) {
-            case "psychologist" -> "Psychologue";
-            case "student", "user" -> "Étudiant";
-            case "admin" -> "Administrateur";
-            default -> role;
-        };
+        if (role.equalsIgnoreCase("psychologist")) return "Psychologue";
+        if (role.equalsIgnoreCase("student") || role.equalsIgnoreCase("user")) return "Etudiant";
+        if (role.equalsIgnoreCase("admin")) return "Administrateur";
+        return role;
     }
 
-    /**
-     * ✅ CONFIGURER LES COMBOBOX
-     */
     private void setupComboBoxes() {
         categoryFilterCombo.setItems(FXCollections.observableArrayList(
-                "Tous", "Anxiété", "Dépression", "Stress", "Trouble du Sommeil"
+                "Tous", "Anxiete", "Depression", "Stress", "Trouble du Sommeil"
         ));
         categoryFilterCombo.setValue("Tous");
         categoryFilterCombo.setOnAction(e -> filterTests());
     }
 
-    /**
-     * ✅ CONFIGURER LE LISTVIEW
-     */
     private void setupListView() {
         testsListView.setCellFactory(param -> new SpecificTestCell());
         testsListView.setItems(displayedTests);
-
-        System.out.println("✅ ListView configuré");
     }
 
-    /**
-     * ✅ CHARGER LES TESTS
-     */
     private void loadTests() {
         try {
-            System.out.println("🔄 Chargement des tests spécifiques...");
-            List<SpecificTest> tests = SpecificTestService.getAllSpecificTests();
+            System.out.println("Chargement des tests specifiques...");
 
-            allTests.clear();
-            allTests.addAll(tests);
-            displayedTests.clear();
-            displayedTests.addAll(tests);
+            List<SpecificTest> tests;
 
-            System.out.println("✅ " + tests.size() + " test(s) chargé(s)");
+            // Psychologue / Admin -> voir TOUS les tests
+            if (AuthContext.isAdmin() || AuthContext.isPsychologist()) {
+                tests = SpecificTestService.getAllSpecificTests();
+
+                allTests.setAll(tests);
+                displayedTests.setAll(tests);
+                updateStats();
+
+                if (tests.isEmpty()) {
+                    showEmptyMessage("Aucun test disponible.");
+                } else {
+                    hideEmptyMessage();
+                }
+                return;
+            }
+
+            // Etudiant -> logique basee sur le pourcentage
+            int userId = AuthContext.getCurrentUserId();
+            int percentage = ScoreService.getLatestPercentageForUser(userId);
+
+            System.out.println("User ID : " + userId);
+            System.out.println("Pourcentage : " + percentage);
+
+            // Pas encore de score -> message
+            if (percentage < 0) {
+                showEmptyMessage("Vous devez passer un test general d'abord.");
+                return;
+            }
+
+            // Categorie determinee automatiquement
+            String category = ScoreService.getCategoryFromPercentage(percentage);
+            tests = SpecificTestService.getSpecificTestsByCategory(category);
+
+            allTests.setAll(tests);
+            displayedTests.setAll(tests);
+
+            System.out.println(tests.size() + " test(s) pour categorie: " + category + " (" + percentage + "%)");
             updateStats();
 
             if (tests.isEmpty()) {
-                emptyMessage.setVisible(true);
-                testsListView.setVisible(false);
+                showEmptyMessage("Aucun test disponible pour : " + category);
             } else {
-                emptyMessage.setVisible(false);
-                testsListView.setVisible(true);
+                hideEmptyMessage();
             }
 
         } catch (SQLException e) {
-            System.err.println("❌ Erreur: " + e.getMessage());
+            System.err.println("Erreur: " + e.getMessage());
             showError("Erreur", "Erreur lors du chargement: " + e.getMessage());
         }
     }
 
-    /**
-     * ✅ METTRE À JOUR LES STATS
-     */
-    private void updateStats() {
-        totalLabel.setText(String.valueOf(allTests.size()));
+    private void showEmptyMessage(String message) {
+        emptyMessage.getChildren().clear();
+        Label msg = new Label(message);
+        msg.setStyle("-fx-text-fill: #9B9BB0; -fx-font-size: 14px;");
+        emptyMessage.getChildren().add(msg);
+        emptyMessage.setVisible(true);
+        emptyMessage.setManaged(true);
+        testsListView.setVisible(false);
+        testsListView.setManaged(false);
     }
 
-    /**
-     * ✅ CONFIGURER LES ACTIONS
-     */
+    private void hideEmptyMessage() {
+        emptyMessage.getChildren().clear();
+        emptyMessage.setVisible(false);
+        emptyMessage.setManaged(false);
+        testsListView.setVisible(true);
+        testsListView.setManaged(true);
+    }
+
+    private void updateStats() {
+        if (totalLabel != null) {
+            totalLabel.setText(Integer.toString(allTests.size()));
+        }
+    }
+
     private void setupActions() {
         addBtn.setOnAction(e -> addTest());
         searchField.textProperty().addListener((obs, old, newVal) -> filterTests());
     }
 
-    /**
-     * ✅ VÉRIFIER LES PERMISSIONS
-     */
     private void checkPermissions() {
         if (!PermissionUtils.canCreateTests()) {
             addBtn.setDisable(true);
+            addBtn.setVisible(false);
+            addBtn.setManaged(false);
         }
     }
 
-    /**
-     * ✅ AJOUTER UN TEST
-     */
     private void addTest() {
         if (!PermissionUtils.canCreateTests()) {
-            showError("Accès refusé", PermissionUtils.getAccessDeniedMessage());
+            showError("Acces refuse", PermissionUtils.getAccessDeniedMessage());
             return;
         }
-        // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
-        App.loadScene("/views/SpecificTest/SpecificTestAdd.fxml", "➕ Nouveau Test Spécifique");
+        App.loadScene("/views/SpecificTest/SpecificTestAdd.fxml", "Nouveau Test Specifique");
     }
 
-    /**
-     * ✅ FILTRER LES TESTS
-     */
     private void filterTests() {
+        if (AuthContext.isStudent()) {
+            displayedTests.clear();
+            displayedTests.addAll(allTests);
+            return;
+        }
+
         String searchQuery = searchField.getText().trim().toLowerCase();
         String selectedCategory = categoryFilterCombo.getValue();
 
         ObservableList<SpecificTest> filtered = allTests.filtered(test -> {
             boolean matchesSearch = searchQuery.isEmpty() ||
                     test.getTitle().toLowerCase().contains(searchQuery) ||
-                    (test.getDescription() != null && test.getDescription().toLowerCase().contains(searchQuery));
+                    (test.getDescription() != null &&
+                            test.getDescription().toLowerCase().contains(searchQuery));
 
             boolean matchesCategory = "Tous".equals(selectedCategory) ||
                     test.getCategory().equalsIgnoreCase(selectedCategory);
@@ -184,6 +233,29 @@ public class SpecificTestListController implements Initializable {
         displayedTests.addAll(filtered);
     }
 
+    // ===== NAVIGATION =====
+
+    @FXML
+    private void handleOpenDashboard() {
+        App.loadScene("/views/Dashboard.fxml", "Dashboard Psychologue");
+    }
+
+    @FXML
+    private void handleOpenGeneralTests() {
+        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "Tests Generaux");
+    }
+
+    @FXML
+    private void handleOpenStatistics() {
+        App.loadScene("/views/Statistics.fxml", "Statistiques");
+    }
+
+    @FXML
+    private void handleLogout() {
+        AuthContext.logout();
+        App.loadScene("/views/SelectRole.fxml", "MindBoost");
+    }
+
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -191,9 +263,8 @@ public class SpecificTestListController implements Initializable {
         alert.showAndWait();
     }
 
-    /**
-     * ✅ CELLULE PERSONNALISÉE POUR LE LISTVIEW
-     */
+    // ===== CELLULE PERSONNALISEE =====
+
     private class SpecificTestCell extends ListCell<SpecificTest> {
 
         @Override
@@ -205,132 +276,116 @@ public class SpecificTestListController implements Initializable {
                 return;
             }
 
-            // ===== CRÉER LE CONTENU DE LA CELLULE =====
             VBox cell = new VBox(8);
-            cell.setStyle("-fx-border-color: #e5e7eb; -fx-border-radius: 8; -fx-padding: 12; " +
-                    "-fx-background-color: #f9fafb; -fx-border-width: 1; -fx-spacing: 8;");
+            cell.setStyle("-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 12; " +
+                    "-fx-border-color: rgba(255,255,255,0.08); -fx-border-radius: 12; " +
+                    "-fx-border-width: 1; -fx-padding: 16;");
 
-            // ===== EN-TÊTE: ID + TITRE + ACTIONS =====
+            // En-tete
             HBox header = new HBox(12);
             header.setAlignment(Pos.CENTER_LEFT);
 
             Label idLabel = new Label("ID: " + test.getId());
-            idLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9ca3af; -fx-font-weight: bold;");
+            idLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9B9BB0; -fx-font-weight: bold;");
 
             Label titleLabel = new Label(test.getTitle());
-            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;");
+            titleLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
 
             Label categoryBadge = new Label(test.getCategory());
-            categoryBadge.setStyle("-fx-padding: 2 8; -fx-background-color: #dbeafe; " +
-                    "-fx-text-fill: #0c4a6e; -fx-background-radius: 12; " +
+            categoryBadge.setStyle("-fx-padding: 2 8; -fx-background-color: rgba(108,99,255,0.2); " +
+                    "-fx-text-fill: #A89CFF; -fx-background-radius: 12; " +
                     "-fx-font-size: 10px; -fx-font-weight: bold;");
 
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
 
-            // ===== BOUTONS D'ACTION AVEC LABELS =====
             HBox actions = new HBox(6);
             actions.setAlignment(Pos.CENTER_RIGHT);
 
-            Button viewBtn = new Button("👁️ Voir");
-            viewBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #3b82f6; " +
-                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
-            viewBtn.setOnAction(e -> viewTest(test));
+            // ETUDIANT : Bouton passer le test
+            if (AuthContext.isStudent()) {
+                Button takeBtn = new Button("Passer le Test");
+                takeBtn.setStyle("-fx-padding: 8 16; -fx-font-size: 11px; -fx-background-color: linear-gradient(to right, #4ECDC4, #3DBDB5); " +
+                        "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+                takeBtn.setOnAction(e -> takeTest(test));
+                actions.getChildren().add(takeBtn);
+            } else {
+                // PSYCHOLOGUE : Boutons voir/modifier/supprimer
+                Button viewBtn = new Button("Voir");
+                viewBtn.setStyle("-fx-padding: 8 16; -fx-font-size: 11px; -fx-background-color: linear-gradient(to right, #6C63FF, #5A52D5); " +
+                        "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+                viewBtn.setOnAction(e -> viewTest(test));
 
-            Button editBtn = new Button("✏️ Modifier");
-            editBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #5b8def; " +
-                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
-            editBtn.setOnAction(e -> editTest(test));
+                Button editBtn = new Button("Modifier");
+                editBtn.setStyle("-fx-padding: 8 16; -fx-font-size: 11px; -fx-background-color: linear-gradient(to right, #4ECDC4, #3DBDB5); " +
+                        "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+                editBtn.setOnAction(e -> editTest(test));
 
-            Button deleteBtn = new Button("🗑️ Supprimer");
-            deleteBtn.setStyle("-fx-padding: 8 12; -fx-font-size: 11; -fx-background-color: #dc2626; " +
-                    "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
-            deleteBtn.setOnAction(e -> deleteTest(test));
+                Button deleteBtn = new Button("Supprimer");
+                deleteBtn.setStyle("-fx-padding: 8 16; -fx-font-size: 11px; -fx-background-color: linear-gradient(to right, #E74C3C, #C0392B); " +
+                        "-fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+                deleteBtn.setOnAction(e -> deleteTest(test));
 
-            // Désactiver edit/delete si pas propriétaire
-            if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
-                editBtn.setDisable(true);
-                deleteBtn.setDisable(true);
+                actions.getChildren().addAll(viewBtn, editBtn, deleteBtn);
             }
 
-            actions.getChildren().addAll(viewBtn, editBtn, deleteBtn);
             header.getChildren().addAll(idLabel, titleLabel, categoryBadge, spacer, actions);
 
-            // ===== CONTENU: DESCRIPTION + STATS =====
+            // Description
             VBox content = new VBox(6);
-
             String description = test.getDescription();
             if (description != null && !description.isEmpty()) {
-                Label descLabel = new Label(description.length() > 100 ?
-                        description.substring(0, 100) + "..." : description);
-                descLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6b7280; -fx-wrap-text: true;");
+                String shortDesc = description.length() > 100 ? description.substring(0, 100) + "..." : description;
+                Label descLabel = new Label(shortDesc);
+                descLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true;");
                 content.getChildren().add(descLabel);
             }
 
-            // ===== FOOTER: STATISTIQUES =====
-            HBox footer = new HBox(20);
-            footer.setStyle("-fx-padding: 8 0; -fx-background-color: transparent;");
-
+            // Footer
             int questionCount = test.getQuestions() != null ? test.getQuestions().size() : 0;
             String status = test.getStatus() != null ? test.getStatus() : "UNKNOWN";
+            String dateStr = test.getCreatedAt() != null ? test.getCreatedAt().toString().substring(0, 10) : "N/A";
 
-            Label statsLabel = new Label("❓ " + questionCount + " questions | " +
-                    "📊 " + status + " | " +
-                    "📅 " + (test.getCreatedAt() != null ? test.getCreatedAt().toString().substring(0, 10) : "N/A"));
-            statsLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #9ca3af;");
+            Label statsLabel = new Label(questionCount + " questions | " + status + " | " + dateStr);
+            statsLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: #9B9BB0;");
+            content.getChildren().add(statsLabel);
 
-            footer.getChildren().add(statsLabel);
-            content.getChildren().add(footer);
-
-            // ===== ASSEMBLAGE =====
             cell.getChildren().addAll(header, content);
             setGraphic(cell);
         }
 
-        /**
-         * ✅ Voir un test
-         */
+        private void takeTest(SpecificTest test) {
+            if (test == null) return;
+            System.out.println("Etudiant passe le test: " + test.getTitle());
+            TestDataHolder.setSelectedSpecificTestId(test.getId());
+            App.loadScene("/views/SpecificTest/SpecificTestTake.fxml", "Passer - " + test.getTitle());
+        }
+
         private void viewTest(SpecificTest test) {
             if (test == null) return;
-
-            // ✅ PASSER L'ID VIA TestDataHolder
             TestDataHolder.setSelectedSpecificTestId(test.getId());
-            // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
-            App.loadScene("/views/SpecificTest/SpecificTestView.fxml", "👁️ " + test.getTitle());
+            App.loadScene("/views/SpecificTest/SpecificTestView.fxml", test.getTitle());
         }
 
-        /**
-         * ✅ Modifier un test
-         */
         private void editTest(SpecificTest test) {
             if (test == null) return;
-            if (!PermissionUtils.canModifyTests() || test.getCreatedBy() != AuthContext.getCurrentUserId()) {
-                showError("Erreur", "Accès refusé");
-                return;
-            }
-
             TestDataHolder.setSelectedSpecificTestId(test.getId());
-            // ✅ CHEMIN CORRECT (AVEC MAJUSCULES)
-            App.loadScene("/views/SpecificTest/SpecificTestEdit.fxml", "✏️ Modifier");
+            App.loadScene("/views/SpecificTest/SpecificTestEdit.fxml", "Modifier");
         }
 
-        /**
-         * ✅ Supprimer un test
-         */
         private void deleteTest(SpecificTest test) {
             if (test == null) return;
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation");
-            alert.setHeaderText("⚠️ Êtes-vous sûr?");
-            alert.setContentText("Êtes-vous sûr de vouloir supprimer ce test?\n\nCette action est irréversible!");
+            alert.setHeaderText("Etes-vous sur?");
+            alert.setContentText("Cette action est irreversible!");
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     try {
                         SpecificTestService.deleteSpecificTest(test.getId());
                         loadTests();
-                        showSuccess("Succès", "Test supprimé!");
                     } catch (SQLException e) {
                         showError("Erreur", "Erreur: " + e.getMessage());
                     }
@@ -340,13 +395,6 @@ public class SpecificTestListController implements Initializable {
 
         private void showError(String title, String message) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(title);
-            alert.setContentText(message);
-            alert.showAndWait();
-        }
-
-        private void showSuccess(String title, String message) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle(title);
             alert.setContentText(message);
             alert.showAndWait();

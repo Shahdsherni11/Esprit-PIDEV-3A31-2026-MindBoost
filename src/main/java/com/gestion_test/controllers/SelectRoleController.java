@@ -10,12 +10,6 @@ import com.gestion_test.App;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * ✅ SÉLECTION DU RÔLE - FLUX ÉTUDIANT CORRIGÉ
- *
- * PSYCHOLOGUE: SelectRole → Dashboard
- * ÉTUDIANT: SelectRole → GeneralTestList (pour PASSER les tests)
- */
 public class SelectRoleController implements Initializable {
 
     @FXML private Button psychologistBtn;
@@ -23,56 +17,22 @@ public class SelectRoleController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("\n========================================");
-        System.out.println("✅ SelectRoleController initialisé");
-        System.out.println("========================================\n");
-
+        System.out.println("SelectRoleController initialise");
         psychologistBtn.setOnAction(e -> loginAsPsychologist());
         studentBtn.setOnAction(e -> loginAsStudent());
     }
 
-    /**
-     * ✅ PSYCHOLOGUE → Dashboard (CRUD des tests)
-     */
     private void loginAsPsychologist() {
-        System.out.println("\n========================================");
-        System.out.println("🔐 CONNEXION: PSYCHOLOGUE");
-        System.out.println("========================================\n");
-
-        try {
-            AuthContext.setCurrentUser(1, "psychologue@mindboost.com", "psychologist", "Dr. Michel Dupont");
-
-            System.out.println("✅ Connexion réussie!");
-            System.out.println("👤 Dr. Michel Dupont | 📂 Psychologue");
-            System.out.println("📄 Navigation: Dashboard (Gestion des tests)\n");
-
-            App.loadScene("/views/Dashboard.fxml", "🧠 Dashboard Psychologue");
-        } catch (Exception e) {
-            showError("Erreur", "Impossible de se connecter");
-        }
+        System.out.println("Connexion: PSYCHOLOGUE");
+        AuthContext.setCurrentUser(1, "psychologue@mindboost.com", "psychologist", "Dr. Michel Dupont");
+        App.loadScene("/views/Dashboard.fxml", "Dashboard Psychologue");
     }
 
-    /**
-     * ✅ ÉTUDIANT → GeneralTestList (PASSER les tests)
-     * PAS DE DASHBOARD!
-     */
     private void loginAsStudent() {
-        System.out.println("\n========================================");
-        System.out.println("🔐 CONNEXION: ÉTUDIANT");
-        System.out.println("========================================\n");
-
-        try {
-            AuthContext.setCurrentUser(2, "jean.martin@example.com", "student", "Jean Martin");
-
-            System.out.println("✅ Connexion réussie!");
-            System.out.println("👤 Jean Martin | 📂 Étudiant");
-            System.out.println("📄 Navigation: Liste des Tests Généraux\n");
-
-            // ✅ DIRECT à la liste des tests (PAS de Dashboard!)
-            App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "📋 Tests Généraux");
-        } catch (Exception e) {
-            showError("Erreur", "Impossible de se connecter");
-        }
+        System.out.println("Connexion: ETUDIANT");
+        AuthContext.setCurrentUser(1, "hamdibac2023@gmail.com", "user", "hassen");
+        // ETUDIANT va directement aux Tests Generaux
+        App.loadScene("/views/GeneralTest/GeneralTestList.fxml", "Tests Generaux");
     }
 
     private void showError(String title, String message) {

@@ -7,15 +7,16 @@ import java.sql.SQLException;
 public class MyDataBase {
 
     // ========================================
-    // CONFIGURATION BD : app_psychologique
-    // (Tests Psycho + Users + Profiles)
+    // CONFIGURATION BD : mindboost
     // ========================================
-    final String USERNAME = "root";
-    final String URL = "jdbc:mysql://localhost:3306/app_psychologique";
-    final String PASSWORD = "";
+    private final String USERNAME = "root";
+    private final String PASSWORD = "";
 
-    Connection connection;
-    static MyDataBase instance;
+    // 🔥 Base changée ici
+    private final String URL = "jdbc:mysql://localhost:3306/mindboost?useSSL=false&serverTimezone=UTC";
+
+    private Connection connection;
+    private static MyDataBase instance;
 
     /**
      * Constructeur privé (Singleton)
@@ -66,5 +67,4 @@ public class MyDataBase {
             System.err.println("❌ Erreur: " + e.getMessage());
         }
     }
-
 }

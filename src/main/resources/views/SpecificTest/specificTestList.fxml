@@ -1,79 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
 
-<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
-            xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.gestion_test.controllers.SpecificTestListController">
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.SpecificTestListController"
+            stylesheets="@../../styles/app.css"
+            styleClass="main-bg"
+            prefWidth="1200" prefHeight="750">
 
-    <top><fx:include source="../Topbar.fxml"/></top>
-    <left><fx:include source="../Sidebar.fxml"/></left>
-
-    <center>
-        <VBox spacing="16" styleClass="dashboard">
-
-            <!-- ===== HEADER ===== -->
-            <VBox spacing="8">
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <Label text="🎯 Tests Spécifiques" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="userLabel" text="👤 Utilisateur" style="-fx-font-size: 12px;"/>
-                    <Label fx:id="roleLabel" text="📂 Rôle" style="-fx-font-size: 12px;"/>
-                </HBox>
-                <Label text="Gérez les tests spécifiques adaptés à chaque catégorie"
-                       style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
-            </VBox>
-
-            <!-- ===== STATISTIQUES ===== -->
-            <HBox spacing="12">
-                <VBox styleClass="stat-card" style="-fx-padding: 16; -fx-background-color: #eef2ff; -fx-border-color: #5b8def; -fx-border-width: 1;">
-                    <Label text="Total des Tests" style="-fx-font-size: 11px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
-                    <Label fx:id="totalLabel" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
-                </VBox>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button fx:id="addBtn"
-                        text="➕ Nouveau Test"
-                        styleClass="button"
-                        style="-fx-padding: 10 20; -fx-font-weight: bold;"/>
+    <!-- ===== SIDEBAR STYLE EQUIPE ===== -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:30 20 20 20;">
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:#6C63FF;">Boost</Text>
             </HBox>
 
-            <!-- ===== FILTRES ===== -->
-            <HBox spacing="12" alignment="CENTER_LEFT">
-                <ComboBox fx:id="categoryFilterCombo"
-                          prefWidth="200"
-                          promptText="Filtrer par catégorie..."
-                          styleClass="input-large"
-                          style="-fx-font-size: 12px; -fx-padding: 10 14;"/>
+            <Label text="PSYCHOLOGUE"
+                   style="-fx-text-fill:rgba(255,255,255,0.3); -fx-font-size:10px; -fx-font-weight:bold; -fx-padding:0 20 15 20;"/>
 
-                <TextField fx:id="searchField"
-                           promptText="🔍 Rechercher un test..."
-                           styleClass="search-field"
-                           style="-fx-font-size: 12px; -fx-padding: 10 14;"
-                           HBox.hgrow="ALWAYS"/>
-            </HBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
 
-            <!-- ===== LISTE DES TESTS (LISTVIEW) ===== -->
-            <VBox spacing="2" styleClass="card" VBox.vgrow="ALWAYS">
-                <ListView fx:id="testsListView"
-                          VBox.vgrow="ALWAYS"
-                          styleClass="tests-list-view"
-                          style="-fx-font-size: 12px; -fx-border-radius: 8;"/>
+            <VBox spacing="2" style="-fx-padding:10 0;">
+                <Button text="🏠  Dashboard" styleClass="nav-button"
+                        onAction="#handleOpenDashboard"/>
+                <Button text="📋  Tests Generaux" styleClass="nav-button"
+                        onAction="#handleOpenGeneralTests"/>
+                <Button text="🎯  Tests Specifiques" styleClass="nav-button, nav-button-active"/>
+                <Button text="📊  Statistiques" styleClass="nav-button"
+                        onAction="#handleOpenStatistics"/>
             </VBox>
 
-            <!-- ===== MESSAGE AUCUN TEST ===== -->
-            <VBox fx:id="emptyMessage"
-                  spacing="12"
-                  alignment="CENTER"
-                  style="-fx-padding: 60 40; -fx-background-color: #f9fafb; -fx-background-radius: 8;"
-                  visible="false">
-                <Label text="📭" style="-fx-font-size: 48px;"/>
-                <Label text="Aucun test trouvé" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #6b7280;"/>
-                <Label text="Créez votre premier test spécifique en cliquant sur 'Nouveau Test'"
-                       style="-fx-font-size: 12px; -fx-text-fill: #9ca3af;"/>
-            </VBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
 
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="🚪  Deconnexion" styleClass="nav-button"
+                    onAction="#handleLogout"
+                    style="-fx-text-fill:#E74C3C; -fx-padding:15 20 20 25;"/>
         </VBox>
+    </left>
+
+    <!-- ===== CONTENU PRINCIPAL ===== -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="20">
+
+                <!-- HEADER -->
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Tests Specifiques" styleClass="page-title"/>
+                        <Label text="Gerez les tests specifiques adaptes a chaque categorie" styleClass="page-subtitle"/>
+                    </VBox>
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Label fx:id="userLabel" text="" style="-fx-text-fill: #9B9BB0; -fx-font-size: 12px;"/>
+                        <Label fx:id="roleLabel" text="" style="-fx-text-fill: #6C63FF; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                    </HBox>
+                </HBox>
+
+                <!-- STAT CARD + BOUTON AJOUTER -->
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox styleClass="stat-card, card-teal" spacing="8" style="-fx-min-width: 200;">
+                        <Label text="Total des Tests" styleClass="stat-label"/>
+                        <Label fx:id="totalLabel" text="0" styleClass="stat-number"/>
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="addBtn" text="+ Nouveau Test" styleClass="btn-primary"
+                            style="-fx-padding: 12 24; -fx-font-size: 14px;"/>
+                </HBox>
+
+                <!-- FILTRES -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="categoryFilterCombo" styleClass="form-combo" prefWidth="200"/>
+                    <TextField fx:id="searchField" styleClass="search-field" promptText="Rechercher un test..."/>
+                </HBox>
+
+                <!-- LISTE DES TESTS -->
+                <ListView fx:id="testsListView" styleClass="tests-list-view"
+                          prefHeight="400" VBox.vgrow="ALWAYS"/>
+
+                <!-- MESSAGE VIDE -->
+                <VBox fx:id="emptyMessage" visible="false" alignment="CENTER"
+                      styleClass="empty-state" spacing="10">
+                    <Label text="Aucun test disponible" style="-fx-text-fill: #9B9BB0; -fx-font-size: 14px;"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>

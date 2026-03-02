@@ -2,7 +2,9 @@ package com.gestion_test.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import com.gestion_test.entities.SpecificTest;
 import com.gestion_test.services.SpecificTestService;
 import com.gestion_test.App;
@@ -28,7 +30,7 @@ public class SpecificTestDeleteController implements Initializable {
     public void setTest(SpecificTest test) {
         this.currentTest = test;
         testTitleLabel.setText("Test: " + test.getTitle());
-        testCategoryLabel.setText("Catégorie: " + test.getCategory());
+        testCategoryLabel.setText("Categorie: " + test.getCategory());
     }
 
     private void setupActions() {
@@ -38,12 +40,12 @@ public class SpecificTestDeleteController implements Initializable {
 
     private void confirmDelete() {
         try {
-            if (SpecificTestService.deleteSpecificTest(currentTest.getId())) {
-                showSuccess("✅ Test supprimé avec succès");
-                goBack();
-            }
+            // deleteSpecificTest retourne void, pas boolean
+            SpecificTestService.deleteSpecificTest(currentTest.getId());
+            showSuccess("Test supprime avec succes");
+            goBack();
         } catch (SQLException e) {
-            showError("❌ Erreur: " + e.getMessage());
+            showError("Erreur: " + e.getMessage());
         }
     }
 
@@ -52,7 +54,7 @@ public class SpecificTestDeleteController implements Initializable {
     }
 
     private void goBack() {
-        App.loadScene("/com/gestion_test/views/SpecificTest/SpecificTestList.fxml", "🎯 Tests Spécifiques");
+        App.loadScene("/views/SpecificTest/SpecificTestList.fxml", "Tests Specifiques");
     }
 
     private void showError(String message) {
@@ -64,7 +66,7 @@ public class SpecificTestDeleteController implements Initializable {
 
     private void showSuccess(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Succès");
+        alert.setTitle("Succes");
         alert.setContentText(message);
         alert.showAndWait();
     }

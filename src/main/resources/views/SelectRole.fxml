@@ -1,59 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.gestion_test.controllers.SelectRoleController"
-            style="-fx-background-color: #f7f8fb;">
+            stylesheets="@../styles/app.css" styleClass="login-bg"
+            prefWidth="900" prefHeight="700">
 
-    <!-- ===== TOP: TITRE ===== -->
-    <top>
-        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 30; -fx-background: linear-gradient(to right, #9bb8f5, #a6e3b5, #c6b4f3);">
-            <Label text="🎯 Gestion des Tests Psychologiques"
-                   style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-            <Label text="Choisissez votre rôle pour continuer"
-                   style="-fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.9);"/>
-        </VBox>
-    </top>
-
-    <!-- ===== CENTER: BOUTONS DE SÉLECTION ===== -->
+    <!-- CENTER: Role Selection -->
     <center>
         <VBox alignment="CENTER" spacing="40" style="-fx-padding: 60;">
 
-            <!-- ===== PSYCHOLOGUE ===== -->
-            <VBox spacing="20" alignment="TOP_CENTER"
-                  style="-fx-border-color: #e5e7eb; -fx-border-width: 2; -fx-border-radius: 16; -fx-padding: 40; -fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 4);">
-                <Label text="👨‍⚕️ PSYCHOLOGUE"
-                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
-                <Label text="Créer et gérer les tests&#10;Consulter les résultats des étudiants"
-                       style="-fx-font-size: 13px; -fx-text-fill: #6b7280; -fx-wrap-text: true;"/>
-                <Button fx:id="psychologistBtn"
-                        text="Se connecter en tant que Psychologue"
-                        style="-fx-padding: 12 24; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #5b8def; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;"/>
+            <!-- Logo -->
+            <VBox alignment="CENTER" spacing="8">
+                <HBox alignment="CENTER" spacing="4">
+                    <Text style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;">Mind</Text>
+                    <Text style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: #6C63FF;">Boost</Text>
+                </HBox>
+                <Label text="🎯 Gestion des Tests Psychologiques" styleClass="login-subtitle"/>
+                <Label text="Choisissez votre rôle pour continuer" style="-fx-text-fill: #5A5A7A; -fx-font-size: 12px;"/>
             </VBox>
 
-            <!-- ===== ÉTUDIANT ===== -->
-            <VBox spacing="20" alignment="TOP_CENTER"
-                  style="-fx-border-color: #e5e7eb; -fx-border-width: 2; -fx-border-radius: 16; -fx-padding: 40; -fx-background-color: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 4);">
-                <Label text="👨‍🎓 ÉTUDIANT"
-                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #10b981;"/>
-                <Label text="Répondre aux tests&#10;Consulter vos résultats"
-                       style="-fx-font-size: 13px; -fx-text-fill: #6b7280; -fx-wrap-text: true;"/>
-                <Button fx:id="studentBtn"
-                        text="Se connecter en tant que Étudiant"
-                        style="-fx-padding: 12 24; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;"/>
+            <!-- Role Cards -->
+            <HBox spacing="30" alignment="CENTER">
+
+                <!-- Psychologue -->
+                <VBox spacing="16" alignment="CENTER" styleClass="role-card, role-card-psychologist"
+                      prefWidth="340">
+                    <Label text="👨‍⚕️" style="-fx-font-size: 48px;"/>
+                    <Label text="PSYCHOLOGUE" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                    <Label text="Créer et gérer les tests&#10;Consulter les résultats des étudiants"
+                           style="-fx-font-size: 12px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true; -fx-text-alignment: center;"/>
+                    <Button fx:id="psychologistBtn"
+                            text="Se connecter en tant que Psychologue"
+                            styleClass="btn-primary"
+                            style="-fx-padding: 12 24;"/>
+                </VBox>
+
+                <!-- Étudiant -->
+                <VBox spacing="16" alignment="CENTER" styleClass="role-card, role-card-student"
+                      prefWidth="340">
+                    <Label text="👨‍🎓" style="-fx-font-size: 48px;"/>
+                    <Label text="ÉTUDIANT" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #4ECDC4;"/>
+                    <Label text="Répondre aux tests&#10;Consulter vos résultats"
+                           style="-fx-font-size: 12px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true; -fx-text-alignment: center;"/>
+                    <Button fx:id="studentBtn"
+                            text="Se connecter en tant qu'Étudiant"
+                            styleClass="btn-edit"
+                            style="-fx-padding: 12 24;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Footer -->
+            <VBox alignment="CENTER" spacing="4">
+                <Label text="⚠️ MODE TEMPORAIRE - Pour tests et développement"
+                       style="-fx-font-size: 11px; -fx-text-fill: #E74C3C;"/>
+                <Label text="Cette sélection sera remplacée par un système d'authentification complet"
+                       style="-fx-font-size: 10px; -fx-text-fill: #5A5A7A;"/>
             </VBox>
         </VBox>
     </center>
-
-    <!-- ===== BOTTOM: INFO ===== -->
-    <bottom>
-        <VBox alignment="CENTER" spacing="5" style="-fx-padding: 20; -fx-background-color: #f3f4f6;">
-            <Label text="⚠️ MODE TEMPORAIRE - Pour tests et développement"
-                   style="-fx-font-size: 11px; -fx-text-fill: #dc2626;"/>
-            <Label text="Cette sélection sera remplacée par un système d'authentification complet"
-                   style="-fx-font-size: 10px; -fx-text-fill: #9ca3af;"/>
-        </VBox>
-    </bottom>
 </BorderPane>

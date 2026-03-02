@@ -1,158 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<BorderPane stylesheets="@../../styles/app.css" styleClass="root light"
+<BorderPane stylesheets="@../../styles/app.css" styleClass="main-bg"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.gestion_test.controllers.GeneralTestEditController">
+            fx:controller="com.gestion_test.controllers.GeneralTestEditController"
+            prefWidth="1200" prefHeight="750">
 
-    <top><fx:include source="../Topbar.fxml"/></top>
     <left><fx:include source="../Sidebar.fxml"/></left>
 
     <center>
-        <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-border-color: transparent;">
-            <VBox spacing="20" styleClass="dashboard" style="-fx-padding: 20;">
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox styleClass="content-area" spacing="20">
 
-                <!-- ===== HEADER ===== -->
+                <!-- Header -->
                 <HBox spacing="15" alignment="CENTER_LEFT">
-                    <Button fx:id="backBtn" text="← Retour" styleClass="button ghost" style="-fx-padding: 8 16;"/>
+                    <Button fx:id="backBtn" text="← Retour" styleClass="btn-secondary"/>
                     <VBox spacing="4">
-                        <Label text="✏️ MODIFIER LE TEST GÉNÉRAL" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                        <Label text="Mettez à jour les informations et les questions du test" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
+                        <Label text="✏️ Modifier le Test Général" styleClass="page-title"/>
+                        <Label text="Mettez à jour les informations et les questions du test" styleClass="page-subtitle"/>
                     </VBox>
                 </HBox>
 
-                <!-- ===== SECTION 1: INFOS DU TEST ===== -->
-                <VBox spacing="0" styleClass="card">
-                    <VBox spacing="12" style="-fx-padding: 20;">
-                        <HBox spacing="8" alignment="CENTER_LEFT">
-                            <Label text="ℹ️" style="-fx-font-size: 18px;"/>
-                            <Label text="INFORMATIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                        </HBox>
-                        <Separator style="-fx-border-width: 1; -fx-border-color: #e5e7eb;"/>
+                <!-- Section 1: Test Info -->
+                <VBox spacing="16" styleClass="form-container">
+                    <Label text="ℹ️ INFORMATIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
 
-                        <!-- ID et Date -->
-                        <HBox spacing="20">
-                            <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                <Label text="ID du Test" styleClass="form-label"/>
-                                <TextField fx:id="idField"
-                                           editable="false"
-                                           styleClass="input-large"
-                                           style="-fx-text-fill: #6b7280; -fx-padding: 10 12;"/>
-                            </VBox>
-                            <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                <Label text="Date de création" styleClass="form-label"/>
-                                <TextField fx:id="createdDateField"
-                                           editable="false"
-                                           styleClass="input-large"
-                                           style="-fx-text-fill: #6b7280; -fx-padding: 10 12;"/>
-                            </VBox>
-                        </HBox>
-
-                        <Separator style="-fx-border-width: 1; -fx-border-color: #e5e7eb;"/>
-
-                        <!-- Titre -->
-                        <VBox spacing="6">
-                            <HBox spacing="4" alignment="CENTER_LEFT">
-                                <Label text="Titre du Test" styleClass="form-label"/>
-                                <Label text="*" style="-fx-text-fill: #dc2626; -fx-font-weight: bold;"/>
-                            </HBox>
-                            <TextField fx:id="titleField"
-                                       promptText="Titre du test"
-                                       styleClass="input-large"
-                                       style="-fx-font-size: 13px; -fx-padding: 10 12;"/>
+                    <HBox spacing="20">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="ID du Test" styleClass="form-label"/>
+                            <TextField fx:id="idField" editable="false" styleClass="form-field"/>
                         </VBox>
-
-                        <!-- Description -->
-                        <VBox spacing="6">
-                            <Label text="Description" styleClass="form-label"/>
-                            <TextArea fx:id="descriptionField"
-                                      promptText="Description du test..."
-                                      prefRowCount="3"
-                                      wrapText="true"
-                                      styleClass="input-large"
-                                      style="-fx-font-size: 12px; -fx-padding: 10 12;"/>
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <Label text="Date de création" styleClass="form-label"/>
+                            <TextField fx:id="createdDateField" editable="false" styleClass="form-field"/>
                         </VBox>
+                    </HBox>
+
+                    <VBox spacing="6">
+                        <HBox spacing="4" alignment="CENTER_LEFT">
+                            <Label text="Titre du Test" styleClass="form-label"/>
+                            <Label text="*" style="-fx-text-fill: #E74C3C;"/>
+                        </HBox>
+                        <TextField fx:id="titleField" promptText="Titre du test" styleClass="form-field"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Description" styleClass="form-label"/>
+                        <TextArea fx:id="descriptionField" promptText="Description..." prefRowCount="3" wrapText="true" styleClass="form-area"/>
                     </VBox>
                 </VBox>
 
-                <!-- ===== SECTION 2: QUESTIONS QCM ===== -->
-                <VBox spacing="0" styleClass="card">
-                    <VBox spacing="12" style="-fx-padding: 20;">
-                        <HBox spacing="8" alignment="CENTER_LEFT">
-                            <Label text="❓" style="-fx-font-size: 18px;"/>
-                            <Label text="QUESTIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                            <Label text="*" style="-fx-text-fill: #dc2626; -fx-font-weight: bold;"/>
-                        </HBox>
-                        <Separator style="-fx-border-width: 1; -fx-border-color: #e5e7eb;"/>
+                <!-- Section 2: Questions -->
+                <VBox spacing="16" styleClass="form-container">
+                    <Label text="❓ QUESTIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
 
-                        <!-- Stats -->
-                        <HBox spacing="15" style="-fx-background-color: #f3f4f6; -fx-padding: 12; -fx-background-radius: 8;">
-                            <VBox spacing="3" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                                <Label text="Questions actuelles" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
-                                <Label text="0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
-                            </VBox>
-                            <Separator style="-fx-orientation: vertical;"/>
-                            <VBox spacing="3" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                                <Label text="Format" style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
-                                <Label text="QCM (4 options)" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #10b981;"/>
-                            </VBox>
-                        </HBox>
+                    <HBox spacing="8">
+                        <Button fx:id="addQuestionBtn" text="➕ Ajouter Question" styleClass="btn-primary, btn-small"/>
+                        <Button fx:id="editQuestionBtn" text="✏️ Modifier" styleClass="btn-edit, btn-small"/>
+                        <Button fx:id="removeQuestionBtn" text="🗑️ Supprimer" styleClass="btn-danger, btn-small"/>
+                    </HBox>
 
-                        <!-- Boutons -->
-                        <HBox spacing="8" alignment="CENTER_LEFT">
-                            <Button fx:id="addQuestionBtn"
-                                    text="➕ Ajouter Question"
-                                    styleClass="button"
-                                    style="-fx-padding: 10 16; -fx-font-weight: bold;"/>
-                            <Button fx:id="editQuestionBtn"
-                                    text="✏️ Modifier"
-                                    styleClass="button"
-                                    style="-fx-padding: 10 16;"/>
-                            <Button fx:id="removeQuestionBtn"
-                                    text="🗑️ Supprimer"
-                                    styleClass="button delete"
-                                    style="-fx-padding: 10 16;"/>
-                        </HBox>
-
-                        <!-- Liste -->
-                        <VBox spacing="2">
-                            <Label text="Vos questions:" style="-fx-font-size: 12px; -fx-text-fill: #6b7280; -fx-font-weight: bold;"/>
-                            <ListView fx:id="questionsList"
-                                      VBox.vgrow="ALWAYS"
-                                      styleClass="input-large"
-                                      prefHeight="250"
-                                      style="-fx-border-radius: 8; -fx-border-color: #e5e7eb; -fx-border-width: 1;"/>
-                        </VBox>
-                    </VBox>
+                    <ListView fx:id="questionsList"
+                              VBox.vgrow="ALWAYS"
+                              styleClass="tests-list-view"
+                              prefHeight="250"/>
                 </VBox>
 
-                <!-- ===== AVERTISSEMENT ===== -->
-                <HBox spacing="12" style="-fx-background-color: #fef2f2; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #ef4444; -fx-border-width: 1;">
+                <!-- Warning -->
+                <HBox spacing="12" styleClass="danger-box">
                     <Label text="⚠️" style="-fx-font-size: 16px;"/>
                     <VBox spacing="4">
-                        <Label text="Attention à la modification" style="-fx-font-weight: bold; -fx-text-fill: #7f1d1d;"/>
+                        <Label text="Attention à la modification" style="-fx-font-weight: bold; -fx-text-fill: #E74C3C;"/>
                         <Label text="Les modifications de questions existantes affecteront les résultats des tests déjà passés"
-                               style="-fx-font-size: 11px; -fx-text-fill: #7f1d1d; -fx-wrap-text: true;"/>
+                               style="-fx-font-size: 11px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true;"/>
                     </VBox>
                 </HBox>
 
-                <!-- ===== BOUTONS D'ACTION ===== -->
-                <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 10 0 0 0;">
-                    <Button fx:id="cancelBtn"
-                            text="← Retour"
-                            styleClass="button ghost"
-                            style="-fx-padding: 10 20;"/>
-                    <Button fx:id="deleteBtn"
-                            text="🗑️ Supprimer le test"
-                            styleClass="button delete"
-                            style="-fx-padding: 10 20;"/>
-                    <Button fx:id="updateBtn"
-                            text="✅ Mettre à jour"
-                            styleClass="button"
-                            style="-fx-padding: 10 20; -fx-font-weight: bold; -fx-font-size: 13px;"/>
+                <!-- Actions -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="cancelBtn" text="← Retour" styleClass="btn-secondary"/>
+                    <Button fx:id="deleteBtn" text="🗑️ Supprimer" styleClass="btn-danger"/>
+                    <Button fx:id="updateBtn" text="✅ Mettre à jour" styleClass="btn-primary"/>
                 </HBox>
 
             </VBox>

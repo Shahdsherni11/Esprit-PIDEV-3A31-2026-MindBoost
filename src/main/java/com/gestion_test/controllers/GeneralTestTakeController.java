@@ -4,8 +4,11 @@ import com.gestion_test.entities.GeneralTest;
 import com.gestion_test.entities.GeneralTest.GeneralQuestion;
 import com.gestion_test.entities.GeneralTest.GeneralAnswer;
 import com.gestion_test.services.GeneralTestService;
+import com.gestion_test.services.ScoreService;
+import com.gestion_test.services.AuthContext;
 import com.gestion_test.utils.TestDataHolder;
 import com.gestion_test.App;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.geometry.Pos;
@@ -19,7 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * ✅ Controller pour PASSER un test général (10 questions QCM)
+ * ✅ Controller pour PASSER un test général (QCM)
+ * Fonctionne AVANT et APRÈS intégration User
  */
 public class GeneralTestTakeController {
 
@@ -37,7 +41,7 @@ public class GeneralTestTakeController {
     @FXML private ComboBox<String> questionSelector;
 
     private GeneralTest currentTest;
-    private Map<Integer, Integer> answers = new HashMap<>();
+    private final Map<Integer, Integer> answers = new HashMap<>();
     private int currentQuestionIndex = 0;
 
     @FXML
@@ -95,16 +99,13 @@ public class GeneralTestTakeController {
         currentQuestionIndex = index;
         GeneralQuestion question = currentTest.getQuestions().get(index);
 
-        // Mise à jour des labels
         currentQuestionNumberLabel.setText("Question " + (index + 1));
         currentQuestionTextLabel.setText(question.getQuestionText());
         questionIndicatorLabel.setText("Question " + (index + 1) + " / " + currentTest.getQuestions().size());
         questionProgressBar.setProgress((double) (index + 1) / currentTest.getQuestions().size());
 
-        // Mettre à jour le selector
         questionSelector.setValue("Question " + (index + 1));
 
-        // Afficher les réponses
         currentAnswersContainer.getChildren().clear();
 
         if (question.getAnswers() == null || question.getAnswers().isEmpty()) {
@@ -118,30 +119,29 @@ public class GeneralTestTakeController {
             for (GeneralAnswer answer : question.getAnswers()) {
                 RadioButton rb = new RadioButton(answer.getAnswerText());
                 rb.setToggleGroup(group);
-                rb.setStyle("-fx-font-size: 13px;");
+                // ✅ CORRIGÉ : Forcer le texte en noir/gris foncé
+                rb.setStyle("-fx-font-size: 13px; -fx-text-fill: #1f2937;");
                 rb.setUserData(answerIndex);
 
                 if (answers.containsKey(index) && answers.get(index) == answerIndex) {
                     rb.setSelected(true);
                 }
 
+                rb.setOnAction(e -> answers.put(currentQuestionIndex, (int) rb.getUserData()));
+
                 HBox row = new HBox(10);
                 row.setAlignment(Pos.CENTER_LEFT);
-                row.setStyle("-fx-background-color: white; -fx-padding: 12; -fx-border-color: #e5e7eb; -fx-border-radius: 6;");
+                // ✅ CORRIGÉ : Fond blanc AVEC bordure visible
+                row.setStyle("-fx-background-color: white; -fx-padding: 12; " +
+                        "-fx-border-color: #e5e7eb; -fx-border-radius: 6; " +
+                        "-fx-background-radius: 6;");
                 row.getChildren().add(rb);
 
                 currentAnswersContainer.getChildren().add(row);
                 answerIndex++;
             }
-
-            // Sauvegarder la réponse si sélectionnée
-            Toggle selected = group.getSelectedToggle();
-            if (selected != null) {
-                answers.put(index, (int) selected.getUserData());
-            }
         }
 
-        // Mise à jour des boutons
         previousBtn.setDisable(index == 0);
         nextBtn.setDisable(index == currentTest.getQuestions().size() - 1);
     }
@@ -169,17 +169,11 @@ public class GeneralTestTakeController {
     }
 
     private void saveCurrentAnswer() {
-        VBox container = currentAnswersContainer;
-        for (var node : container.getChildren()) {
-            if (node instanceof HBox) {
-                HBox row = (HBox) node;
+        for (var node : currentAnswersContainer.getChildren()) {
+            if (node instanceof HBox row) {
                 for (var child : row.getChildren()) {
-                    if (child instanceof RadioButton) {
-                        RadioButton rb = (RadioButton) child;
-                        if (rb.isSelected()) {
-                            answers.put(currentQuestionIndex, (int) rb.getUserData());
-                            System.out.println("💾 Réponse Q" + (currentQuestionIndex + 1) + ": " + rb.getText());
-                        }
+                    if (child instanceof RadioButton rb && rb.isSelected()) {
+                        answers.put(currentQuestionIndex, (int) rb.getUserData());
                     }
                 }
             }
@@ -202,26 +196,67 @@ public class GeneralTestTakeController {
         }
     }
 
+    /**
+     * ✅ CORRIGÉ : Utilise AuthContext au lieu de hardcoder 1
+     * ✅ NOUVEAU : Redirection automatique vers tests spécifiques
+     *
+     * AVANT intégration : AuthContext.getCurrentUserId() retourne 1
+     *                     (défini par SelectRoleController)
+     * APRÈS intégration : AuthContext.getCurrentUserId() retourne le vrai ID
+     *                     (défini par LoginController de votre collègue)
+     */
     private void calculateScore() {
         int totalScore = 0;
         int maxScore = currentTest.getQuestions().size() * 100;
 
         for (int i = 0; i < currentTest.getQuestions().size(); i++) {
-            GeneralQuestion question = currentTest.getQuestions().get(i);
+            var q = currentTest.getQuestions().get(i);
             int answerIndex = answers.get(i);
-            GeneralAnswer answer = question.getAnswers().get(answerIndex);
-            totalScore += answer.getScore();
+            var a = q.getAnswers().get(answerIndex);
+            totalScore += a.getScore();
         }
 
         int percentage = (totalScore * 100) / maxScore;
 
-        Alert result = new Alert(Alert.AlertType.INFORMATION);
-        result.setTitle("Résultat");
-        result.setHeaderText("✅ Test Complété!");
-        result.setContentText("Score: " + totalScore + "/" + maxScore + "\nPourcentage: " + percentage + "%");
-        result.showAndWait();
+        try {
+            // ✅ CORRIGÉ : Utilise AuthContext (marche AVANT et APRÈS intégration)
+            int userId = AuthContext.getCurrentUserId();
+            int testId = TestDataHolder.getSelectedGeneralTestId();
 
-        goBack();
+            // ✅ Sauvegarder le score
+            ScoreService.saveTotalScore(userId, testId, totalScore, percentage);
+
+            // ✅ NOUVEAU : Déterminer la catégorie automatiquement
+            String category = ScoreService.getCategoryFromPercentage(percentage);
+
+            System.out.println("📊 Score : " + totalScore + "/" + maxScore);
+            System.out.println("📊 Pourcentage : " + percentage + "%");
+            System.out.println("📂 Catégorie assignée : " + category);
+
+            // ✅ NOUVEAU : Afficher résultat avec catégorie
+            Alert result = new Alert(Alert.AlertType.INFORMATION);
+            result.setTitle("📊 Résultat du Test Général");
+            result.setHeaderText("✅ Test Complét�� !");
+            result.setContentText(
+                    "Score : " + totalScore + "/" + maxScore + "\n" +
+                            "Pourcentage : " + percentage + "%\n\n" +
+                            "📂 Catégorie assignée : " + category + "\n\n" +
+                            "Vous allez être redirigé vers votre test spécifique adapté."
+            );
+
+            ButtonType goToSpecific = new ButtonType("🎯 Aller au Test Spécifique",
+                    ButtonBar.ButtonData.OK_DONE);
+            result.getButtonTypes().setAll(goToSpecific);
+            result.showAndWait();
+
+            // ✅ NOUVEAU : Redirection automatique vers tests spécifiques filtrés
+            TestDataHolder.resetGeneralTestId();
+            App.loadScene("/views/SpecificTest/SpecificTestList.fxml",
+                    "🎯 Test Spécifique - " + category);
+
+        } catch (SQLException e) {
+            showError("Erreur DB", "Impossible d'enregistrer le score: " + e.getMessage());
+        }
     }
 
     private void goBack() {

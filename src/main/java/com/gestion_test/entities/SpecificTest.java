@@ -1,12 +1,10 @@
 package com.gestion_test.entities;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ✅ Entité pour les Tests Spécifiques (QCM sans scores)
- */
 public class SpecificTest {
+
     private int id;
     private int generalTestId;
     private String category;
@@ -14,21 +12,41 @@ public class SpecificTest {
     private String description;
     private String status;
     private int createdBy;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private List<SpecificQuestion> questions;
 
-    public SpecificTest() {}
+    public SpecificTest() {
+        this.questions = new ArrayList<SpecificQuestion>();
+    }
 
-    public SpecificTest(int generalTestId, String category, String title, String status, int createdBy) {
+    public SpecificTest(int id, int generalTestId, String category, String title,
+                        String description, String status, int createdBy,
+                        String createdAt, String updatedAt) {
+        this.id = id;
         this.generalTestId = generalTestId;
         this.category = category;
         this.title = title;
+        this.description = description;
         this.status = status;
         this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.questions = new ArrayList<SpecificQuestion>();
     }
 
-    // ===== GETTERS ET SETTERS =====
+    // Ancien constructeur simplifie (pour compatibilite)
+    public SpecificTest(int id, String title, String description,
+                        String category, String status, String createdAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.questions = new ArrayList<SpecificQuestion>();
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -50,104 +68,17 @@ public class SpecificTest {
     public int getCreatedBy() { return createdBy; }
     public void setCreatedBy(int createdBy) { this.createdBy = createdBy; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
 
     public List<SpecificQuestion> getQuestions() { return questions; }
     public void setQuestions(List<SpecificQuestion> questions) { this.questions = questions; }
 
     @Override
     public String toString() {
-        return "SpecificTest{id=" + id + ", category='" + category + "', title='" + title + "'}";
-    }
-
-    // ===== CLASSE INTERNE : SpecificQuestion =====
-    public static class SpecificQuestion {
-        private int id;
-        private int testId;
-        private String questionText;
-        private int questionOrder;
-        private List<SpecificAnswer> answers;
-
-        public SpecificQuestion() {}
-
-        public SpecificQuestion(String questionText, int questionOrder) {
-            this.questionText = questionText;
-            this.questionOrder = questionOrder;
-        }
-
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-
-        public int getTestId() { return testId; }
-        public void setTestId(int testId) { this.testId = testId; }
-
-        public String getQuestionText() { return questionText; }
-        public void setQuestionText(String questionText) { this.questionText = questionText; }
-
-        public int getQuestionOrder() { return questionOrder; }
-        public void setQuestionOrder(int questionOrder) { this.questionOrder = questionOrder; }
-
-        public List<SpecificAnswer> getAnswers() { return answers; }
-        public void setAnswers(List<SpecificAnswer> answers) { this.answers = answers; }
-
-        @Override
-        public String toString() {
-            return "[Q" + questionOrder + "] " + questionText;
-        }
-    }
-
-    // ===== CLASSE INTERNE : SpecificAnswer (AVEC LABEL) =====
-    public static class SpecificAnswer {
-        private int id;
-        private int questionId;
-        private String answerText;
-        private int answerOrder;
-        private String answerLabel;  // ✅ LABEL A, B, C, D
-
-        public SpecificAnswer() {}
-
-        public SpecificAnswer(String answerText, int answerOrder) {
-            this.answerText = answerText;
-            this.answerOrder = answerOrder;
-            this.answerLabel = String.valueOf((char) ('A' + answerOrder - 1));
-        }
-
-        public int getId() { return id; }
-        public void setId(int id) { this.id = id; }
-
-        public int getQuestionId() { return questionId; }
-        public void setQuestionId(int questionId) { this.questionId = questionId; }
-
-        public String getAnswerText() { return answerText; }
-        public void setAnswerText(String answerText) { this.answerText = answerText; }
-
-        public int getAnswerOrder() { return answerOrder; }
-        public void setAnswerOrder(int answerOrder) { this.answerOrder = answerOrder; }
-
-        /**
-         * ✅ GETTER: Obtenir le label (A, B, C, D)
-         */
-        public String getAnswerLabel() {
-            if (answerLabel == null || answerLabel.isEmpty()) {
-                answerLabel = String.valueOf((char) ('A' + answerOrder - 1));
-            }
-            return answerLabel;
-        }
-
-        /**
-         * ✅ SETTER: Définir le label (A, B, C, D)
-         */
-        public void setAnswerLabel(String answerLabel) {
-            this.answerLabel = answerLabel;
-        }
-
-        @Override
-        public String toString() {
-            return getAnswerLabel() + ". " + answerText;
-        }
+        return title != null ? title : "Test #" + id;
     }
 }

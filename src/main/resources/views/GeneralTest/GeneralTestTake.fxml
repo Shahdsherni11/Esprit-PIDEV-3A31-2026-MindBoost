@@ -2,90 +2,82 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane stylesheets="@/styles/app.css" styleClass="root light"
+<BorderPane stylesheets="@../../styles/app.css" styleClass="main-bg"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.gestion_test.controllers.GeneralTestTakeController">
+            fx:controller="com.gestion_test.controllers.GeneralTestTakeController"
+            prefWidth="1200" prefHeight="750">
 
+    <!-- Top Bar -->
     <top>
-        <!-- TOP BAR -->
-        <VBox style="-fx-background-color: linear-gradient(to right, #9bb8f5, #a6e3b5, #c6b4f3); -fx-padding: 15 20;">
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <Label text="🧠 MindBoost - Test Général"
-                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #fff;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- PROGRESSION -->
-                <HBox spacing="10" alignment="CENTER">
-                    <Label fx:id="questionIndicatorLabel" text="Question 1 / 10"
-                           style="-fx-font-size: 12px; -fx-text-fill: #fff; -fx-font-weight: bold;"/>
-                    <ProgressBar fx:id="questionProgressBar" prefWidth="150" style="-fx-accent: white;"/>
-                </HBox>
+        <HBox spacing="20" alignment="CENTER_LEFT"
+              style="-fx-background-color: linear-gradient(to right, rgba(108,99,255,0.3), rgba(78,205,196,0.3)); -fx-padding: 15 25;">
+            <Label text="🧠 MindBoost - Test Général"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox spacing="10" alignment="CENTER">
+                <Label fx:id="questionIndicatorLabel" text="Question 1 / 10"
+                       style="-fx-font-size: 12px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                <ProgressBar fx:id="questionProgressBar" prefWidth="150"/>
             </HBox>
-        </VBox>
+        </HBox>
     </top>
 
     <center>
-        <VBox spacing="20" style="-fx-padding: 30;">
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox styleClass="content-area" spacing="20">
 
-            <!-- INFOS DU TEST -->
-            <VBox spacing="12" styleClass="card">
-                <VBox spacing="8" style="-fx-padding: 20;">
+                <!-- Test Info -->
+                <VBox spacing="12" styleClass="stat-card, card-purple">
                     <Label text="📋 INFORMATIONS DU TEST"
-                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827;"/>
-                    <Separator style="-fx-border-width: 1; -fx-border-color: #e5e7eb;"/>
-
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
                     <Label fx:id="titleLabel" text="Titre du test"
-                           style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #111827; -fx-wrap-text: true;"/>
-
-                    <Label fx:id="descriptionLabel" text="Description du test..."
-                           style="-fx-font-size: 13px; -fx-text-fill: #6b7280; -fx-wrap-text: true;"/>
+                           style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white; -fx-wrap-text: true;"/>
+                    <Label fx:id="descriptionLabel" text="Description..."
+                           style="-fx-font-size: 13px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true;"/>
                 </VBox>
-            </VBox>
 
-            <!-- QUESTION ACTUELLE -->
-            <VBox spacing="12" styleClass="card" VBox.vgrow="ALWAYS">
-                <VBox spacing="12" style="-fx-padding: 20;">
-
-                    <!-- En-tête -->
+                <!-- Current Question -->
+                <VBox spacing="16" styleClass="form-container" VBox.vgrow="ALWAYS">
                     <HBox spacing="12" alignment="CENTER_LEFT">
                         <Label fx:id="currentQuestionNumberLabel" text="Question 1"
-                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
-                        <Separator style="-fx-orientation: vertical;"/>
+                               style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                        <Separator orientation="VERTICAL" style="-fx-background-color: rgba(255,255,255,0.1);"/>
                         <Label fx:id="currentQuestionTextLabel" text="..."
-                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #111827; -fx-wrap-text: true;"/>
+                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white; -fx-wrap-text: true;"/>
                     </HBox>
 
-                    <Separator style="-fx-border-width: 1; -fx-border-color: #e5e7eb;"/>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
 
-                    <!-- Réponses -->
-                    <VBox fx:id="currentAnswersContainer" spacing="10" VBox.vgrow="ALWAYS" style="-fx-padding: 10 0;"/>
-
+                    <VBox fx:id="currentAnswersContainer" spacing="10" VBox.vgrow="ALWAYS"/>
                 </VBox>
+
+                <!-- Navigation -->
+                <HBox spacing="12" alignment="CENTER">
+                    <Button fx:id="previousBtn" text="⬅️ Précédent" styleClass="btn-secondary"/>
+                    <ComboBox fx:id="questionSelector" prefWidth="200" styleClass="dark-combo"/>
+                    <Button fx:id="nextBtn" text="Suivant ➜" styleClass="btn-primary"/>
+                </HBox>
+
+                <!-- Tip -->
+                <HBox spacing="12" styleClass="info-box">
+                    <Label text="💡" style="-fx-font-size: 18px;"/>
+                    <VBox spacing="4">
+                        <Label text="Conseils pour réussir" style="-fx-font-weight: bold; -fx-text-fill: #A89CFF;"/>
+                        <Label text="Lisez attentivement chaque question et répondez à toutes avant de soumettre"
+                               style="-fx-font-size: 11px; -fx-text-fill: #9B9BB0; -fx-wrap-text: true;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Submit -->
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button fx:id="cancelBtn" text="❌ Abandonner" styleClass="btn-secondary"/>
+                    <Button fx:id="submitBtn" text="✅ Soumettre le test" styleClass="btn-primary"
+                            style="-fx-background-color: linear-gradient(to right, #2ECC71, #27AE60);"/>
+                </HBox>
+
             </VBox>
-
-            <!-- NAVIGATION -->
-            <HBox spacing="12" alignment="CENTER" style="-fx-padding: 20;">
-                <Button fx:id="previousBtn" text="⬅️ Précédent" styleClass="button ghost" style="-fx-padding: 12 24; -fx-font-weight: bold;"/>
-                <ComboBox fx:id="questionSelector" prefWidth="200"/>
-                <Button fx:id="nextBtn" text="Suivant ➜" styleClass="button" style="-fx-padding: 12 24; -fx-font-weight: bold;"/>
-            </HBox>
-
-            <!-- CONSEIL -->
-            <HBox spacing="12" style="-fx-background-color: #eff6ff; -fx-padding: 16; -fx-background-radius: 12; -fx-border-color: #3b82f6; -fx-border-width: 1;">
-                <Label text="💡" style="-fx-font-size: 18px;"/>
-                <VBox spacing="4">
-                    <Label text="Conseils pour réussir" style="-fx-font-weight: bold; -fx-text-fill: #1e40af;"/>
-                    <Label text="Lisez attentivement chaque question et répondez à toutes avant de soumettre" style="-fx-font-size: 11px; -fx-text-fill: #1e40af; -fx-wrap-text: true;"/>
-                </VBox>
-            </HBox>
-
-            <!-- BOUTONS FINAUX -->
-            <HBox spacing="12" alignment="CENTER_RIGHT" style="-fx-padding: 20 0 0 0;">
-                <Button fx:id="cancelBtn" text="❌ Abandonner" styleClass="button ghost" style="-fx-padding: 12 24; -fx-font-weight: bold;"/>
-                <Button fx:id="submitBtn" text="✅ Soumettre le test" styleClass="button" style="-fx-padding: 12 24; -fx-font-weight: bold; -fx-background-color: #10b981;"/>
-            </HBox>
-
-        </VBox>
+        </ScrollPane>
     </center>
 </BorderPane>
