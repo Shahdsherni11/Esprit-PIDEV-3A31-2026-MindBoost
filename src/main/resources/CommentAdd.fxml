@@ -16,7 +16,7 @@
 
                 <GridPane hgap="12" vgap="6" styleClass="form-container">
                     <Label text="Post ID" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                    <TextField fx:id="postIdField" styleClass="form-field" GridPane.rowIndex="0" GridPane.columnIndex="1" editable="false"/>
+                    <TextField fx:id="postIdField" styleClass="form-field" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
                     <Label fx:id="postIdError" styleClass="error-label" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <Label text="User ID" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
