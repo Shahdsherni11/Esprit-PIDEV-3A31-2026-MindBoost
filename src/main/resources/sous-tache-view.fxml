@@ -7,10 +7,9 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.view.SousTacheViewController"
-            prefWidth="1100" prefHeight="700"
+            prefWidth="1000" prefHeight="700"
             stylesheets="@styles.css">
 
-    <!-- ===== TOP HEADER ===== -->
     <top>
         <VBox styleClass="header">
             <HBox alignment="CENTER_LEFT" spacing="15">
@@ -18,106 +17,40 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <HBox alignment="CENTER" spacing="10">
                     <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                        <image>
-                            <Image url="@logo.png"/>
-                        </image>
+                        <image><Image url="@logo.png"/></image>
                     </ImageView>
                     <Label text="MindBood" styleClass="header-title"/>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
             </HBox>
             <Label text="Gestion des Sous-Tâches" styleClass="header-subtitle" alignment="CENTER">
-                <VBox.margin>
-                    <Insets top="5"/>
-                </VBox.margin>
+                <VBox.margin><Insets top="5"/></VBox.margin>
             </Label>
         </VBox>
     </top>
 
-    <!-- ===== LEFT FORM ===== -->
-    <left>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
-            <VBox styleClass="form-container" spacing="15" prefWidth="360">
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
-                
-                <Label text="✓ Formulaire de Sous-Tâche" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                
-                <Separator/>
-                
-                <VBox spacing="5">
-                    <Label text="Tâche Parente *" styleClass="form-label"/>
-                    <ComboBox fx:id="tacheParentComboBox" maxWidth="Infinity" promptText="Sélectionner une tâche..."/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="Description *" styleClass="form-label"/>
-                    <TextField fx:id="descriptionField" promptText="Description de la sous-tâche..."/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="Durée Recommandée (min)" styleClass="form-label"/>
-                    <Spinner fx:id="dureeSpinner" editable="true" maxWidth="Infinity"/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="État *" styleClass="form-label"/>
-                    <ComboBox fx:id="etatComboBox" maxWidth="Infinity" promptText="Sélectionner un état..."/>
-                </VBox>
-                
-                <HBox spacing="10">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Heure Début" styleClass="form-label"/>
-                        <TextField fx:id="heureDebutField" promptText="09:00:00"/>
-                    </VBox>
-                    
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Heure Fin" styleClass="form-label"/>
-                        <TextField fx:id="heureFinField" promptText="10:00:00"/>
-                    </VBox>
-                </HBox>
-                
-                <VBox spacing="5">
-                    <Label text="Priorité (1-5)" styleClass="form-label"/>
-                    <Spinner fx:id="prioriteSpinner" editable="true" maxWidth="Infinity"/>
-                </VBox>
-                
-                <Label fx:id="messageLabel" styleClass="error-label" wrapText="true"/>
-                
-                <Separator/>
-                
-                <VBox spacing="10">
-                    <Button text="✚ Ajouter" onAction="#handleAjouter" 
-                           styleClass="btn-success" maxWidth="Infinity"/>
-                    <Button text="✎ Modifier" onAction="#handleModifier" 
-                           styleClass="btn-warning" maxWidth="Infinity"/>
-                    <Button text="✖ Supprimer" onAction="#handleSupprimer" 
-                           styleClass="btn-danger" maxWidth="Infinity"/>
-                    <Button text="↻ Vider" onAction="#handleClear" 
-                           styleClass="btn-secondary" maxWidth="Infinity"/>
-                </VBox>
-            </VBox>
-        </ScrollPane>
-    </left>
-
-    <!-- ===== CENTER TABLE ===== -->
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <Label text="📊 Liste des Sous-Tâches" 
-                      style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <VBox spacing="15">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="✚ Ajouter" onAction="#handleAjouter"
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="✎ Modifier" onAction="#handleModifier"
+                        style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="✖ Supprimer" onAction="#handleSupprimer"
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="🔄 Actualiser" onAction="#handleRefresh" styleClass="btn-info"/>
+                <Button text="🔄 Actualiser" onAction="#handleRefresh"
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
             </HBox>
-            
+
+            <Label fx:id="messageLabel" wrapText="true"
+                   style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+
             <TableView fx:id="sousTacheTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="idCol" text="ID" prefWidth="60" resizable="false"/>
+                    <TableColumn fx:id="idCol" text="ID" prefWidth="60"/>
                     <TableColumn fx:id="idTacheCol" text="ID Tâche" prefWidth="80"/>
                     <TableColumn fx:id="descriptionCol" text="Description" prefWidth="300"/>
                     <TableColumn fx:id="dureeCol" text="Durée (min)" prefWidth="100"/>

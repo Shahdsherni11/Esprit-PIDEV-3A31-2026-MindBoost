@@ -1,4 +1,4 @@
-package org.example.service;
+package org.example.Service;
 
 import org.example.model.SousTache;
 import java.time.LocalTime;

@@ -7,10 +7,9 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.view.TacheFocusViewController"
-            prefWidth="1200" prefHeight="750"
+            prefWidth="1000" prefHeight="700"
             stylesheets="@styles.css">
 
-    <!-- ===== TOP HEADER ===== -->
     <top>
         <VBox styleClass="header">
             <HBox alignment="CENTER_LEFT" spacing="15">
@@ -18,128 +17,49 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <HBox alignment="CENTER" spacing="10">
                     <ImageView fitHeight="30" fitWidth="30" preserveRatio="true">
-                        <image>
-                            <Image url="@logo.png"/>
-                        </image>
+                        <image><Image url="@logo.png"/></image>
                     </ImageView>
                     <Label text="MindBood" styleClass="header-title"/>
                 </HBox>
                 <Region HBox.hgrow="ALWAYS"/>
             </HBox>
             <Label text="Gestion des Tâches Focus" styleClass="header-subtitle" alignment="CENTER">
-                <VBox.margin>
-                    <Insets top="5"/>
-                </VBox.margin>
+                <VBox.margin><Insets top="5"/></VBox.margin>
             </Label>
         </VBox>
     </top>
 
-    <!-- ===== LEFT FORM ===== -->
-    <left>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
-            <VBox styleClass="form-container" spacing="15" prefWidth="380">
-                <padding>
-                    <Insets top="20" right="20" bottom="20" left="20"/>
-                </padding>
-                
-                <Label text="🎯 Formulaire de Tâche Focus" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
-                
-                <Separator/>
-                
-                <VBox spacing="5">
-                    <Label text="Titre *" styleClass="form-label"/>
-                    <TextField fx:id="titreField" promptText="Ex: Terminer le rapport"/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="Objectif Principal" styleClass="form-label"/>
-                    <TextArea fx:id="objectifArea" promptText="Décrivez l'objectif..." prefRowCount="3"/>
-                </VBox>
-                
-                <HBox spacing="10">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Difficulté (1-5)" styleClass="form-label"/>
-                        <Spinner fx:id="difficulteSpinner" editable="true" maxWidth="Infinity"/>
-                    </VBox>
-                    
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Priorité (1-5)" styleClass="form-label"/>
-                        <Spinner fx:id="prioriteSpinner" editable="true" maxWidth="Infinity"/>
-                    </VBox>
-                </HBox>
-                
-                <VBox spacing="5">
-                    <Label text="Statut *" styleClass="form-label"/>
-                    <ComboBox fx:id="statutComboBox" maxWidth="Infinity" promptText="Sélectionner..."/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="Score Productivité (0-100)" styleClass="form-label"/>
-                    <Spinner fx:id="scoreSpinner" editable="true" maxWidth="Infinity"/>
-                </VBox>
-                
-                <VBox spacing="5">
-                    <Label text="ID Utilisateur" styleClass="form-label"/>
-                    <TextField fx:id="userIdField" promptText="ID utilisateur"/>
-                </VBox>
-                
-                <HBox spacing="10">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Heure Début (HH:MM:SS)" styleClass="form-label"/>
-                        <TextField fx:id="heureDebutField" promptText="09:00:00"/>
-                    </VBox>
-                    
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Heure Fin (HH:MM:SS)" styleClass="form-label"/>
-                        <TextField fx:id="heureFinField" promptText="17:00:00"/>
-                    </VBox>
-                </HBox>
-                
-                <Label fx:id="errorLabel" styleClass="error-label" wrapText="true"/>
-                
-                <Separator/>
-                
-                <VBox spacing="10">
-                    <Button text="✚ Ajouter" onAction="#handleAjouter" 
-                           styleClass="btn-success" maxWidth="Infinity"/>
-                    <Button text="✎ Modifier" onAction="#handleModifier" 
-                           styleClass="btn-warning" maxWidth="Infinity"/>
-                    <Button text="✖ Supprimer" onAction="#handleSupprimer" 
-                           styleClass="btn-danger" maxWidth="Infinity"/>
-                    <Button text="↻ Vider" onAction="#handleClear" 
-                           styleClass="btn-secondary" maxWidth="Infinity"/>
-                    <Button text="💡 Suggérer Sous-Tâches"
-                            onAction="#handleSuggerer"
-                            style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold;"
-                            maxWidth="Infinity"/>
-                </VBox>
-            </VBox>
-        </ScrollPane>
-    </left>
-
-    <!-- ===== CENTER TABLE ===== -->
     <center>
-        <VBox spacing="10">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-            
-            <HBox alignment="CENTER_LEFT" spacing="15">
-                <Label text="📊 Liste des Tâches Focus" 
-                      style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+        <VBox spacing="15">
+            <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="✚ Ajouter" onAction="#handleAjouter"
+                        style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="✎ Modifier" onAction="#handleModifier"
+                        style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="✖ Supprimer" onAction="#handleSupprimer"
+                        style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="💡 Suggérer" onAction="#handleSuggerer"
+                        style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
+                <Button text="🤖 Analyser IA" onAction="#handleAnalyserIA"
+                        style="-fx-background-color: #8e44ad; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="totalLabel" text="Total: 0 tâches" 
-                      style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
-                <Button text="🔄 Actualiser" onAction="#handleRefresh" styleClass="btn-info"/>
+                <Label fx:id="totalLabel" text="Total: 0 tâches"
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                <Button text="🔄 Actualiser" onAction="#handleRefresh"
+                        style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
             </HBox>
-            
+
+            <Label fx:id="errorLabel" wrapText="true" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+
             <TableView fx:id="tacheTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="idCol" text="ID" prefWidth="50" resizable="false"/>
+                    <TableColumn fx:id="idCol" text="ID" prefWidth="50"/>
                     <TableColumn fx:id="titreCol" text="Titre" prefWidth="200"/>
-                    <TableColumn fx:id="objectifCol" text="Objectif" prefWidth="180"/>
+                    <TableColumn fx:id="objectifCol" text="Objectif" prefWidth="200"/>
                     <TableColumn fx:id="difficulteCol" text="Difficulté" prefWidth="80"/>
-                    <TableColumn fx:id="statutCol" text="Statut" prefWidth="120"/>
+                    <TableColumn fx:id="statutCol" text="Statut" prefWidth="130"/>
                     <TableColumn fx:id="scoreCol" text="Score" prefWidth="70"/>
                     <TableColumn fx:id="debutCol" text="Début" prefWidth="100"/>
                     <TableColumn fx:id="finCol" text="Fin" prefWidth="100"/>

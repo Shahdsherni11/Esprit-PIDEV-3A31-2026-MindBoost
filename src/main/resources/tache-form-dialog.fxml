@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.view.TacheFormDialogController"
+            prefWidth="450" prefHeight="550"
+            stylesheets="@styles.css">
+
+    <content>
+        <VBox spacing="15">
+            <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
+
+            <Label text="🎯 Formulaire Tâche Focus"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Separator/>
+
+            <VBox spacing="5">
+                <Label text="Titre *" styleClass="form-label"/>
+                <TextField fx:id="titreField" promptText="Ex: Terminer le rapport"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Objectif Principal" styleClass="form-label"/>
+                <TextArea fx:id="objectifArea" promptText="Décrivez l'objectif..." prefRowCount="3"/>
+            </VBox>
+
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Difficulté (1-5)" styleClass="form-label"/>
+                    <Spinner fx:id="difficulteSpinner" editable="true" maxWidth="Infinity"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Priorité (1-5)" styleClass="form-label"/>
+                    <Spinner fx:id="prioriteSpinner" editable="true" maxWidth="Infinity"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="5">
+                <Label text="Statut *" styleClass="form-label"/>
+                <ComboBox fx:id="statutComboBox" maxWidth="Infinity" promptText="Sélectionner..."/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Score Productivité (0-100)" styleClass="form-label"/>
+                <Spinner fx:id="scoreSpinner" editable="true" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="ID Utilisateur" styleClass="form-label"/>
+                <TextField fx:id="userIdField" promptText="ID utilisateur"/>
+            </VBox>
+
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Heure Début (HH:MM:SS)" styleClass="form-label"/>
+                    <TextField fx:id="heureDebutField" promptText="09:00:00"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Heure Fin (HH:MM:SS)" styleClass="form-label"/>
+                    <TextField fx:id="heureFinField" promptText="17:00:00"/>
+                </VBox>
+            </HBox>
+
+            <Label fx:id="errorLabel" wrapText="true"
+                   style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="OK"/>
+        <ButtonType fx:constant="CANCEL"/>
+    </buttonTypes>
+
+</DialogPane>

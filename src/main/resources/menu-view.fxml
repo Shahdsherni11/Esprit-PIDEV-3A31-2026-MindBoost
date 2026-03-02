@@ -31,6 +31,14 @@
             <Label text="Système de Gestion de Focus et Productivité" 
                    styleClass="header-subtitle"
                    style="-fx-font-size: 14px;"/>
+
+
+            <Label fx:id="citationLabel" wrapText="true"
+                   style="-fx-font-size: 13px; -fx-font-style: italic; -fx-text-fill: #2c3e50;"/>
+            <Label fx:id="citationAuteurLabel"
+                   style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #7f8c8d;"/>
+
+
         </VBox>
     </top>
 
@@ -64,6 +72,18 @@
                            style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d; -fx-text-alignment: center;"
                            wrapText="true" alignment="CENTER"/>
                 </VBox>
+
+                <VBox styleClass="menu-card" alignment="CENTER" spacing="15"
+                      prefWidth="250" prefHeight="200" onMouseClicked="#openStatistiqueView">
+                    <Label text="📊" style="-fx-font-size: 64px;"/>
+                    <Label text="Statistiques" styleClass="menu-card-title"/>
+                    <Label text="Voir la répartition de vos tâches"
+                           style="-fx-font-size: 12px; -fx-text-fill: #7f8c8d;"
+                           wrapText="true" alignment="CENTER"/>
+                </VBox>
+
+
+
             </HBox>
             
             <Separator prefWidth="400"/>

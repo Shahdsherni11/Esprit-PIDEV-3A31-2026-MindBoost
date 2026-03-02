@@ -1,5 +1,6 @@
 package org.example;
 
+import org.example.Service.OpenAIService;
 import org.example.controller.TacheFocusController;
 import org.example.controller.SousTacheController;
 import org.example.model.TacheFocus;
@@ -58,10 +59,10 @@ public class Main {
         System.out.println("\nListe des tâches focus:");
         for (TacheFocus t : taches) {
             System.out.println(
-                    t.getIdTache() + " | " + 
-                    t.getTitre() + " | " + 
-                    t.getStatut() + " | " + 
-                    t.getScoreProductivite() + "%"
+                    t.getIdTache() + " | " +
+                            t.getTitre() + " | " +
+                            t.getStatut() + " | " +
+                            t.getScoreProductivite() + "%"
             );
         }
 
@@ -80,7 +81,6 @@ public class Main {
         System.out.println("TEST CRUD SOUS-TACHE");
         System.out.println("=================================");
 
-        // Refresh taches
         taches = tacheController.getAllTaches();
         if (taches.isEmpty()) {
             System.out.println("Aucune tâche focus trouvée. STOP.");
@@ -125,9 +125,9 @@ public class Main {
         for (SousTache st : sousTaches) {
             System.out.println(
                     st.getIdSousTache() + " | " +
-                    st.getDescription() + " | " +
-                    st.getEtat() + " | " +
-                    st.getDureeRecommandee() + " min"
+                            st.getDescription() + " | " +
+                            st.getEtat() + " | " +
+                            st.getDureeRecommandee() + " min"
             );
         }
 
@@ -142,11 +142,35 @@ public class Main {
         }
 
         // ============================
-        // DELETE ENTITIES (optional)
+        // DELETE ENTITIES
         // ============================
         if (sousTaches.size() > 1) {
             sousTacheController.supprimerSousTache(sousTaches.get(sousTaches.size() - 1).getIdSousTache());
             System.out.println("Sous-tâche supprimée.");
+        }
+
+        // ============================
+        // TEST OPENAI IA
+        // ============================
+        try {
+            System.out.println("\n=================================");
+            System.out.println("TEST IA OPENAI");
+            System.out.println("=================================");
+
+            OpenAIService aiService = new OpenAIService();
+
+            List<String> sousTachesIA = aiService.genererSousTachesIA(
+                    "Préparer mon projet Java en 5 jours",
+                    "Terminer toutes les fonctionnalités"
+            );
+
+            System.out.println("\nRéponse IA :");
+            for (String s : sousTachesIA) {
+                System.out.println("- " + s);
+            }
+
+        } catch (Exception e) {
+            System.out.println("Erreur IA : " + e.getMessage());
         }
 
         System.out.println("\n=================================");

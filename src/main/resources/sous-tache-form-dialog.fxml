@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<DialogPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.view.SousTacheFormDialogController"
+            prefWidth="450" prefHeight="500"
+            stylesheets="@styles.css">
+
+    <content>
+        <VBox spacing="15">
+            <padding><Insets top="20" right="20" bottom="10" left="20"/></padding>
+
+            <Label text="✓ Formulaire Sous-Tâche"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"/>
+            <Separator/>
+
+            <VBox spacing="5">
+                <Label text="Tâche Parente *" styleClass="form-label"/>
+                <ComboBox fx:id="tacheParentComboBox" maxWidth="Infinity" promptText="Sélectionner une tâche..."/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Description *" styleClass="form-label"/>
+                <TextField fx:id="descriptionField" promptText="Description de la sous-tâche..."/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Durée Recommandée (min)" styleClass="form-label"/>
+                <Spinner fx:id="dureeSpinner" editable="true" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="État *" styleClass="form-label"/>
+                <ComboBox fx:id="etatComboBox" maxWidth="Infinity" promptText="Sélectionner un état..."/>
+            </VBox>
+
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Heure Début (HH:MM:SS)" styleClass="form-label"/>
+                    <TextField fx:id="heureDebutField" promptText="09:00:00"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Heure Fin (HH:MM:SS)" styleClass="form-label"/>
+                    <TextField fx:id="heureFinField" promptText="10:00:00"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="5">
+                <Label text="Priorité (1-5)" styleClass="form-label"/>
+                <Spinner fx:id="prioriteSpinner" editable="true" maxWidth="Infinity"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" wrapText="true"
+                   style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+        </VBox>
+    </content>
+
+    <buttonTypes>
+        <ButtonType fx:constant="OK"/>
+        <ButtonType fx:constant="CANCEL"/>
+    </buttonTypes>
+
+</DialogPane>

@@ -1,6 +1,7 @@
 package org.example.view;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import org.example.Service.CitationService;
 import org.example.controller.TacheFocusController;
 import org.example.controller.SousTacheController;
 import org.example.model.TacheFocus;
@@ -20,27 +22,24 @@ public class MenuViewController {
     @FXML private Label totalTachesLabel;
     @FXML private Label totalSousTachesLabel;
     @FXML private Label avgScoreLabel;
+    @FXML private Label citationLabel;
+    @FXML private Label citationAuteurLabel;
 
     private TacheFocusController tacheController = new TacheFocusController();
     private SousTacheController sousTacheController = new SousTacheController();
+    private CitationService citationService = new CitationService();
 
     @FXML
     public void initialize() {
         loadStatistics();
+        loadCitation();
     }
 
     private void loadStatistics() {
         try {
-            // Get taches count
             List<TacheFocus> taches = tacheController.getAllTaches();
-            int tachesCount = taches.size();
-            totalTachesLabel.setText("Total: " + tachesCount);
-
-            // Get sous-taches count
-            int sousTachesCount = sousTacheController.getAllSousTaches().size();
-            totalSousTachesLabel.setText("Total: " + sousTachesCount);
-
-            // Calculate average score
+            totalTachesLabel.setText("Total: " + taches.size());
+            totalSousTachesLabel.setText("Total: " + sousTacheController.getAllSousTaches().size());
             double avgScore = taches.stream()
                     .mapToInt(TacheFocus::getScoreProductivite)
                     .average()
@@ -48,11 +47,33 @@ public class MenuViewController {
             avgScoreLabel.setText(String.format("%.0f%%", avgScore));
         } catch (Exception e) {
             e.printStackTrace();
-            // Set default values on error
             totalTachesLabel.setText("Total: 0");
             totalSousTachesLabel.setText("Total: 0");
             avgScoreLabel.setText("0%");
         }
+    }
+
+    private void loadCitation() {
+        Task<String[]> task = new Task<>() {
+            @Override
+            protected String[] call() {
+                return citationService.getCitation();
+            }
+        };
+        task.setOnSucceeded(e -> {
+            String[] citation = task.getValue();
+            if (citationLabel != null)
+                citationLabel.setText("\" " + citation[0] + " \"");
+            if (citationAuteurLabel != null)
+                citationAuteurLabel.setText("— " + citation[1]);
+        });
+        task.setOnFailed(e -> {
+            if (citationLabel != null)
+                citationLabel.setText("\" La productivité naît de la discipline. \"");
+            if (citationAuteurLabel != null)
+                citationAuteurLabel.setText("— MindBood");
+        });
+        new Thread(task).start();
     }
 
     @FXML
@@ -66,6 +87,11 @@ public class MenuViewController {
     }
 
     @FXML
+    private void openStatistiqueView(MouseEvent event) {
+        loadView("/statistique-view.fxml");
+    }
+
+    @FXML
     private void handleQuit() {
         Platform.exit();
     }
@@ -75,8 +101,7 @@ public class MenuViewController {
             Stage stage = (Stage) totalTachesLabel.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent root = loader.load();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
         } catch (IOException e) {
             e.printStackTrace();
         }
