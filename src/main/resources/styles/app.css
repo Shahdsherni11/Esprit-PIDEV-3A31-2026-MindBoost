@@ -397,3 +397,26 @@
 .chart-plot-background {
     -fx-background-color: transparent;
 }
+.blur-overlay {
+    -fx-background-color: rgba(6, 12, 30, 0.55);
+    -fx-background-radius: 16;
+    -fx-padding: 24;
+    -fx-alignment: center;
+}
+
+.blur-view-btn {
+    -fx-background-color: #4F46E5;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+}
+
+.blur-view-btn:hover {
+    -fx-background-color: #6366F1;
+}
+.summary-box {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+}

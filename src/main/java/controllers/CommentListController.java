@@ -1,12 +1,14 @@
 package controllers;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.*;
 import org.example.SceneManager;
 import org.example.entities.comment;
 import org.example.services.commentServices;
+import org.example.utils.ProfanityService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -75,7 +77,31 @@ public class CommentListController {
                     card.getStyleClass().add("comment-card");
                     card.setMaxWidth(800);
 
-                    HBox wrapper = new HBox(card);
+                    boolean flagged = ProfanityService.isProfane(c.getComment());
+
+                    StackPane stack = new StackPane(card);
+
+                    if (flagged) {
+                        card.setEffect(new GaussianBlur(14));
+
+                        Button viewBtn = new Button("👁 View");
+                        viewBtn.getStyleClass().add("blur-view-btn");
+
+                        VBox overlay = new VBox(viewBtn);
+                        overlay.getStyleClass().add("blur-overlay");
+                        overlay.setAlignment(Pos.CENTER);
+
+                        viewBtn.setOnAction(evt -> {
+                            card.setEffect(null);
+                            overlay.setVisible(false);
+                            overlay.setManaged(false);
+                        });
+
+                        stack.getChildren().add(overlay);
+                        StackPane.setAlignment(overlay, Pos.CENTER);
+                    }
+
+                    HBox wrapper = new HBox(stack);
                     wrapper.setStyle("-fx-alignment: center;");
 
                     setGraphic(wrapper);
