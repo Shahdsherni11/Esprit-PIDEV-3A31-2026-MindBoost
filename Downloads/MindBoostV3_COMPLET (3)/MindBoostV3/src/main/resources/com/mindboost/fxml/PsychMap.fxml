@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mindboost.controllers.PsychMapController"
+      spacing="20" style="-fx-background-color:transparent;-fx-padding:0;">
+
+    <!-- Titre -->
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <Label text="🧭 Cartographie Psychologique" style="-fx-text-fill:white;-fx-font-size:20px;-fx-font-weight:bold;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="🔄 Actualiser" onAction="#handleRefresh" styleClass="btn-secondary"
+                style="-fx-font-size:12px;-fx-padding:8 16;"/>
+    </HBox>
+
+    <!-- Profil Type + Anomalie -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card,card-purple" HBox.hgrow="ALWAYS" spacing="6">
+            <Label text="Type Détecté" style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+            <Label fx:id="typeLabel" text="🧠 ANALYTIQUE" style="-fx-font-size:20px;-fx-font-weight:bold;"/>
+            <Label fx:id="themeLabel" text="🔮 Thème: DEEP_PURPLE" style="-fx-text-fill:#9B9BB0;-fx-font-size:11px;"/>
+        </VBox>
+        <VBox styleClass="stat-card,card-pink" HBox.hgrow="ALWAYS" spacing="6">
+            <Label text="Score Anomalie" style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+            <Label fx:id="anomalyLabel" text="0%" style="-fx-font-size:20px;-fx-font-weight:bold;"/>
+            <Label fx:id="lastUpdatedLabel" text="" style="-fx-text-fill:#9B9BB0;-fx-font-size:11px;"/>
+        </VBox>
+    </HBox>
+
+    <!-- Radar + Barres -->
+    <HBox spacing="24" alignment="TOP_CENTER">
+        <!-- Radar Chart -->
+        <VBox styleClass="stat-card" spacing="8" alignment="CENTER">
+            <Label text="📊 Carte Radar 5 Dimensions" style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+            <Canvas fx:id="radarCanvas" width="320" height="280"/>
+        </VBox>
+
+        <!-- Barres de progression -->
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="16">
+            <Label text="📈 Détail des Dimensions" style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+
+            <VBox spacing="8">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="😰 Anxiété" style="-fx-text-fill:#E8E8F0;-fx-font-size:13px;-fx-min-width:120;"/>
+                    <ProgressBar fx:id="anxietyBar" HBox.hgrow="ALWAYS" prefHeight="12"
+                                 style="-fx-accent:#E74C3C;"/>
+                    <Label fx:id="anxietyPct" text="50%" style="-fx-text-fill:#E74C3C;-fx-font-size:12px;-fx-min-width:40;"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="💪 Résilience" style="-fx-text-fill:#E8E8F0;-fx-font-size:13px;-fx-min-width:120;"/>
+                    <ProgressBar fx:id="resilienceBar" HBox.hgrow="ALWAYS" prefHeight="12"
+                                 style="-fx-accent:#2ECC71;"/>
+                    <Label fx:id="resiliencePct" text="50%" style="-fx-text-fill:#2ECC71;-fx-font-size:12px;-fx-min-width:40;"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="💬 Sociabilité" style="-fx-text-fill:#E8E8F0;-fx-font-size:13px;-fx-min-width:120;"/>
+                    <ProgressBar fx:id="sociabilityBar" HBox.hgrow="ALWAYS" prefHeight="12"
+                                 style="-fx-accent:#4ECDC4;"/>
+                    <Label fx:id="sociabilityPct" text="50%" style="-fx-text-fill:#4ECDC4;-fx-font-size:12px;-fx-min-width:40;"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="🎯 Concentration" style="-fx-text-fill:#E8E8F0;-fx-font-size:13px;-fx-min-width:120;"/>
+                    <ProgressBar fx:id="focusBar" HBox.hgrow="ALWAYS" prefHeight="12"
+                                 style="-fx-accent:#6C63FF;"/>
+                    <Label fx:id="focusPct" text="50%" style="-fx-text-fill:#6C63FF;-fx-font-size:12px;-fx-min-width:40;"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="😊 Humeur" style="-fx-text-fill:#E8E8F0;-fx-font-size:13px;-fx-min-width:120;"/>
+                    <ProgressBar fx:id="moodBar" HBox.hgrow="ALWAYS" prefHeight="12"
+                                 style="-fx-accent:#F39C12;"/>
+                    <Label fx:id="moodPct" text="50%" style="-fx-text-fill:#F39C12;-fx-font-size:12px;-fx-min-width:40;"/>
+                </HBox>
+            </VBox>
+
+            <!-- Zone d'alerte -->
+            <VBox fx:id="alertBox" spacing="12" visible="false"
+                  style="-fx-background-color:rgba(231,76,60,0.1);-fx-background-radius:8;-fx-border-color:rgba(231,76,60,0.5);-fx-border-width:1;-fx-border-radius:8;-fx-padding:16;">
+                <Label text="🚨 Alerte Détectée" style="-fx-text-fill:#E74C3C;-fx-font-size:14px;-fx-font-weight:bold;"/>
+                <Label fx:id="alertLabel" wrapText="true"
+                       style="-fx-text-fill:#E8E8F0;-fx-font-size:12px;"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="psyEmailCombo" promptText="Email psychologue"
+                              style="-fx-background-color:rgba(255,255,255,0.07);-fx-text-fill:white;-fx-border-color:rgba(255,255,255,0.15);-fx-border-radius:6;-fx-background-radius:6;"/>
+                    <Button fx:id="sendAlertBtn" text="📧 Alerter le Psy"
+                            styleClass="btn-danger" onAction="#handleSendAlert"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </HBox>
+</VBox>

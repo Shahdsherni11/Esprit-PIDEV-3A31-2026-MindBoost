@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.mindboost.controllers.MindBotController"
+      spacing="0" style="-fx-background-color:transparent;">
+
+    <!-- Header -->
+    <VBox spacing="6" style="-fx-padding:0 0 16 0;">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="🤖" style="-fx-font-size:28px;"/>
+            <VBox spacing="2">
+                <Label text="MindBot" style="-fx-text-fill:white;-fx-font-size:20px;-fx-font-weight:bold;"/>
+                <Label text="Votre assistant psychologique personnel — Alimenté par IA"
+                       style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ProgressIndicator fx:id="loadingIndicator" prefWidth="24" prefHeight="24" visible="false"
+                               style="-fx-progress-color:#6C63FF;"/>
+        </HBox>
+
+        <!-- Contexte psy -->
+        <Label fx:id="contextLabel" text="🧠 Profil: En cours d'analyse..."
+               style="-fx-text-fill:rgba(108,99,255,0.8);-fx-font-size:11px;-fx-background-color:rgba(108,99,255,0.1);-fx-background-radius:6;-fx-padding:6 10;"
+               wrapText="true"/>
+    </VBox>
+
+    <!-- Chat area -->
+    <ScrollPane fx:id="chatScroll" VBox.vgrow="ALWAYS" fitToWidth="true"
+                style="-fx-background-color:transparent;-fx-background:transparent;-fx-padding:0;"
+                hbarPolicy="NEVER">
+        <VBox fx:id="chatBox" spacing="12"
+              style="-fx-padding:8 4;-fx-background-color:transparent;"/>
+    </ScrollPane>
+
+    <!-- Quick responses -->
+    <HBox spacing="8" style="-fx-padding:12 0 8 0;">
+        <Button text="😰 Je suis anxieux" onAction="#handleQuickMood"
+                style="-fx-background-color:rgba(231,76,60,0.15);-fx-text-fill:#E74C3C;-fx-background-radius:20;-fx-padding:6 14;-fx-cursor:hand;-fx-border-color:rgba(231,76,60,0.4);-fx-border-width:1;-fx-border-radius:20;-fx-font-size:12px;"/>
+        <Button text="🌬 Exercice respiration" onAction="#handleQuickRelax"
+                style="-fx-background-color:rgba(78,205,196,0.15);-fx-text-fill:#4ECDC4;-fx-background-radius:20;-fx-padding:6 14;-fx-cursor:hand;-fx-border-color:rgba(78,205,196,0.4);-fx-border-width:1;-fx-border-radius:20;-fx-font-size:12px;"/>
+        <Button text="🎯 Améliorer focus" onAction="#handleQuickAdvice"
+                style="-fx-background-color:rgba(108,99,255,0.15);-fx-text-fill:#A89CFF;-fx-background-radius:20;-fx-padding:6 14;-fx-cursor:hand;-fx-border-color:rgba(108,99,255,0.4);-fx-border-width:1;-fx-border-radius:20;-fx-font-size:12px;"/>
+    </HBox>
+
+    <!-- Input -->
+    <HBox spacing="10" alignment="CENTER" style="-fx-padding:8 0 0 0;">
+        <TextField fx:id="inputField" HBox.hgrow="ALWAYS"
+                   promptText="Écrivez votre message à MindBot..."
+                   styleClass="form-field" style="-fx-pref-height:46px;"/>
+        <Button fx:id="sendBtn" text="➤" styleClass="btn-primary"
+                onAction="#handleSend"
+                style="-fx-min-width:46px;-fx-pref-height:46px;-fx-font-size:18px;"/>
+    </HBox>
+
+    <Label text="⚠️ MindBot est un assistant de soutien, pas un médecin. Consultez un professionnel en cas de besoin."
+           style="-fx-text-fill:rgba(255,255,255,0.2);-fx-font-size:10px;-fx-padding:8 0 0 0;"
+           wrapText="true"/>
+</VBox>

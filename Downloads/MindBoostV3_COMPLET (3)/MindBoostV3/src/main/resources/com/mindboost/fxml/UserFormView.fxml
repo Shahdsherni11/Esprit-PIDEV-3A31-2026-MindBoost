@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mindboost.controllers.UserFormController"
+            styleClass="main-bg" prefWidth="1200" prefHeight="750">
+
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:28 20 18 20;">
+                <Text style="-fx-font-size:20px;-fx-font-weight:bold;-fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px;-fx-font-weight:bold;-fx-fill:#6C63FF;">Boost</Text>
+            </HBox>
+            <Label text="ADMIN PANEL"
+                   style="-fx-text-fill:rgba(255,255,255,0.3);-fx-font-size:10px;-fx-font-weight:bold;-fx-padding:0 20 12 20;"/>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox spacing="2" style="-fx-padding:8 0;">
+                <Button text="📊  Dashboard"       styleClass="nav-button" onAction="#goDashboard"/>
+                <Button text="👥  Gestion Users"   styleClass="nav-button,nav-button-active" onAction="#goToList"/>
+                <Button text="🧩  Gestion Profils" styleClass="nav-button" onAction="#goToProfileList"/>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="🚪  Déconnexion" styleClass="nav-button" onAction="#handleLogout"
+                    style="-fx-text-fill:#E74C3C;-fx-padding:14 20 20 25;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent;-fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="24">
+                <VBox spacing="4">
+                    <Label fx:id="pageTitle" text="Ajouter un Utilisateur" styleClass="page-title"/>
+                    <Label fx:id="pageSubtitle" text="Remplissez les informations du nouveau compte"
+                           styleClass="page-subtitle"/>
+                </VBox>
+
+                <VBox styleClass="form-container" spacing="18" maxWidth="560">
+
+                    <VBox spacing="6">
+                        <Label text="Adresse Email *" styleClass="form-label"/>
+                        <TextField fx:id="emailField" promptText="exemple@domaine.com" styleClass="form-field"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label fx:id="passwordLabel" text="Mot de passe *" styleClass="form-label"/>
+                        <PasswordField fx:id="passwordField"
+                                      promptText="Min 8 chars, 1 majuscule, 1 chiffre" styleClass="form-field"/>
+                        <Label fx:id="passwordHint" text="Laisser vide pour ne pas changer"
+                               style="-fx-text-fill:#9B9BB0;-fx-font-size:11px;" visible="false"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Rôle *" styleClass="form-label"/>
+                        <ComboBox fx:id="roleCombo" styleClass="form-combo" prefWidth="540"/>
+                    </VBox>
+
+                    <CheckBox fx:id="verifiedCheck" text="Compte vérifié"
+                              style="-fx-text-fill:white;-fx-font-size:13px;"/>
+
+                    <Separator style="-fx-background-color:rgba(255,255,255,0.08);"/>
+
+                    <Label fx:id="errorLabel"   styleClass="error-label"   visible="false" wrapText="true"/>
+                    <Label fx:id="successLabel" styleClass="success-label" visible="false"/>
+
+                    <HBox spacing="12">
+                        <Button fx:id="saveBtn" text="💾  Enregistrer" styleClass="btn-primary"
+                                onAction="#handleSave" prefHeight="44" prefWidth="200"/>
+                        <Button text="✕  Annuler" styleClass="btn-secondary"
+                                onAction="#goToList" prefHeight="44"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

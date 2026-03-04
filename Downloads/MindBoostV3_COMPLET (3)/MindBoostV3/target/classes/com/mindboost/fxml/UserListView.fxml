@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.mindboost.controllers.UserListController"
+            styleClass="main-bg" prefWidth="1200" prefHeight="750">
+
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:28 20 18 20;">
+                <Text style="-fx-font-size:20px;-fx-font-weight:bold;-fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px;-fx-font-weight:bold;-fx-fill:#6C63FF;">Boost</Text>
+            </HBox>
+            <Label text="ADMIN PANEL"
+                   style="-fx-text-fill:rgba(255,255,255,0.3);-fx-font-size:10px;-fx-font-weight:bold;-fx-padding:0 20 12 20;"/>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox spacing="2" style="-fx-padding:8 0;">
+                <Button text="📊  Dashboard"       styleClass="nav-button" onAction="#goDashboard"/>
+                <Button text="👥  Gestion Users"   styleClass="nav-button,nav-button-active" onAction="#reload"/>
+                <Button text="🧩  Gestion Profils" styleClass="nav-button" onAction="#goToProfileList"/>
+            </VBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="🚪  Déconnexion" styleClass="nav-button" onAction="#handleLogout"
+                    style="-fx-text-fill:#E74C3C;-fx-padding:14 20 20 25;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="content-area" spacing="20">
+            <VBox spacing="4">
+                <Label text="Gestion des Utilisateurs" styleClass="page-title"/>
+                <Label text="CRUD complet — Ajouter, Modifier, Supprimer des comptes utilisateurs"
+                       styleClass="page-subtitle"/>
+            </VBox>
+
+            <VBox styleClass="table-container" spacing="14" VBox.vgrow="ALWAYS">
+                <!-- Toolbar -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField" styleClass="search-field"
+                               promptText="🔍  Rechercher par email ou rôle..."/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button text="↻  Actualiser" styleClass="btn-secondary" onAction="#reload"/>
+                    <Button text="➕  Ajouter un User" styleClass="btn-primary" onAction="#goToAdd"/>
+                </HBox>
+
+                <!-- Table -->
+                <TableView fx:id="table" styleClass="data-table" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colId"       text="ID"        prefWidth="55"/>
+                        <TableColumn fx:id="colEmail"    text="Email"     prefWidth="240"/>
+                        <TableColumn fx:id="colRole"     text="Rôle"      prefWidth="120"/>
+                        <TableColumn fx:id="colVerified" text="Vérifié"   prefWidth="90"/>
+                        <TableColumn fx:id="colDate"     text="Inscrit le" prefWidth="150"/>
+                        <TableColumn fx:id="colActions"  text="Actions"   prefWidth="170"/>
+                    </columns>
+                </TableView>
+
+                <Label fx:id="countLabel" style="-fx-text-fill:#9B9BB0;-fx-font-size:12px;"/>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>
