@@ -1,56 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import javafx.scene.text.Text?>
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.view.StatistiqueViewController"
-            prefWidth="800" prefHeight="600"
+            prefWidth="1200" prefHeight="750"
+            styleClass="main-bg"
             stylesheets="@styles.css">
-
-    <top>
-        <VBox styleClass="header" alignment="CENTER" spacing="8">
-            <padding><Insets top="20" bottom="20"/></padding>
-            <Label text="📊 Statistiques de Productivité"
-                   style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white;"/>
-            <Label text="Répartition de vos tâches focus par statut"
-                   style="-fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.8);"/>
-        </VBox>
-    </top>
-
-    <center>
-        <VBox alignment="CENTER" spacing="20">
-            <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
-            <HBox alignment="CENTER" spacing="40">
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="📋" style="-fx-font-size: 28px;"/>
-                    <Label fx:id="totalTachesLabel" text="Total tâches : 0"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #3498db;"/>
-                </VBox>
-                <VBox alignment="CENTER" spacing="5">
-                    <Label text="🚀" style="-fx-font-size: 28px;"/>
-                    <Label fx:id="scoreMoyenLabel" text="Score moyen : 0%"
-                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
-                </VBox>
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:30 20 20 20;">
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:#6C63FF;">Bood</Text>
             </HBox>
-            <Separator prefWidth="600"/>
-            <PieChart fx:id="pieChart"
-                      prefWidth="500" prefHeight="380"
-                      legendVisible="true"
-                      labelsVisible="true"
-                      animated="true"/>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox spacing="2" style="-fx-padding:10 0;">
+                <Button text="🏠  Menu Principal" styleClass="nav-button" onAction="#retourMenu"/>
+            </VBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox style="-fx-padding:20;" spacing="16">
+                <Label text="RÉSUMÉ" style="-fx-text-fill:rgba(255,255,255,0.3); -fx-font-size:10px; -fx-font-weight:bold;"/>
+                <VBox styleClass="stat-card, card-purple" spacing="4">
+                    <Label text="📋 Total Tâches" styleClass="stat-label"/>
+                    <Label fx:id="totalTachesLabel" text="0"
+                           style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#6C63FF;"/>
+                </VBox>
+                <VBox styleClass="stat-card, card-green" spacing="4">
+                    <Label text="🚀 Score Moyen" styleClass="stat-label"/>
+                    <Label fx:id="scoreMoyenLabel" text="0%"
+                           style="-fx-font-size:28px; -fx-font-weight:bold; -fx-text-fill:#2ECC71;"/>
+                </VBox>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox styleClass="content-area" spacing="24">
+            <VBox spacing="4">
+                <Label text="📊 Statistiques de Productivité" styleClass="page-title"/>
+                <Label text="Répartition de vos tâches focus par statut" styleClass="page-subtitle"/>
+            </VBox>
+            <VBox styleClass="table-container" VBox.vgrow="ALWAYS" alignment="CENTER">
+                <PieChart fx:id="pieChart"
+                          prefWidth="600" prefHeight="450"
+                          legendVisible="true"
+                          labelsVisible="true"
+                          animated="true"
+                          style="-fx-background-color:transparent; -fx-text-fill:white;"/>
+            </VBox>
         </VBox>
     </center>
-
-    <bottom>
-        <HBox alignment="CENTER" spacing="10"
-              style="-fx-background-color: #ecf0f1; -fx-padding: 15;">
-            <Button text="← Retour au Menu" onAction="#retourMenu"
-                    style="-fx-background-color: #3498db; -fx-text-fill: white;
-                           -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8;"/>
-        </HBox>
-    </bottom>
-
 </BorderPane>

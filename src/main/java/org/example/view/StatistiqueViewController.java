@@ -53,8 +53,8 @@ public class StatistiqueViewController {
         int total = statistiqueService.getTotalTaches();
         double score = statistiqueService.getScoreMoyen();
 
-        totalTachesLabel.setText("Total tâches : " + total);
-        scoreMoyenLabel.setText(String.format("Score moyen : %.0f%%", score));
+        totalTachesLabel.setText(String.valueOf(total));
+        scoreMoyenLabel.setText(String.format("%.0f%%", score));
     }
 
     @FXML

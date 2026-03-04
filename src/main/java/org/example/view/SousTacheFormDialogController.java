@@ -30,9 +30,17 @@ public class SousTacheFormDialogController {
         etatComboBox.setItems(FXCollections.observableArrayList(
                 "À faire", "En cours", "Terminée", "Bloquée"
         ));
-        // Charger les tâches parentes
         List<TacheFocus> taches = tacheController.getAllTaches();
         tacheParentComboBox.setItems(FXCollections.observableArrayList(taches));
+    }
+
+    // ✅ NOUVEAU : pré-sélectionner la tâche parente automatiquement
+    public void setIdTacheParente(int idTache) {
+        TacheFocus tache = tacheController.getTacheById(idTache);
+        if (tache != null) {
+            tacheParentComboBox.setValue(tache);
+            tacheParentComboBox.setDisable(true); // bloquer le choix car déjà fixé
+        }
     }
 
     // Pré-remplir pour modification
