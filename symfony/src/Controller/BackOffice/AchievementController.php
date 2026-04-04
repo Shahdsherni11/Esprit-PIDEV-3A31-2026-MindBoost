@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\BackOffice;
 
 use App\Entity\Achievement;
 use App\Form\AchievementType;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/achievements')]
+#[Route('/admin/achievements')]
 class AchievementController extends AbstractController
 {
     public function __construct(
@@ -19,15 +19,15 @@ class AchievementController extends AbstractController
         private AchievementRepository $achievementRepository
     ) {}
 
-    #[Route('', name: 'achievement_index', methods: ['GET'])]
+    #[Route('', name: 'back_achievement_index', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('achievement/index.html.twig', [
+        return $this->render('back/achievement/index.html.twig', [
             'achievements' => $this->achievementRepository->findBy([], ['achievementScore' => 'DESC']),
         ]);
     }
 
-    #[Route('/new', name: 'achievement_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'back_achievement_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $achievement = new Achievement();
@@ -38,15 +38,15 @@ class AchievementController extends AbstractController
             $this->em->persist($achievement);
             $this->em->flush();
             $this->addFlash('success', 'Achievement created!');
-            return $this->redirectToRoute('achievement_index');
+            return $this->redirectToRoute('back_achievement_index');
         }
 
-        return $this->render('achievement/new.html.twig', [
+        return $this->render('back/achievement/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'achievement_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'back_achievement_edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $achievement = $this->achievementRepository->find($id);
@@ -60,16 +60,16 @@ class AchievementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
             $this->addFlash('success', 'Achievement updated!');
-            return $this->redirectToRoute('achievement_index');
+            return $this->redirectToRoute('back_achievement_index');
         }
 
-        return $this->render('achievement/edit.html.twig', [
+        return $this->render('back/achievement/edit.html.twig', [
             'form' => $form->createView(),
             'achievement' => $achievement,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'achievement_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'back_achievement_delete', methods: ['POST'])]
     public function delete(int $id, Request $request): Response
     {
         $achievement = $this->achievementRepository->find($id);
@@ -83,6 +83,6 @@ class AchievementController extends AbstractController
             $this->addFlash('success', 'Achievement deleted!');
         }
 
-        return $this->redirectToRoute('achievement_index');
+        return $this->redirectToRoute('back_achievement_index');
     }
 }
