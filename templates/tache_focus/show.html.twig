@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TacheFocus{% endblock %}
+
+{% block body %}
+    <h1>TacheFocus</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ tache_focu.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ tache_focu.titre }}</td>
+            </tr>
+            <tr>
+                <th>ObjectifPrincipal</th>
+                <td>{{ tache_focu.objectifPrincipal }}</td>
+            </tr>
+            <tr>
+                <th>NiveauDifficulte</th>
+                <td>{{ tache_focu.niveauDifficulte }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ tache_focu.statut }}</td>
+            </tr>
+            <tr>
+                <th>ScoreProductivite</th>
+                <td>{{ tache_focu.scoreProductivite }}</td>
+            </tr>
+            <tr>
+                <th>HeureDebut</th>
+                <td>{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>HeureFin</th>
+                <td>{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_tache_focus_index') }}">back to list</a>
+
+    <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}">edit</a>
+
+    {{ include('tache_focus/_delete_form.html.twig') }}
+{% endblock %}

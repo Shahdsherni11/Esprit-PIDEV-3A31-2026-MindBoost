@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New SousTache{% endblock %}
+
+{% block body %}
+    <h1>Create new SousTache</h1>
+
+    {{ include('sous_tache/_form.html.twig') }}
+
+    <a href="{{ path('app_sous_tache_index') }}">back to list</a>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Sous-Tâches{% endblock %}
+
+{% block body %}
+
+    <h1>✓ Gestion des Sous-Tâches</h1>
+
+    {# ===== MESSAGES FLASH ===== #}
+    {% for message in app.flashes('success') %}
+        <div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {# ===== RECHERCHE + FILTRE ===== #}
+    <form method="GET" action="{{ path('app_sous_tache_index') }}" style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="🔍 Rechercher par description..."
+               style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; width: 300px;"/>
+
+        <select name="etat" style="padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px;">
+            <option value="">-- Tous les états --</option>
+            <option value="Terminée" {{ etat == 'Terminée' ? 'selected' : '' }}>Terminée</option>
+            <option value="En cours" {{ etat == 'En cours' ? 'selected' : '' }}>En cours</option>
+            <option value="Non commencée" {{ etat == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
+            <option value="À faire" {{ etat == 'À faire' ? 'selected' : '' }}>À faire</option>
+        </select>
+
+        <button type="submit" style="padding: 8px 20px; background: #6C63FF; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            🔍 Rechercher
+        </button>
+
+        <a href="{{ path('app_sous_tache_index') }}"
+           style="padding: 8px 20px; background: #e74c3c; color: white; border-radius: 6px; text-decoration: none;">
+            ✖ Réinitialiser
+        </a>
+    </form>
+
+    {# ===== TABLEAU ===== #}
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+        <thead style="background: #4ECDC4; color: white;">
+            <tr>
+                <th style="padding: 10px;">Id</th>
+                <th style="padding: 10px;">Tâche Parente</th>
+                <th style="padding: 10px;">Description</th>
+                <th style="padding: 10px;">Durée (min)</th>
+                <th style="padding: 10px;">État</th>
+                <th style="padding: 10px;">Début</th>
+                <th style="padding: 10px;">Fin</th>
+                <th style="padding: 10px;">Priorité</th>
+                <th style="padding: 10px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sous_tache in sous_taches %}
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;">{{ sous_tache.id }}</td>
+                <td style="padding: 10px;">
+                    {% if sous_tache.tacheFocus %}
+                        <span style="background: #e8e4ff; color: #6C63FF; padding: 4px 8px; border-radius: 8px; font-size: 12px;">
+                            {{ sous_tache.tacheFocus.titre }}
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td style="padding: 10px;">{{ sous_tache.description }}</td>
+                <td style="padding: 10px; text-align: center;">{{ sous_tache.dureeRecommandee }} min</td>
+                <td style="padding: 10px;">
+                    {% if sous_tache.etat == 'Terminée' or sous_tache.etat == 'Terminee' %}
+                        <span style="background: #d4edda; color: #155724; padding: 4px 8px; border-radius: 12px; font-size: 12px;">✅ {{ sous_tache.etat }}</span>
+                    {% elseif sous_tache.etat == 'En cours' %}
+                        <span style="background: #fff3cd; color: #856404; padding: 4px 8px; border-radius: 12px; font-size: 12px;">⏳ {{ sous_tache.etat }}</span>
+                    {% else %}
+                        <span style="background: #f8d7da; color: #721c24; padding: 4px 8px; border-radius: 12px; font-size: 12px;">⭕ {{ sous_tache.etat }}</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 10px;">{{ sous_tache.heureDebut ? sous_tache.heureDebut|date('H:i') : '-' }}</td>
+                <td style="padding: 10px;">{{ sous_tache.heureFin ? sous_tache.heureFin|date('H:i') : '-' }}</td>
+                <td style="padding: 10px; text-align: center;">{{ sous_tache.priorite }}</td>
+                <td style="padding: 10px;">
+                    <a href="{{ path('app_sous_tache_show', {'id': sous_tache.id}) }}"
+                       style="background: #3498db; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none; margin-right: 4px;">👁</a>
+                    <a href="{{ path('app_sous_tache_edit', {'id': sous_tache.id}) }}"
+                       style="background: #f39c12; color: white; padding: 4px 10px; border-radius: 4px; text-decoration: none;">✎</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 20px; color: #999;">
+                    Aucune sous-tâche trouvée
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <a href="{{ path('app_sous_tache_new') }}"
+       style="background: #27ae60; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+        ✚ Créer une nouvelle sous-tâche
+    </a>
+
+{% endblock %}

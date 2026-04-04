@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Tâches Focus{% endblock %}
+
+{% block body %}
+
+{% if citation is defined %}
+<div style="background: rgba(108,99,255,0.1); border-left: 4px solid #6C63FF; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+    <p style="font-style: italic; margin: 0; color: #9B9BB0;">💬 "{{ citation.q }}"</p>
+    <p style="font-weight: bold; margin: 5px 0 0 0; color: #6C63FF;">— {{ citation.a }}</p>
+</div>
+{% endif %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="page-title">🎯 Gestion des Tâches Focus</h1>
+        <p class="page-subtitle">Créez et gérez vos tâches de productivité</p>
+    </div>
+    <span style="color: #6C63FF; font-weight: bold; font-size: 16px;">
+        Total: {{ tache_foci|length }} tâches
+    </span>
+</div>
+
+<form method="GET" action="{{ path('app_tache_focus_index') }}" class="mb-4">
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="🔍 Rechercher par titre ou objectif..."
+               class="form-control" style="width: 280px;"/>
+        <select name="statut" class="form-select" style="width: 180px;">
+            <option value="">-- Tous les statuts --</option>
+            <option value="En cours" {{ statut == 'En cours' ? 'selected' : '' }}>En cours</option>
+            <option value="Non commencée" {{ statut == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
+            <option value="Terminée" {{ statut == 'Terminée' ? 'selected' : '' }}>Terminée</option>
+        </select>
+        <select name="tri" class="form-select" style="width: 180px;">
+            <option value="id" {{ tri == 'id' ? 'selected' : '' }}>Trier par ID</option>
+            <option value="titre" {{ tri == 'titre' ? 'selected' : '' }}>Trier par Titre</option>
+            <option value="statut" {{ tri == 'statut' ? 'selected' : '' }}>Trier par Statut</option>
+            <option value="niveauDifficulte" {{ tri == 'niveauDifficulte' ? 'selected' : '' }}>Trier par Difficulté</option>
+            <option value="scoreProductivite" {{ tri == 'scoreProductivite' ? 'selected' : '' }}>Trier par Score</option>
+        </select>
+        <select name="ordre" class="form-select" style="width: 150px;">
+            <option value="ASC" {{ ordre == 'ASC' ? 'selected' : '' }}>⬆ Croissant</option>
+            <option value="DESC" {{ ordre == 'DESC' ? 'selected' : '' }}>⬇ Décroissant</option>
+        </select>
+        <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+        <a href="{{ path('app_tache_focus_index') }}" class="btn btn-danger">✖ Réinitialiser</a>
+        <a href="{{ path('app_tache_focus_new') }}" class="btn btn-success">✚ Ajouter</a>
+    </div>
+</form>
+
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Objectif</th>
+                <th>Difficulté</th>
+                <th>Statut</th>
+                <th>Score</th>
+                <th>Début</th>
+                <th>Fin</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tache_focu in tache_foci %}
+            <tr>
+                <td>{{ tache_focu.id }}</td>
+                <td><strong>{{ tache_focu.titre }}</strong></td>
+                <td>{{ tache_focu.objectifPrincipal }}</td>
+                <td style="text-align: center;">{{ tache_focu.niveauDifficulte }}</td>
+                <td>
+                    {% if tache_focu.statut == 'Terminée' %}
+                        <span class="badge-terminee">✅ {{ tache_focu.statut }}</span>
+                    {% elseif tache_focu.statut == 'En cours' %}
+                        <span class="badge-encours">⏳ {{ tache_focu.statut }}</span>
+                    {% else %}
+                        <span class="badge-noncommence">⭕ {{ tache_focu.statut }}</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center;">
+                    <strong style="color: {% if tache_focu.scoreProductivite >= 75 %}#2ECC71{% elseif tache_focu.scoreProductivite >= 50 %}#F39C12{% else %}#E74C3C{% endif %};">
+                        {{ tache_focu.scoreProductivite }}%
+                    </strong>
+                </td>
+                <td>{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i') : '-' }}</td>
+                <td>{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '-' }}</td>
+                <td>
+                    <a href="{{ path('app_tache_focus_show', {'id': tache_focu.id}) }}"
+                       class="btn btn-sm btn-primary me-1">👁</a>
+                    <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}"
+                       class="btn btn-sm btn-warning me-1">✎</a>
+                    <form method="post" action="{{ path('app_tache_focus_delete', {'id': tache_focu.id}) }}"
+                          style="display:inline-block;"
+                          onsubmit="return confirm('Confirmer la suppression ?')">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache_focu.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger">✖</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9" style="text-align: center; padding: 20px; color: #9B9BB0;">
+                    Aucune tâche trouvée
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

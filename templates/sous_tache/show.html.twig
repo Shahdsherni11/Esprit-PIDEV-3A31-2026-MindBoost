@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SousTache{% endblock %}
+
+{% block body %}
+    <h1>SousTache</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sous_tache.id }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ sous_tache.description }}</td>
+            </tr>
+            <tr>
+                <th>DureeRecommandee</th>
+                <td>{{ sous_tache.dureeRecommandee }}</td>
+            </tr>
+            <tr>
+                <th>Etat</th>
+                <td>{{ sous_tache.etat }}</td>
+            </tr>
+            <tr>
+                <th>HeureDebut</th>
+                <td>{{ sous_tache.heureDebut ? sous_tache.heureDebut|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>HeureFin</th>
+                <td>{{ sous_tache.heureFin ? sous_tache.heureFin|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Priorite</th>
+                <td>{{ sous_tache.priorite }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_sous_tache_index') }}">back to list</a>
+
+    <a href="{{ path('app_sous_tache_edit', {'id': sous_tache.id}) }}">edit</a>
+
+    {{ include('sous_tache/_delete_form.html.twig') }}
+{% endblock %}

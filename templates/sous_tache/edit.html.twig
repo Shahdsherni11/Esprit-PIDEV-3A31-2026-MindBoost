@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit SousTache{% endblock %}
+
+{% block body %}
+    <h1>Edit SousTache</h1>
+
+    {{ include('sous_tache/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_sous_tache_index') }}">back to list</a>
+
+    {{ include('sous_tache/_delete_form.html.twig') }}
+{% endblock %}
