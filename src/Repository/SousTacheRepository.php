@@ -13,8 +13,7 @@ class SousTacheRepository extends ServiceEntityRepository
         parent::__construct($registry, SousTache::class);
     }
 
-    // ===== RECHERCHE + FILTRE =====
-    public function findBySearchAndFilter(string $search = '', string $etat = ''): array
+    public function findBySearchAndFilter(string $search = '', string $etat = '', string $tacheId = ''): array
     {
         $qb = $this->createQueryBuilder('s');
 
@@ -26,6 +25,11 @@ class SousTacheRepository extends ServiceEntityRepository
         if (!empty($etat)) {
             $qb->andWhere('s.etat = :etat')
                ->setParameter('etat', $etat);
+        }
+
+        if (!empty($tacheId)) {
+            $qb->andWhere('s.tacheFocus = :tacheId')
+               ->setParameter('tacheId', $tacheId);
         }
 
         return $qb->orderBy('s.priorite', 'ASC')

@@ -1,11 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New SousTache{% endblock %}
+{% block title %}Nouvelle Sous-Tâche{% endblock %}
 
 {% block body %}
-    <h1>Create new SousTache</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">✚ Nouvelle Sous-Tâche</h1>
+        <p class="page-subtitle">Ajoutez une sous-étape à une tâche focus</p>
+    </div>
+    <a href="{{ path('app_sous_tache_index') }}" class="btn btn-secondary">
+        ← Retour à la liste
+    </a>
+</div>
 
-    {{ include('sous_tache/_form.html.twig') }}
-
-    <a href="{{ path('app_sous_tache_index') }}">back to list</a>
+<div class="card" style="max-width: 600px;">
+    <div class="card-header">
+        <h5 class="mb-0">📝 Formulaire</h5>
+    </div>
+    <div class="card-body p-4">
+        {{ include('sous_tache/_form.html.twig') }}
+    </div>
+</div>
 {% endblock %}

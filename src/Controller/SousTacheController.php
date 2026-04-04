@@ -17,16 +17,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class SousTacheController extends AbstractController
 {
     #[Route('/', name: 'app_sous_tache_index', methods: ['GET'])]
-    public function index(Request $request, SousTacheRepository $sousTacheRepository): Response
+    public function index(Request $request, SousTacheRepository $sousTacheRepository, TacheFocusRepository $tacheFocusRepository): Response
     {
         $search = $request->query->get('search', '');
         $etat = $request->query->get('etat', '');
-        $sousTaches = $sousTacheRepository->findBySearchAndFilter($search, $etat);
+        $tacheId = $request->query->get('tache_id', '');
+
+        $sousTaches = $sousTacheRepository->findBySearchAndFilter($search, $etat, $tacheId);
+        $taches = $tacheFocusRepository->findAll();
 
         return $this->render('sous_tache/index.html.twig', [
             'sous_taches' => $sousTaches,
             'search' => $search,
             'etat' => $etat,
+            'tache_id' => $tacheId,
+            'taches' => $taches,
         ]);
     }
 

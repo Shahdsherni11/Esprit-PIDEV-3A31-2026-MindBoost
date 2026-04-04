@@ -135,6 +135,17 @@
         .page-title { font-size: 26px; font-weight: bold; color: white; }
         .page-subtitle { font-size: 14px; color: var(--text-muted); }
         .invalid-feedback { color: #E74C3C !important; }
+        select.form-select option,
+        select.form-control option {
+            background-color: #1A1A2E !important;
+            color: white !important;
+        }
+        select.form-select,
+        select.form-control {
+            background-color: rgba(255,255,255,0.07) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+        }
     </style>
     {% block stylesheets %}{% endblock %}
 </head>
@@ -149,6 +160,11 @@
         <div class="nav-section-title">NAVIGATION</div>
         <ul class="nav flex-column">
             <li class="nav-item">
+                <a href="{{ path('app_home') }}" class="nav-link {% if app.request.get('_route') == 'app_home' %}active{% endif %}">
+                    <i class="fas fa-home me-2"></i> Accueil
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ path('app_tache_focus_index') }}" class="nav-link {% if app.request.get('_route') starts with 'app_tache_focus' %}active{% endif %}">
                     <i class="fas fa-bullseye me-2"></i> Tâches Focus
                 </a>
@@ -156,6 +172,19 @@
             <li class="nav-item">
                 <a href="{{ path('app_sous_tache_index') }}" class="nav-link {% if app.request.get('_route') starts with 'app_sous_tache' %}active{% endif %}">
                     <i class="fas fa-check-circle me-2"></i> Sous-Tâches
+                </a>
+            </li>
+        </ul>
+        <div class="nav-section-title mt-3">BACK OFFICE</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="{{ path('app_tache_focus_new') }}" class="nav-link">
+                    <i class="fas fa-plus me-2"></i> Nouvelle Tâche
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('app_sous_tache_new') }}" class="nav-link">
+                    <i class="fas fa-plus-circle me-2"></i> Nouvelle Sous-Tâche
                 </a>
             </li>
         </ul>

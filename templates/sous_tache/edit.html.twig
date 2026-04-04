@@ -1,13 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit SousTache{% endblock %}
+{% block title %}Modifier Sous-Tâche{% endblock %}
 
 {% block body %}
-    <h1>Edit SousTache</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="page-title">✎ Modifier Sous-Tâche</h1>
+        <p class="page-subtitle">Modifiez les informations de la sous-tâche</p>
+    </div>
+    <a href="{{ path('app_sous_tache_index') }}" class="btn btn-secondary">
+        ← Retour à la liste
+    </a>
+</div>
 
-    {{ include('sous_tache/_form.html.twig', {'button_label': 'Update'}) }}
+<div class="card" style="max-width: 600px;">
+    <div class="card-header">
+        <h5 class="mb-0">📝 Formulaire de modification</h5>
+    </div>
+    <div class="card-body p-4">
+        {{ include('sous_tache/_form.html.twig', {'button_label': '✎ Modifier'}) }}
+    </div>
+</div>
 
-    <a href="{{ path('app_sous_tache_index') }}">back to list</a>
-
+<div class="mt-3">
     {{ include('sous_tache/_delete_form.html.twig') }}
+</div>
 {% endblock %}

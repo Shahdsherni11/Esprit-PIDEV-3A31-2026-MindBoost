@@ -1,4 +1,51 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+<div class="mb-3">
+    {{ form_label(form.tacheFocus) }}
+    {{ form_widget(form.tacheFocus, {'attr': {'class': 'form-select'}}) }}
+    {{ form_errors(form.tacheFocus) }}
+</div>
+<div class="mb-3">
+    {{ form_label(form.description) }}
+    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Description de la sous-tâche...'}}) }}
+    {{ form_errors(form.description) }}
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.dureeRecommandee) }}
+        {{ form_widget(form.dureeRecommandee, {'attr': {'class': 'form-control', 'min': 1, 'max': 480}}) }}
+        {{ form_errors(form.dureeRecommandee) }}
+        <small style="color: #9B9BB0;">Entre 1 et 480 minutes</small>
+    </div>
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.priorite) }}
+        {{ form_widget(form.priorite, {'attr': {'class': 'form-control', 'min': 1, 'max': 5}}) }}
+        {{ form_errors(form.priorite) }}
+        <small style="color: #9B9BB0;">Entre 1 et 5</small>
+    </div>
+</div>
+<div class="mb-3">
+    {{ form_label(form.etat) }}
+    {{ form_widget(form.etat, {'attr': {'class': 'form-select'}}) }}
+    {{ form_errors(form.etat) }}
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.heureDebut) }}
+        {{ form_widget(form.heureDebut, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.heureDebut) }}
+    </div>
+    <div class="col-md-6 mb-3">
+        {{ form_label(form.heureFin) }}
+        {{ form_widget(form.heureFin, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.heureFin) }}
+    </div>
+</div>
+<div class="mt-4 d-flex gap-2">
+    <button type="submit" class="btn btn-primary">
+        {{ button_label|default('✚ Sauvegarder') }}
+    </button>
+    <a href="{{ path('app_sous_tache_index') }}" class="btn btn-secondary">
+        Annuler
+    </a>
+</div>
 {{ form_end(form) }}
