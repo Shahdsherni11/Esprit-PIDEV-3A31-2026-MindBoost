@@ -17,10 +17,12 @@ class SavesType extends AbstractType
             ->add('postId', IntegerType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Post ID'],
                 'label' => 'Post ID',
+                'empty_data' => 0,
             ])
             ->add('userId', IntegerType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => 'User ID'],
                 'label' => 'User ID',
+                'empty_data' => 0,
             ])
             ->add('description', TextareaType::class, [
                 'required' => false,

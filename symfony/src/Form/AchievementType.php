@@ -21,6 +21,7 @@ class AchievementType extends AbstractType
             ->add('achievementScore', IntegerType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => '0'],
                 'label' => 'Score',
+                'empty_data' => 0,
             ]);
     }
 
