@@ -23,7 +23,7 @@ class AchievementController extends AbstractController
     public function index(): Response
     {
         return $this->render('achievement/index.html.twig', [
-            'achievements' => $this->achievementRepository->findBy([], ['acheivementScore' => 'DESC']),
+            'achievements' => $this->achievementRepository->findBy([], ['achievementScore' => 'DESC']),
         ]);
     }
 

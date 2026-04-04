@@ -14,11 +14,11 @@ class AchievementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('acheivementName', TextType::class, [
+            ->add('achievementName', TextType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Achievement name'],
                 'label' => 'Achievement Name',
             ])
-            ->add('acheivementScore', IntegerType::class, [
+            ->add('achievementScore', IntegerType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => '0'],
                 'label' => 'Score',
             ]);

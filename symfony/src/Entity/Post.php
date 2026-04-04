@@ -39,7 +39,7 @@ class Post
     private int $userId = 0;
 
     #[ORM\Column(name: 'acheivement_id', type: 'integer', nullable: true)]
-    private ?int $acheivementId = null;
+    private ?int $achievementId = null;
 
     public function getId(): ?int { return $this->id; }
 
@@ -67,6 +67,6 @@ class Post
     public function getUserId(): int { return $this->userId; }
     public function setUserId(int $userId): static { $this->userId = $userId; return $this; }
 
-    public function getAcheivementId(): ?int { return $this->acheivementId; }
-    public function setAcheivementId(?int $acheivementId): static { $this->acheivementId = $acheivementId; return $this; }
+    public function getAchievementId(): ?int { return $this->achievementId; }
+    public function setAchievementId(?int $achievementId): static { $this->achievementId = $achievementId; return $this; }
 }
