@@ -54,7 +54,9 @@ final class Version20260404235900 extends AbstractMigration
             $this->addSql('ALTER TABLE saves DROP PRIMARY KEY');
         }
 
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 0');
         $this->addSql('ALTER TABLE saves ADD COLUMN id INT AUTO_INCREMENT NOT NULL PRIMARY KEY FIRST');
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function down(Schema $schema): void

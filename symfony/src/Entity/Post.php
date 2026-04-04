@@ -48,10 +48,10 @@ class Post
     public function getId(): ?int { return $this->id; }
 
     public function getContent(): string { return $this->content; }
-    public function setContent(string $content): static { $this->content = $content; return $this; }
+    public function setContent(?string $content): static { $this->content = $content ?? ''; return $this; }
 
     public function getTitle(): string { return $this->title; }
-    public function setTitle(string $title): static { $this->title = $title; return $this; }
+    public function setTitle(?string $title): static { $this->title = $title ?? ''; return $this; }
 
     public function getTag(): ?string { return $this->tag; }
     public function setTag(?string $tag): static { $this->tag = $tag; return $this; }
