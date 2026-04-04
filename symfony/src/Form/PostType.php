@@ -17,10 +17,12 @@ class PostType extends AbstractType
             ->add('title', TextType::class, [
                 'attr' => ['class' => 'form-control', 'placeholder' => 'Post title'],
                 'label' => 'Title',
+                'empty_data' => '',
             ])
             ->add('content', TextareaType::class, [
                 'attr' => ['class' => 'form-control', 'rows' => 6, 'placeholder' => 'Write your post content here...'],
                 'label' => 'Content',
+                'empty_data' => '',
             ])
             ->add('tag', TextType::class, [
                 'required' => false,
