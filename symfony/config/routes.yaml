@@ -1,5 +1,11 @@
-controllers:
+front_controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Controller/FrontOffice/
+        namespace: App\Controller\FrontOffice
+    type: attribute
+
+back_controllers:
+    resource:
+        path: ../src/Controller/BackOffice/
+        namespace: App\Controller\BackOffice
     type: attribute

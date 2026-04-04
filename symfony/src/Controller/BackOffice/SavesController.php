@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\BackOffice;
 
 use App\Entity\Saves;
 use App\Form\SavesType;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/saves')]
+#[Route('/admin/saves')]
 class SavesController extends AbstractController
 {
     public function __construct(
@@ -19,15 +19,15 @@ class SavesController extends AbstractController
         private SavesRepository $savesRepository
     ) {}
 
-    #[Route('', name: 'saves_index', methods: ['GET'])]
+    #[Route('', name: 'back_saves_index', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('saves/index.html.twig', [
+        return $this->render('back/saves/index.html.twig', [
             'saves' => $this->savesRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'saves_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'back_saves_new', methods: ['GET', 'POST'])]
     public function new(Request $request): Response
     {
         $save = new Saves();
@@ -38,15 +38,15 @@ class SavesController extends AbstractController
             $this->em->persist($save);
             $this->em->flush();
             $this->addFlash('success', 'Post saved!');
-            return $this->redirectToRoute('saves_index');
+            return $this->redirectToRoute('back_saves_index');
         }
 
-        return $this->render('saves/new.html.twig', [
+        return $this->render('back/saves/new.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'saves_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'back_saves_edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
         $save = $this->savesRepository->find($id);
@@ -60,16 +60,16 @@ class SavesController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->em->flush();
             $this->addFlash('success', 'Save updated!');
-            return $this->redirectToRoute('saves_index');
+            return $this->redirectToRoute('back_saves_index');
         }
 
-        return $this->render('saves/edit.html.twig', [
+        return $this->render('back/saves/edit.html.twig', [
             'form' => $form->createView(),
             'save' => $save,
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'saves_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'back_saves_delete', methods: ['POST'])]
     public function delete(int $id, Request $request): Response
     {
         $save = $this->savesRepository->find($id);
@@ -83,6 +83,6 @@ class SavesController extends AbstractController
             $this->addFlash('success', 'Save deleted!');
         }
 
-        return $this->redirectToRoute('saves_index');
+        return $this->redirectToRoute('back_saves_index');
     }
 }
