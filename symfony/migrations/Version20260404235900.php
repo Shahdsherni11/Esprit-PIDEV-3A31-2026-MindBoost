@@ -19,6 +19,14 @@ use Doctrine\Migrations\AbstractMigration;
  *
  * This migration safely adds the `id` AUTO_INCREMENT PRIMARY KEY column when
  * it is missing, and is a no-op when the column already exists.
+ *
+ * MySQL errno 150 ("Foreign key constraint is incorrectly formed") occurs when
+ * ALTER TABLE forces a table rebuild and tries to re-attach existing FK
+ * constraints to the renamed temp table.  SET FOREIGN_KEY_CHECKS=0 only skips
+ * data-integrity checks, NOT structural FK validation, so it does not prevent
+ * this error.  The correct fix is to explicitly drop all FK constraints on
+ * `saves` before the ALTER TABLE and not recreate them (the Doctrine entities
+ * use plain integer columns with no ORM-level FK relationships).
  */
 final class Version20260404235900 extends AbstractMigration
 {
@@ -42,6 +50,20 @@ final class Version20260404235900 extends AbstractMigration
             return;
         }
 
+        // Drop any FK constraints on saves so that MySQL can rebuild the table
+        // without failing to re-attach them to the renamed temp table (errno 150).
+        // The Doctrine entities use plain integer columns; no FK is needed here.
+        $fkRows = $this->connection->executeQuery(
+            "SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS
+              WHERE TABLE_SCHEMA    = DATABASE()
+                AND TABLE_NAME      = 'saves'
+                AND CONSTRAINT_TYPE = 'FOREIGN KEY'"
+        )->fetchAllAssociative();
+
+        foreach ($fkRows as $row) {
+            $this->addSql('ALTER TABLE saves DROP FOREIGN KEY ' . $row['CONSTRAINT_NAME']);
+        }
+
         // Drop any existing PRIMARY KEY before adding the new auto-increment one
         $hasPk = (int) $this->connection->executeQuery(
             "SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
@@ -54,9 +76,7 @@ final class Version20260404235900 extends AbstractMigration
             $this->addSql('ALTER TABLE saves DROP PRIMARY KEY');
         }
 
-        $this->addSql('SET FOREIGN_KEY_CHECKS = 0');
         $this->addSql('ALTER TABLE saves ADD COLUMN id INT AUTO_INCREMENT NOT NULL PRIMARY KEY FIRST');
-        $this->addSql('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function down(Schema $schema): void
