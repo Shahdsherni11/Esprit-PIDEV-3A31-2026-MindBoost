@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SavesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SavesRepository::class)]
 #[ORM\Table(name: 'saves')]
@@ -17,9 +18,13 @@ class Saves
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
+    #[Assert\NotBlank(message: 'Post ID is required.')]
+    #[Assert\Positive(message: 'Post ID must be a positive integer.')]
     #[ORM\Column(name: 'post_id', type: 'integer')]
     private int $postId = 0;
 
+    #[Assert\NotBlank(message: 'User ID is required.')]
+    #[Assert\Positive(message: 'User ID must be a positive integer.')]
     #[ORM\Column(name: 'user_id', type: 'integer')]
     private int $userId = 0;
 
