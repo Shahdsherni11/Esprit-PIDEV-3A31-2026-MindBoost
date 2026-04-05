@@ -144,17 +144,17 @@
                 <small style="color:#F39C12" class="fw-bold">{{ commentRatio }}%</small>
             </div>
             <div class="ratio-bar-wrap">
-                <div class="ratio-bar-fill" style="width:{{ [commentRatio, 100]|min }}%;background:#F39C12"></div>
+                <div class="ratio-bar-fill" style="width:{{ commentRatio > 100 ? 100 : commentRatio }}%;background:#F39C12"></div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="d-flex justify-content-between mb-1">
                 <small style="color:#1ABC9C">Save Rate</small>
                 {% set saveRatio = totalInteractions > 0 ? (savesCount / totalInteractions * 100)|round(1) : 0 %}
-                <small style="color:#1ABC9C" class="fw-bold">{{ [saveRatio, 100]|min }}%</small>
+                <small style="color:#1ABC9C" class="fw-bold">{{ saveRatio > 100 ? 100 : saveRatio }}%</small>
             </div>
             <div class="ratio-bar-wrap">
-                <div class="ratio-bar-fill" style="width:{{ [saveRatio, 100]|min }}%;background:#1ABC9C"></div>
+                <div class="ratio-bar-fill" style="width:{{ saveRatio > 100 ? 100 : saveRatio }}%;background:#1ABC9C"></div>
             </div>
         </div>
     </div>
