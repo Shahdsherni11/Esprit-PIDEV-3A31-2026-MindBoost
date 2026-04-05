@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\PostRepository;
 use App\Service\AIService;
+use App\Service\ProfanityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,7 +20,8 @@ class PostController extends AbstractController
     public function __construct(
         private EntityManagerInterface $em,
         private PostRepository $postRepository,
-        private AIService $aiService
+        private AIService $aiService,
+        private ProfanityService $profanityService
     ) {}
 
     #[Route('', name: 'front_post_index', methods: ['GET'])]
@@ -64,10 +66,18 @@ class PostController extends AbstractController
             'method' => 'POST',
         ]);
 
+        $postProfane = $this->profanityService->isProfane($post->getTitle() . ' ' . $post->getContent());
+        $commentsProfane = [];
+        foreach ($comments as $comment) {
+            $commentsProfane[$comment->getId()] = $this->profanityService->isProfane($comment->getComment());
+        }
+
         return $this->render('front/post/show.html.twig', [
             'post' => $post,
             'comments' => $comments,
             'commentForm' => $commentForm->createView(),
+            'postProfane' => $postProfane,
+            'commentsProfane' => $commentsProfane,
         ]);
     }
 

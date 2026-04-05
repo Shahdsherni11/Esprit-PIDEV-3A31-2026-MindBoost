@@ -8,6 +8,7 @@ use App\Repository\CommentRepository;
 use App\Service\ProfanityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,6 +37,30 @@ class CommentController extends AbstractController
             $this->em->persist($comment);
             $this->em->flush();
             $this->addFlash('success', 'Comment added!');
+        }
+
+        return $this->redirectToRoute('front_post_show', ['id' => $postId]);
+    }
+
+    #[Route('/{id}/react', name: 'front_comment_react', methods: ['POST'])]
+    public function react(int $postId, int $id, Request $request): JsonResponse|Response
+    {
+        $comment = $this->commentRepository->find($id);
+        if (!$comment || $comment->getPostId() !== $postId) {
+            throw $this->createNotFoundException('Comment not found.');
+        }
+
+        $type = $request->request->get('type');
+        if ($type === 'like') {
+            $comment->setLikes($comment->getLikes() + 1);
+        } elseif ($type === 'dislike') {
+            $comment->setDislikes($comment->getDislikes() + 1);
+        }
+
+        $this->em->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(['likes' => $comment->getLikes(), 'dislikes' => $comment->getDislikes()]);
         }
 
         return $this->redirectToRoute('front_post_show', ['id' => $postId]);
