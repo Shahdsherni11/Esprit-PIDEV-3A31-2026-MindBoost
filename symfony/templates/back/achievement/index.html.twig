@@ -1,0 +1,60 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Manage Achievements — Admin MindBoost{% endblock %}
+{% block page_title %}Manage Achievements{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ achievements|length }} achievement(s) total</span>
+    <a href="{{ path('back_achievement_new') }}" class="btn btn-warning btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>New Achievement
+    </a>
+</div>
+
+{% if achievements is empty %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-trophy display-4"></i>
+    <p class="mt-2">No achievements yet. <a href="{{ path('back_achievement_new') }}">Create the first one!</a></p>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for achievement in achievements %}
+                    <tr>
+                        <td>{{ achievement.id }}</td>
+                        <td><i class="bi bi-trophy text-warning me-1"></i>{{ achievement.achievementName }}</td>
+                        <td><span class="badge bg-warning">{{ achievement.achievementScore }} pts</span></td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ path('back_achievement_edit', {id: achievement.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="post" action="{{ path('back_achievement_delete', {id: achievement.id}) }}"
+                                      onsubmit="return confirm('Delete this achievement?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_achievement' ~ achievement.id) }}">
+                                    <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 8px;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saved Posts — MindBoost{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-bookmark me-2 text-info"></i>Saved Posts</h2>
+    <a href="{{ path('saves_new') }}" class="btn btn-info text-white">
+        <i class="bi bi-plus-lg me-1"></i>Save a Post
+    </a>
+</div>
+
+{% if saves is empty %}
+<div class="text-center py-5 text-muted">
+    <i class="bi bi-bookmark display-4"></i>
+    <p class="mt-2">No saved posts. <a href="{{ path('post_index') }}">Browse posts</a> to save some!</p>
+</div>
+{% else %}
+<div class="row g-3">
+    {% for save in saves %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-bold mb-1">
+                            <a href="{{ path('post_show', {id: save.postId}) }}" class="text-decoration-none">
+                                <i class="bi bi-file-post me-1 text-primary"></i>Post #{{ save.postId }}
+                            </a>
+                        </div>
+                        <small class="text-muted">User #{{ save.userId }}</small>
+                        {% if save.description %}
+                        <p class="mt-2 mb-0 text-muted small">{{ save.description }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-1">
+                        <a href="{{ path('saves_edit', {id: save.id}) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="post" action="{{ path('saves_delete', {id: save.id}) }}"
+                              onsubmit="return confirm('Remove this save?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
+                            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

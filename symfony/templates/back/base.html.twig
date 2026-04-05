@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin — MindBoost{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%); min-height: 100vh; color: #E8E8F0; font-family: 'Segoe UI', Arial, sans-serif; }
+        .sidebar { width: 240px; min-height: 100vh; background: linear-gradient(to bottom, #0D0D1A, #1A1A2E); position: fixed; top: 0; left: 0; z-index: 100; box-shadow: 5px 0 20px rgba(108,99,255,0.3); }
+        .sidebar .brand { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(108,99,255,0.2); }
+        .sidebar .nav-link { color: #9B9BB0; padding: .75rem 1.5rem; border-radius: 0; display: flex; align-items: center; gap: .6rem; font-size: .95rem; transition: all 0.2s ease; }
+        .sidebar .nav-link:hover { color: #fff; background: rgba(108,99,255,0.18); }
+        .sidebar .nav-link.active { color: #fff; background: linear-gradient(to right, rgba(108,99,255,0.4), transparent); border-left: 3px solid #6C63FF; }
+        .sidebar .nav-section { color: rgba(255,255,255,.3); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 1rem 1.5rem .25rem; }
+        .main-content { margin-left: 240px; min-height: 100vh; }
+        .topbar { background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08); padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+        .card { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 14px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.25); color: #E8E8F0; }
+        .card-body { color: #E8E8F0; }
+        .stat-card { border-left: 4px solid; }
+        .flash-messages { position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 280px; }
+        h1, h2, h3, h4, h5, h6 { color: #E8E8F0; }
+        .text-muted { color: #9B9BB0 !important; }
+        .text-dark { color: #E8E8F0 !important; }
+        a { color: #9A8CFF; }
+        a:hover { color: #6C63FF; }
+        .btn { border-radius: 8px; }
+        .btn-primary { background: linear-gradient(to right, #6C63FF, #5A52D5) !important; border: none !important; color: #fff !important; font-weight: 600; }
+        .btn-primary:hover { background: linear-gradient(to right, #7B73FF, #6C63FF) !important; }
+        .btn-danger { background: linear-gradient(to right, #E74C3C, #C0392B) !important; border: none !important; color: #fff !important; }
+        .btn-warning { background: linear-gradient(to right, #F39C12, #E67E22) !important; border: none !important; color: #fff !important; }
+        .btn-outline-primary { border-color: #6C63FF !important; color: #9A8CFF !important; }
+        .btn-outline-primary:hover { background: rgba(108,99,255,0.25) !important; color: #E8E8F0 !important; }
+        .btn-outline-danger { border-color: #E74C3C !important; color: #E74C3C !important; }
+        .btn-outline-danger:hover { background: rgba(231,76,60,0.2) !important; color: #E74C3C !important; }
+        .btn-outline-warning { border-color: #F39C12 !important; color: #F39C12 !important; }
+        .btn-outline-warning:hover { background: rgba(243,156,18,0.2) !important; color: #F39C12 !important; }
+        .btn-outline-secondary { border-color: rgba(255,255,255,0.25) !important; color: #9B9BB0 !important; }
+        .btn-close { filter: invert(1) grayscale(1); }
+        .form-control, .form-select { background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.15) !important; color: #E8E8F0 !important; border-radius: 8px !important; }
+        .form-control:focus, .form-select:focus { background: rgba(255,255,255,0.12) !important; border-color: #6C63FF !important; box-shadow: 0 0 0 0.2rem rgba(108,99,255,0.3) !important; color: #E8E8F0 !important; }
+        .form-control::placeholder { color: #9B9BB0 !important; }
+        .form-label { color: #BFC6E6; font-weight: 500; }
+        .table { color: #E8E8F0; }
+        .table th { color: #BFC6E6; border-color: rgba(255,255,255,0.1); }
+        .table td { border-color: rgba(255,255,255,0.07); }
+        .table-hover tbody tr:hover { background: rgba(108,99,255,0.1); color: #E8E8F0; }
+        .badge.bg-primary { background: #6C63FF !important; }
+        .badge.bg-success { background: #2ECC71 !important; color: #1A1A2E !important; }
+        .badge.bg-danger  { background: #E74C3C !important; }
+        .badge.bg-warning { background: #F39C12 !important; color: #1A1A2E !important; }
+        .alert-success { background: rgba(46,204,113,0.15) !important; border-color: rgba(46,204,113,0.35) !important; color: #2ECC71 !important; }
+        .alert-danger   { background: rgba(231,76,60,0.15) !important; border-color: rgba(231,76,60,0.35) !important; color: #E74C3C !important; }
+        .alert-info     { background: rgba(78,205,196,0.15) !important; border-color: rgba(78,205,196,0.35) !important; color: #4ECDC4 !important; }
+        hr { border-color: rgba(255,255,255,0.1); }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar d-flex flex-column">
+        <div class="brand">
+            <a href="{{ path('back_dashboard') }}" class="text-white text-decoration-none fw-bold fs-5">
+                <i class="bi bi-brain me-2"></i>MindBoost
+            </a>
+            <div class="text-white-50 small mt-1">Admin Panel</div>
+        </div>
+        <nav class="flex-grow-1 pt-2">
+            <div class="nav-section">Overview</div>
+            <a href="{{ path('back_dashboard') }}" class="nav-link {{ app.request.pathInfo == '/admin' ? 'active' : '' }}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <div class="nav-section">Content</div>
+            <a href="{{ path('back_post_index') }}" class="nav-link {{ app.request.pathInfo starts with '/admin/posts' ? 'active' : '' }}">
+                <i class="bi bi-file-post"></i> Posts
+            </a>
+            <a href="{{ path('back_achievement_index') }}" class="nav-link {{ app.request.pathInfo starts with '/admin/achievements' ? 'active' : '' }}">
+                <i class="bi bi-trophy"></i> Achievements
+            </a>
+            <a href="{{ path('back_saves_index') }}" class="nav-link {{ app.request.pathInfo starts with '/admin/saves' ? 'active' : '' }}">
+                <i class="bi bi-bookmark"></i> Saves
+            </a>
+        </nav>
+        <div class="p-3 border-top border-secondary">
+            <a href="{{ path('front_home') }}" class="nav-link text-white-50">
+                <i class="bi bi-box-arrow-left me-1"></i> Back to Site
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <h6 class="mb-0 fw-semibold text-muted">{% block page_title %}Dashboard{% endblock %}</h6>
+            <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ "now"|date("d M Y") }}</small>
+        </div>
+
+        <div class="flash-messages">
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'success' ? 'success' : (type == 'error' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <div class="p-4">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Manage Saves — Admin MindBoost{% endblock %}
+{% block page_title %}Manage Saves{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ saves|length }} save(s) total</span>
+    <a href="{{ path('back_saves_new') }}" class="btn btn-info text-white btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>New Save
+    </a>
+</div>
+
+{% if saves is empty %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-bookmark display-4"></i>
+    <p class="mt-2">No saves yet.</p>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Post</th>
+                        <th>User</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for save in saves %}
+                    <tr>
+                        <td>{{ save.id }}</td>
+                        <td>
+                            <a href="{{ path('front_post_show', {id: save.postId}) }}" class="text-decoration-none" target="_blank">
+                                Post #{{ save.postId }}
+                            </a>
+                        </td>
+                        <td>User #{{ save.userId }}</td>
+                        <td>{{ save.description|default('—') }}</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a href="{{ path('back_saves_edit', {id: save.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="post" action="{{ path('back_saves_delete', {id: save.id}) }}"
+                                      onsubmit="return confirm('Remove this save?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
+                                    <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 8px;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
