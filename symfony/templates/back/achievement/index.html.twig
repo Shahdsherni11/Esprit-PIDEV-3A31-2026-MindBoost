@@ -34,7 +34,7 @@
                     <tr>
                         <td>{{ achievement.id }}</td>
                         <td><i class="bi bi-trophy text-warning me-1"></i>{{ achievement.achievementName }}</td>
-                        <td><span class="badge bg-warning text-dark">{{ achievement.achievementScore }} pts</span></td>
+                        <td><span class="badge bg-warning">{{ achievement.achievementScore }} pts</span></td>
                         <td>
                             <div class="d-flex gap-1">
                                 <a href="{{ path('back_achievement_edit', {id: achievement.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;">
