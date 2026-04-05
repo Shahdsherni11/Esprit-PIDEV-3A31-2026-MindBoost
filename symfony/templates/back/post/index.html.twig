@@ -40,7 +40,7 @@
                                 {{ post.title|slice(0, 60) }}{% if post.title|length > 60 %}...{% endif %}
                             </a>
                         </td>
-                        <td>{% if post.tag %}<span class="badge bg-light text-dark">{{ post.tag }}</span>{% endif %}</td>
+                        <td>{% if post.tag %}<span class="badge bg-secondary">{{ post.tag }}</span>{% endif %}</td>
                         <td><span class="badge bg-success">{{ post.likes }}</span></td>
                         <td><span class="badge bg-danger">{{ post.dislikes }}</span></td>
                         <td>
