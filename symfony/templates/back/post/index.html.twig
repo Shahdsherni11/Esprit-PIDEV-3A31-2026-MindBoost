@@ -25,6 +25,7 @@
                     <tr>
                         <th>#</th>
                         <th>Title</th>
+                        <th>User ID</th>
                         <th>Tag</th>
                         <th>Likes</th>
                         <th>Dislikes</th>
@@ -40,11 +41,15 @@
                                 {{ post.title|slice(0, 60) }}{% if post.title|length > 60 %}...{% endif %}
                             </a>
                         </td>
+                        <td><span class="badge bg-primary" title="Author User ID"><i class="bi bi-person-fill me-1"></i>{{ post.userId }}</span></td>
                         <td>{% if post.tag %}<span class="badge bg-secondary">{{ post.tag }}</span>{% endif %}</td>
                         <td><span class="badge bg-success">{{ post.likes }}</span></td>
                         <td><span class="badge bg-danger">{{ post.dislikes }}</span></td>
                         <td>
                             <div class="d-flex gap-1">
+                                <a href="{{ path('back_post_stats', {id: post.id}) }}" class="btn btn-xs btn-outline-warning" style="font-size:.75rem;padding:2px 8px;" title="Stats">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </a>
                                 <a href="{{ path('back_post_edit', {id: post.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>

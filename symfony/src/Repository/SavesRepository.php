@@ -24,4 +24,14 @@ class SavesRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function countByPostId(int $postId): int
+    {
+        return (int) $this->createQueryBuilder('s')
+            ->select('COUNT(s.id)')
+            ->andWhere('s.postId = :postId')
+            ->setParameter('postId', $postId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

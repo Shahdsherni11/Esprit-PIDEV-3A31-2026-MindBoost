@@ -1,0 +1,412 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Post Stats #{{ post.id }} — Admin MindBoost{% endblock %}
+{% block page_title %}Post Stats — {{ post.title|slice(0,40) }}{% if post.title|length > 40 %}…{% endif %}{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .kpi-card { border-radius: 14px; padding: 1.25rem 1.5rem; position: relative; overflow: hidden; }
+    .kpi-card .kpi-value { font-size: 2rem; font-weight: 700; line-height: 1.1; }
+    .kpi-card .kpi-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .8px; opacity: .75; margin-top: .2rem; }
+    .kpi-card .kpi-icon { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 3.5rem; opacity: .12; }
+    .kpi-likes    { background: linear-gradient(135deg,#2ECC71,#27AE60); color: #fff; }
+    .kpi-dislikes { background: linear-gradient(135deg,#E74C3C,#C0392B); color: #fff; }
+    .kpi-help     { background: linear-gradient(135deg,#3498DB,#2980B9); color: #fff; }
+    .kpi-saves    { background: linear-gradient(135deg,#9B59B6,#8E44AD); color: #fff; }
+    .kpi-comments { background: linear-gradient(135deg,#F39C12,#E67E22); color: #fff; }
+    .kpi-engage   { background: linear-gradient(135deg,#1ABC9C,#16A085); color: #fff; }
+    .chart-card   { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 14px; padding: 1.25rem; }
+    .chart-title  { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .7px; color: #9A8CFF; margin-bottom: 1rem; }
+    .ratio-bar-wrap { height: 24px; border-radius: 12px; overflow: hidden; background: rgba(255,255,255,0.08); }
+    .ratio-bar-fill { height: 100%; border-radius: 12px; transition: width .6s ease; }
+</style>
+{% endblock %}
+
+{% block body %}
+{# ── Breadcrumb ── #}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="background:transparent;padding:0;">
+        <li class="breadcrumb-item"><a href="{{ path('back_post_index') }}">Posts</a></li>
+        <li class="breadcrumb-item active text-muted">Stats #{{ post.id }}</li>
+    </ol>
+</nav>
+
+{# ── Post header info ── #}
+<div class="card mb-4 p-3">
+    <div class="d-flex align-items-start gap-3 flex-wrap">
+        {% if post.imageUrl %}
+        <img src="{{ post.imageUrl }}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:10px;">
+        {% endif %}
+        <div>
+            <h4 class="mb-1">{{ post.title }}</h4>
+            <div class="d-flex gap-3 flex-wrap">
+                <span class="text-muted small"><i class="bi bi-person-fill me-1"></i>User ID: <strong class="text-white">{{ post.userId }}</strong></span>
+                {% if post.tag %}<span class="badge bg-secondary">{{ post.tag }}</span>{% endif %}
+                {% if post.achievementId %}<span class="text-muted small"><i class="bi bi-trophy me-1"></i>Achievement #{{ post.achievementId }}</span>{% endif %}
+            </div>
+        </div>
+        <a href="{{ path('back_post_index') }}" class="btn btn-sm btn-outline-secondary ms-auto">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+</div>
+
+{# ── KPI Cards ── #}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-likes">
+            <div class="kpi-value">{{ post.likes }}</div>
+            <div class="kpi-label">Likes</div>
+            <i class="bi bi-hand-thumbs-up kpi-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-dislikes">
+            <div class="kpi-value">{{ post.dislikes }}</div>
+            <div class="kpi-label">Dislikes</div>
+            <i class="bi bi-hand-thumbs-down kpi-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-help">
+            <div class="kpi-value">{{ post.helpMeter }}</div>
+            <div class="kpi-label">Help Meter</div>
+            <i class="bi bi-heart-pulse kpi-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-comments">
+            <div class="kpi-value">{{ commentCount }}</div>
+            <div class="kpi-label">Comments</div>
+            <i class="bi bi-chat-dots kpi-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-saves">
+            <div class="kpi-value">{{ savesCount }}</div>
+            <div class="kpi-label">Saves</div>
+            <i class="bi bi-bookmark-star kpi-icon"></i>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="kpi-card kpi-engage">
+            <div class="kpi-value">{{ engagementRate }}%</div>
+            <div class="kpi-label">Engagement</div>
+            <i class="bi bi-lightning-charge kpi-icon"></i>
+        </div>
+    </div>
+</div>
+
+{# ── Ratio bars ── #}
+<div class="card mb-4 p-3">
+    <div class="chart-title">Interaction Breakdown</div>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small class="text-success">Like Rate</small>
+                <small class="text-success fw-bold">{{ likeRate }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill bg-success" style="width:{{ likeRate }}%"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small class="text-danger">Dislike Rate</small>
+                <small class="text-danger fw-bold">{{ dislikeRate }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill bg-danger" style="width:{{ dislikeRate }}%"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small class="text-info">Help Rate</small>
+                <small class="text-info fw-bold">{{ helpRate }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill bg-info" style="width:{{ helpRate }}%"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small style="color:#9A8CFF">Comment Positivity</small>
+                <small style="color:#9A8CFF" class="fw-bold">{{ commentPositiveRate }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill" style="width:{{ commentPositiveRate }}%;background:#9A8CFF"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small style="color:#F39C12">Comments per Interaction</small>
+                {% set commentRatio = totalInteractions > 0 ? (commentCount / totalInteractions * 100)|round(1) : 0 %}
+                <small style="color:#F39C12" class="fw-bold">{{ commentRatio }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill" style="width:{{ [commentRatio, 100]|min }}%;background:#F39C12"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small style="color:#1ABC9C">Save Rate</small>
+                {% set saveRatio = totalInteractions > 0 ? (savesCount / totalInteractions * 100)|round(1) : 0 %}
+                <small style="color:#1ABC9C" class="fw-bold">{{ [saveRatio, 100]|min }}%</small>
+            </div>
+            <div class="ratio-bar-wrap">
+                <div class="ratio-bar-fill" style="width:{{ [saveRatio, 100]|min }}%;background:#1ABC9C"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Charts row 1 ── #}
+<div class="row g-3 mb-3">
+    {# Chart 1 – Post Likes vs Dislikes donut #}
+    <div class="col-md-4">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-pie-chart-fill me-1"></i>Post Likes vs Dislikes</div>
+            <canvas id="chartLikesDislikes" height="220"></canvas>
+        </div>
+    </div>
+
+    {# Chart 2 – Overall engagement bar #}
+    <div class="col-md-8">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-bar-chart-fill me-1"></i>Overall Engagement Metrics</div>
+            <canvas id="chartEngagement" height="220"></canvas>
+        </div>
+    </div>
+</div>
+
+{# ── Charts row 2 ── #}
+<div class="row g-3 mb-3">
+    {# Chart 3 – Comment sentiment donut #}
+    <div class="col-md-4">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-chat-heart-fill me-1"></i>Comment Sentiment</div>
+            {% if commentCount > 0 %}
+            <canvas id="chartCommentSentiment" height="220"></canvas>
+            {% else %}
+            <div class="text-center text-muted py-5"><i class="bi bi-chat-slash display-5"></i><p class="mt-2">No comments yet</p></div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Chart 4 – Per-comment likes/dislikes line chart #}
+    <div class="col-md-8">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-graph-up me-1"></i>Per-Comment Engagement (Line)</div>
+            {% if commentEngagement|length > 0 %}
+            <canvas id="chartCommentLine" height="220"></canvas>
+            {% else %}
+            <div class="text-center text-muted py-5"><i class="bi bi-chat-slash display-5"></i><p class="mt-2">No comments to chart</p></div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{# ── Charts row 3 ── #}
+<div class="row g-3 mb-4">
+    {# Chart 5 – Top commenters bar #}
+    <div class="col-md-6">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-people-fill me-1"></i>Top Commenters by User ID</div>
+            {% if commentsPerUser|length > 0 %}
+            <canvas id="chartTopCommenters" height="260"></canvas>
+            {% else %}
+            <div class="text-center text-muted py-5"><i class="bi bi-people display-5"></i><p class="mt-2">No commenters yet</p></div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Chart 6 – Interaction mix doughnut (likes + dislikes + helpMeter + saves + comments) #}
+    <div class="col-md-6">
+        <div class="chart-card h-100">
+            <div class="chart-title"><i class="bi bi-donut me-1"></i>Full Interaction Mix</div>
+            <canvas id="chartMix" height="260"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+Chart.defaults.color = '#9B9BB0';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.08)';
+
+const palette = {
+    green:  '#2ECC71',
+    red:    '#E74C3C',
+    blue:   '#3498DB',
+    purple: '#9B59B6',
+    orange: '#F39C12',
+    teal:   '#1ABC9C',
+    violet: '#9A8CFF',
+};
+
+// ── Chart 1: Likes vs Dislikes (Doughnut) ──
+new Chart(document.getElementById('chartLikesDislikes'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Likes', 'Dislikes'],
+        datasets: [{
+            data: [{{ post.likes }}, {{ post.dislikes }}],
+            backgroundColor: [palette.green, palette.red],
+            borderWidth: 0,
+            hoverOffset: 8,
+        }]
+    },
+    options: {
+        cutout: '65%',
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+        }
+    }
+});
+
+// ── Chart 2: Overall Engagement Bar ──
+new Chart(document.getElementById('chartEngagement'), {
+    type: 'bar',
+    data: {
+        labels: ['Likes', 'Dislikes', 'Help Meter', 'Comments', 'Saves'],
+        datasets: [{
+            label: 'Count',
+            data: [{{ post.likes }}, {{ post.dislikes }}, {{ post.helpMeter }}, {{ commentCount }}, {{ savesCount }}],
+            backgroundColor: [palette.green, palette.red, palette.blue, palette.orange, palette.purple],
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+{% if commentCount > 0 %}
+// ── Chart 3: Comment Sentiment (Doughnut) ──
+new Chart(document.getElementById('chartCommentSentiment'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Comment Likes', 'Comment Dislikes'],
+        datasets: [{
+            data: [{{ commentLikes }}, {{ commentDislikes }}],
+            backgroundColor: [palette.teal, palette.red],
+            borderWidth: 0,
+            hoverOffset: 8,
+        }]
+    },
+    options: {
+        cutout: '65%',
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+        }
+    }
+});
+{% endif %}
+
+{% if commentEngagement|length > 0 %}
+// ── Chart 4: Per-Comment Engagement (Line) ──
+const ceLabels  = [{% for c in commentEngagement %}'{{ c.label }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const ceLikes    = [{% for c in commentEngagement %}{{ c.likes }}{% if not loop.last %},{% endif %}{% endfor %}];
+const ceDislikes = [{% for c in commentEngagement %}{{ c.dislikes }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(document.getElementById('chartCommentLine'), {
+    type: 'line',
+    data: {
+        labels: ceLabels,
+        datasets: [
+            {
+                label: 'Likes',
+                data: ceLikes,
+                borderColor: palette.green,
+                backgroundColor: 'rgba(46,204,113,0.12)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            },
+            {
+                label: 'Dislikes',
+                data: ceDislikes,
+                borderColor: palette.red,
+                backgroundColor: 'rgba(231,76,60,0.10)',
+                tension: 0.35,
+                fill: true,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom', labels: { padding: 14, boxWidth: 12 } } },
+        scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+{% endif %}
+
+{% if commentsPerUser|length > 0 %}
+// ── Chart 5: Top Commenters Bar ──
+const topUsers  = [{% for uid, cnt in commentsPerUser %}'User {{ uid }}'{% if not loop.last %},{% endif %}{% endfor %}];
+const topCounts = [{% for uid, cnt in commentsPerUser %}{{ cnt }}{% if not loop.last %},{% endif %}{% endfor %}];
+
+new Chart(document.getElementById('chartTopCommenters'), {
+    type: 'bar',
+    data: {
+        labels: topUsers,
+        datasets: [{
+            label: 'Comments',
+            data: topCounts,
+            backgroundColor: palette.violet,
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.06)' } },
+            y: { grid: { display: false } }
+        }
+    }
+});
+{% endif %}
+
+// ── Chart 6: Full Interaction Mix Doughnut ──
+new Chart(document.getElementById('chartMix'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Post Likes', 'Post Dislikes', 'Help Meter', 'Comment Likes', 'Comment Dislikes', 'Saves'],
+        datasets: [{
+            data: [{{ post.likes }}, {{ post.dislikes }}, {{ post.helpMeter }}, {{ commentLikes }}, {{ commentDislikes }}, {{ savesCount }}],
+            backgroundColor: [palette.green, palette.red, palette.blue, palette.teal, palette.orange, palette.purple],
+            borderWidth: 0,
+            hoverOffset: 10,
+        }]
+    },
+    options: {
+        cutout: '55%',
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 12, boxWidth: 12 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+        }
+    }
+});
+</script>
+{% endblock %}

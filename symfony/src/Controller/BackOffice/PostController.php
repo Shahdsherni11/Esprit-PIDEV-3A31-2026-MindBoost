@@ -5,7 +5,9 @@ namespace App\Controller\BackOffice;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
+use App\Repository\SavesRepository;
 use App\Service\ProfanityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +21,8 @@ class PostController extends AbstractController
     public function __construct(
         private EntityManagerInterface $em,
         private PostRepository $postRepository,
+        private CommentRepository $commentRepository,
+        private SavesRepository $savesRepository,
         private ProfanityService $profanityService
     ) {}
 
@@ -74,6 +78,62 @@ class PostController extends AbstractController
         return $this->render('back/post/edit.html.twig', [
             'form' => $form->createView(),
             'post' => $post,
+        ]);
+    }
+
+    #[Route('/{id}/stats', name: 'back_post_stats', methods: ['GET'])]
+    public function stats(int $id): Response
+    {
+        $post = $this->postRepository->find($id);
+        if (!$post) {
+            throw $this->createNotFoundException('Post not found.');
+        }
+
+        $comments       = $this->commentRepository->findByPostId($id);
+        $commentCount   = $this->commentRepository->countByPostId($id);
+        $commentLikes   = $this->commentRepository->sumLikesByPostId($id);
+        $commentDislikes = $this->commentRepository->sumDislikesByPostId($id);
+        $savesCount     = $this->savesRepository->countByPostId($id);
+        $commentsPerUser = $this->commentRepository->commentsPerUserByPostId($id);
+
+        // Per-comment engagement for line chart (id → likes)
+        $commentEngagement = [];
+        foreach ($comments as $c) {
+            $commentEngagement[] = [
+                'label' => '#' . $c->getId(),
+                'likes' => $c->getLikes(),
+                'dislikes' => $c->getDislikes(),
+            ];
+        }
+
+        // Engagement rate: (likes + helpMeter) / max(1, likes + dislikes + helpMeter) * 100
+        $totalInteractions = $post->getLikes() + $post->getDislikes() + $post->getHelpMeter();
+        $engagementRate = $totalInteractions > 0
+            ? round(($post->getLikes() + $post->getHelpMeter()) / $totalInteractions * 100, 1)
+            : 0;
+
+        $likeRate    = $totalInteractions > 0 ? round($post->getLikes() / $totalInteractions * 100, 1) : 0;
+        $dislikeRate = $totalInteractions > 0 ? round($post->getDislikes() / $totalInteractions * 100, 1) : 0;
+        $helpRate    = $totalInteractions > 0 ? round($post->getHelpMeter() / $totalInteractions * 100, 1) : 0;
+
+        $commentPositiveRate = ($commentLikes + $commentDislikes) > 0
+            ? round($commentLikes / ($commentLikes + $commentDislikes) * 100, 1)
+            : 0;
+
+        return $this->render('back/post/stats.html.twig', [
+            'post'               => $post,
+            'commentCount'       => $commentCount,
+            'commentLikes'       => $commentLikes,
+            'commentDislikes'    => $commentDislikes,
+            'savesCount'         => $savesCount,
+            'commentsPerUser'    => $commentsPerUser,
+            'commentEngagement'  => $commentEngagement,
+            'engagementRate'     => $engagementRate,
+            'likeRate'           => $likeRate,
+            'dislikeRate'        => $dislikeRate,
+            'helpRate'           => $helpRate,
+            'commentPositiveRate' => $commentPositiveRate,
+            'totalInteractions'  => $totalInteractions,
         ]);
     }
 
