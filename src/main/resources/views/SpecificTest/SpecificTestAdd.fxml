@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@../../styles/app.css" styleClass="main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.SpecificTestAddController"
+            prefWidth="1200" prefHeight="750">
+
+    <left><fx:include source="../Sidebar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox styleClass="content-area" spacing="20">
+
+                <!-- Header -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Button fx:id="backBtn" text="← Retour" styleClass="btn-secondary"/>
+                    <VBox spacing="4">
+                        <Label text="➕ Créer un Test Spécifique" styleClass="page-title"/>
+                        <Label text="Configurez les questions et réponses du test" styleClass="page-subtitle"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Section 1: General Info -->
+                <VBox spacing="16" styleClass="form-container">
+                    <Label text="📝 INFORMATIONS GÉNÉRALES" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
+
+                    <VBox spacing="6">
+                        <Label text="Test Général Parent" styleClass="form-label"/>
+                        <ComboBox fx:id="generalTestCombo" prefWidth="400" styleClass="dark-combo"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Catégorie" styleClass="form-label"/>
+                        <ComboBox fx:id="categoryCombo" prefWidth="400" styleClass="dark-combo"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Titre du Test" styleClass="form-label"/>
+                        <TextField fx:id="titleField" promptText="Titre du test" styleClass="form-field"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Description" styleClass="form-label"/>
+                        <TextArea fx:id="descriptionArea" promptText="Description..." prefRowCount="3" wrapText="true" styleClass="form-area"/>
+                    </VBox>
+
+                    <VBox spacing="6">
+                        <Label text="Statut" styleClass="form-label"/>
+                        <ComboBox fx:id="statusCombo" prefWidth="200" styleClass="dark-combo"/>
+                    </VBox>
+                </VBox>
+
+                <!-- Section 2: Questions -->
+                <VBox spacing="16" styleClass="form-container">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="❓ QUESTIONS DU TEST" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6C63FF;"/>
+                        <Label fx:id="questionsCountLabel" text="0/13"
+                               style="-fx-font-size: 13px; -fx-text-fill: #E74C3C; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <Separator style="-fx-background-color: rgba(255,255,255,0.08);"/>
+
+                    <Button fx:id="addQuestionBtn" text="➕ Ajouter une Question" styleClass="btn-primary"/>
+                    <VBox fx:id="questionsContainer" spacing="10" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <!-- Actions -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button fx:id="cancelBtn" text="❌ Annuler" styleClass="btn-secondary"/>
+                    <Button fx:id="saveBtn" text="✅ Créer le Test" styleClass="btn-primary"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.gestion_test.controllers.SidebarController"
+      spacing="0" prefWidth="220"
+      style="-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-width: 0 1 0 0;
+             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 2, 0);">
+
+    <!-- ===== LOGO ===== -->
+    <VBox alignment="CENTER_LEFT" spacing="2"
+          style="-fx-padding: 20 18 15 18;">
+        <Label text="🧠 MindBoost"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #5b8def;"/>
+        <Label text="Gestion des Tests"
+               style="-fx-font-size: 10px; -fx-text-fill: #9ca3af;"/>
+    </VBox>
+
+    <Separator style="-fx-border-color: #e5e7eb;"/>
+
+    <!-- ===== MENU TESTS ===== -->
+    <VBox spacing="0" style="-fx-padding: 12 8;">
+        <Label text="GESTION DES TESTS"
+               style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #9ca3af;
+                      -fx-padding: 0 10 8 10;"/>
+        <Button text="📋  Tests Généraux" maxWidth="1.7976931348623157E308"
+                onAction="#handleOpenGeneralTests"
+                style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-font-size: 13px;
+                       -fx-font-weight: 600; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;"/>
+        <Button text="🎯  Tests Spécifiques" maxWidth="1.7976931348623157E308"
+                onAction="#handleOpenSpecificTests"
+                style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-font-size: 13px;
+                       -fx-font-weight: 600; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;"/>
+    </VBox>
+
+    <Separator style="-fx-border-color: #f3f4f6;"/>
+
+    <!-- ===== MENU ANALYSE ===== -->
+    <VBox spacing="0" style="-fx-padding: 12 8;">
+        <Label text="ANALYSE"
+               style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #9ca3af;
+                      -fx-padding: 0 10 8 10;"/>
+        <Button text="📊  Statistiques" maxWidth="1.7976931348623157E308"
+                onAction="#handleOpenStatistics"
+                style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-font-size: 13px;
+                       -fx-font-weight: 600; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;"/>
+    </VBox>
+
+    <Separator style="-fx-border-color: #f3f4f6;"/>
+
+    <!-- ===== PARAMÈTRES ===== -->
+    <VBox spacing="0" style="-fx-padding: 12 8;">
+        <Label text="PARAMÈTRES"
+               style="-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #9ca3af;
+                      -fx-padding: 0 10 8 10;"/>
+        <Button text="👤  Profile" maxWidth="1.7976931348623157E308"
+                style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-font-size: 13px;
+                       -fx-font-weight: 600; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;"/>
+        <Button text="⚙️  Paramètres" maxWidth="1.7976931348623157E308"
+                style="-fx-background-color: transparent; -fx-text-fill: #374151; -fx-font-size: 13px;
+                       -fx-font-weight: 600; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;"/>
+    </VBox>
+
+    <!-- ===== SPACER ===== -->
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- ===== DÉCONNEXION ===== -->
+    <VBox style="-fx-padding: 8;">
+        <Separator style="-fx-border-color: #f3f4f6;"/>
+        <Button text="🚪  Déconnexion" maxWidth="1.7976931348623157E308"
+                onAction="#handleLogout"
+                style="-fx-background-color: #fef2f2; -fx-text-fill: #dc2626; -fx-font-size: 13px;
+                       -fx-font-weight: bold; -fx-alignment: CENTER_LEFT; -fx-padding: 10 14;
+                       -fx-cursor: hand; -fx-background-radius: 8;
+                       -fx-border-color: #fecaca; -fx-border-radius: 8; -fx-border-width: 1;"/>
+    </VBox>
+
+    <!-- ===== VERSION ===== -->
+    <Label text="v1.0"
+           style="-fx-font-size: 10px; -fx-text-fill: #d1d5db; -fx-padding: 5 0 10 0;
+                  -fx-alignment: CENTER;"
+           maxWidth="1.7976931348623157E308" alignment="CENTER"/>
+</VBox>

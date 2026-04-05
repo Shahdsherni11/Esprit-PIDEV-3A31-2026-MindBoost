@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.gestion_test.controllers.GeneralTestListController"
+            stylesheets="@../../styles/app.css"
+            styleClass="main-bg"
+            prefWidth="1200" prefHeight="750">
+
+    <!-- ===== SIDEBAR STYLE EQUIPE ===== -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:30 20 20 20;">
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:#6C63FF;">Boost</Text>
+            </HBox>
+
+            <Label fx:id="sidebarRoleLabel" text="PSYCHOLOGUE"
+                   style="-fx-text-fill:rgba(255,255,255,0.3); -fx-font-size:10px; -fx-font-weight:bold; -fx-padding:0 20 15 20;"/>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+
+            <VBox spacing="2" style="-fx-padding:10 0;">
+                <Button text="🏠  Dashboard" styleClass="nav-button"
+                        onAction="#handleOpenDashboard"/>
+                <Button text="📋  Tests Generaux" styleClass="nav-button, nav-button-active"/>
+                <Button text="🎯  Tests Specifiques" styleClass="nav-button"
+                        onAction="#handleOpenSpecificTests"/>
+                <Button text="📊  Statistiques" styleClass="nav-button"
+                        onAction="#handleOpenStatistics"/>
+            </VBox>
+
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button text="🚪  Deconnexion" styleClass="nav-button"
+                    onAction="#handleLogout"
+                    style="-fx-text-fill:#E74C3C; -fx-padding:15 20 20 25;"/>
+        </VBox>
+    </left>
+
+    <!-- ===== CONTENU PRINCIPAL ===== -->
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="20">
+
+                <!-- HEADER -->
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <VBox spacing="4" HBox.hgrow="ALWAYS">
+                        <Label text="Tests Generaux" styleClass="page-title"/>
+                        <Label text="Gerez vos tests QCM et consultez les statistiques" styleClass="page-subtitle"/>
+                    </VBox>
+                    <Button fx:id="addBtn" text="+ Nouveau Test" styleClass="btn-primary"
+                            style="-fx-padding: 12 24; -fx-font-size: 14px;"/>
+                </HBox>
+
+                <!-- STAT CARDS -->
+                <HBox spacing="20">
+                    <VBox styleClass="stat-card, card-purple" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="Total des Tests" styleClass="stat-label"/>
+                        <Label fx:id="totalLabel" text="0" styleClass="stat-number"/>
+                    </VBox>
+                    <VBox styleClass="stat-card, card-teal" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="Format" styleClass="stat-label"/>
+                        <Label text="QCM" styleClass="stat-number" style="-fx-text-fill: #4ECDC4;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- RECHERCHE -->
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField" styleClass="search-field"
+                               promptText="Rechercher par titre..." prefWidth="400"/>
+                </HBox>
+
+                <!-- LISTE DES TESTS -->
+                <ListView fx:id="testsListView" styleClass="tests-list-view"
+                          prefHeight="400" VBox.vgrow="ALWAYS"/>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            style="-fx-background-color: #f7f8fb;">
+
+    <!-- ===== TOP: HEADER ===== -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15 20; -fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-width: 0 0 1 0;">
+            <Label text="📋 Tests Généraux" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1f2937;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔓 Déconnexion" style="-fx-padding: 8 16;"/>
+        </HBox>
+    </top>
+
+    <!-- ===== CENTER: CONTENU =====-->
+    <center>
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
+            <Label text="🧪 Choisissez un test pour commencer" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            <Label text="Répondez à tous les tests pour obtenir votre diagnostic" style="-fx-font-size: 14px; -fx-text-fill: #6b7280;"/>
+
+            <!-- Espace pour la liste des tests -->
+            <ScrollPane style="-fx-fit-to-width: true;">
+                <VBox fx:id="testsList" spacing="10" style="-fx-padding: 10;"/>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
