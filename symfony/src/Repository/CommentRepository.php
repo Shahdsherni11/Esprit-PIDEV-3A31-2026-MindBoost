@@ -25,4 +25,53 @@ class CommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function countByPostId(int $postId): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->andWhere('c.postId = :postId')
+            ->setParameter('postId', $postId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function sumLikesByPostId(int $postId): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('SUM(c.likes)')
+            ->andWhere('c.postId = :postId')
+            ->setParameter('postId', $postId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function sumDislikesByPostId(int $postId): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('SUM(c.dislikes)')
+            ->andWhere('c.postId = :postId')
+            ->setParameter('postId', $postId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /** Returns [ userId => commentCount ] for the given post, sorted desc. */
+    public function commentsPerUserByPostId(int $postId): array
+    {
+        $rows = $this->createQueryBuilder('c')
+            ->select('c.userId, COUNT(c.id) AS cnt')
+            ->andWhere('c.postId = :postId')
+            ->setParameter('postId', $postId)
+            ->groupBy('c.userId')
+            ->orderBy('cnt', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['userId']] = (int) $row['cnt'];
+        }
+        return $result;
+    }
 }
