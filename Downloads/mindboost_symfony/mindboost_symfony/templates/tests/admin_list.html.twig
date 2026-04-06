@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des Tests{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>🧪 Gestion des Tests</h1>
+    <a href="{{ path('app_admin_test_new') }}" class="btn btn-primary">➕ Nouveau test</a>
+</div>
+
+{% if stats %}
+<div class="stats-grid stats-grid-sm">
+    {% for s in stats %}
+    <div class="stat-card {% if s.status == 'ACTIVE' %}stat-green{% elseif s.status == 'DRAFT' %}stat-orange{% else %}stat-red{% endif %}">
+        <div class="stat-icon">{{ s.status == 'ACTIVE' ? '✅' : (s.status == 'DRAFT' ? '📝' : '🚫') }}</div>
+        <div class="stat-info"><span class="stat-number">{{ s.total }}</span><span class="stat-label">{{ s.status }}</span></div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="search-bar">
+    <form method="get" class="search-form">
+        <input type="text" name="q" value="{{ keyword }}" placeholder="🔍 Rechercher..." class="form-control search-input">
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <a href="{{ path('app_admin_test_list') }}" class="btn btn-outline">Reset</a>
+    </form>
+</div>
+
+<div class="table-container">
+    <table class="table table-hover">
+        <thead><tr><th>#</th><th>Titre</th><th>Statut</th><th>Questions</th><th>Créé le</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for test in tests %}
+        <tr>
+            <td>{{ test.id }}</td>
+            <td><strong>{{ test.title }}</strong>{% if test.description %}<br><small class="text-muted">{{ test.description|slice(0,60) }}...</small>{% endif %}</td>
+            <td>
+                <span class="badge {% if test.status == 'ACTIVE' %}badge-success{% elseif test.status == 'DRAFT' %}badge-warning{% else %}badge-danger{% endif %}">
+                    {{ test.status }}
+                </span>
+            </td>
+            <td>{{ test.questions|length }}</td>
+            <td>{{ test.createdAt|date('d/m/Y') }}</td>
+            <td class="actions-cell">
+                <a href="{{ path('app_test_show', {id: test.id}) }}" class="btn btn-xs btn-info" title="Voir">👁</a>
+                <a href="{{ path('app_admin_test_questions', {id: test.id}) }}" class="btn btn-xs btn-primary" title="Questions">❓</a>
+                <a href="{{ path('app_admin_test_edit', {id: test.id}) }}" class="btn btn-xs btn-warning" title="Modifier">✏️</a>
+                <form method="post" action="{{ path('app_admin_test_delete', {id: test.id}) }}" style="display:inline"
+                      onsubmit="return confirm('Supprimer ce test et toutes ses questions ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_test_' ~ test.id) }}">
+                    <button class="btn btn-xs btn-danger" title="Supprimer">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted">Aucun test trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

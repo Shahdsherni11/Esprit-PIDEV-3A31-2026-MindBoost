@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des Profils{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>📋 Gestion des Profils</h1>
+</div>
+<div class="search-bar">
+    <form method="get" class="search-form">
+        <input type="text" name="q" value="{{ keyword }}" placeholder="🔍 Rechercher..." class="form-control search-input">
+        <select name="type" class="form-control select-filter">
+            <option value="">Tous les types</option>
+            {% for type in personalityTypes %}
+            <option value="{{ type }}" {{ selectedType == type ? 'selected' : '' }}>{{ type }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <a href="{{ path('app_admin_profile_list') }}" class="btn btn-outline">Reset</a>
+    </form>
+    <span class="total-count">{{ total }} profil(s)</span>
+</div>
+<div class="table-container">
+    <table class="table table-hover">
+        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Téléphone</th><th>Type</th><th>Créé le</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for p in profiles %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.fullName }}</td>
+            <td>{{ p.user ? p.user.email : '—' }}</td>
+            <td>{{ p.phone ?? '—' }}</td>
+            <td>{% if p.personalityType %}<span class="badge badge-{{ p.personalityType|lower }}">{{ p.personalityType }}</span>{% else %}—{% endif %}</td>
+            <td>{{ p.createdAt ? p.createdAt|date('d/m/Y') : '—' }}</td>
+            <td class="actions-cell">
+                {% if p.user %}<a href="{{ path('app_admin_user_show', {id: p.user.id}) }}" class="btn btn-xs btn-info">👁</a>{% endif %}
+                <a href="{{ path('app_admin_profile_edit', {id: p.id}) }}" class="btn btn-xs btn-warning">✏️</a>
+                <form method="post" action="{{ path('app_admin_profile_delete', {id: p.id}) }}" style="display:inline"
+                      onsubmit="return confirm('Supprimer le profil de « {{ p.fullName }} » ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_profile_' ~ p.id) }}">
+                    <button class="btn btn-xs btn-danger">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted">Aucun profil trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

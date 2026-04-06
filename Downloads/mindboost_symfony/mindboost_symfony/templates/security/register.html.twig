@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %}Inscription{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block body %}
+<div class="auth-container">
+    <div class="auth-card auth-card-wide">
+        <div class="auth-logo">
+            <span class="logo-icon">🧠</span>
+            <h1>Créer un compte</h1>
+            <p>Rejoignez MindBoost</p>
+        </div>
+
+        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate', 'class': 'auth-form'}}) }}
+
+        <div class="form-group {% if registrationForm.email.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(registrationForm.email, '📧 Adresse email') }}
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@email.com'}}) }}
+            {{ form_errors(registrationForm.email) }}
+        </div>
+
+        <div class="form-group {% if registrationForm.plainPassword.first.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(registrationForm.plainPassword.first, '🔒 Mot de passe') }}
+            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Min. 8 car., 1 maj., 1 chiffre'}}) }}
+            {{ form_errors(registrationForm.plainPassword.first) }}
+        </div>
+
+        <div class="form-group {% if registrationForm.plainPassword.second.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(registrationForm.plainPassword.second, '🔒 Confirmer') }}
+            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Répétez le mot de passe'}}) }}
+            {{ form_errors(registrationForm.plainPassword.second) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+        </div>
+
+        <div class="form-check {% if registrationForm.agreeTerms.vars.errors|length %}has-error{% endif %}">
+            {{ form_widget(registrationForm.agreeTerms) }}
+            {{ form_label(registrationForm.agreeTerms) }}
+            {{ form_errors(registrationForm.agreeTerms) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">✅ Créer mon compte</button>
+        {{ form_end(registrationForm) }}
+
+        <div class="auth-footer">
+            <p>Déjà un compte ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

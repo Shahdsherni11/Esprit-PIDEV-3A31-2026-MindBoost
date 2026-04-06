@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>⚙️ Dashboard Administrateur</h1>
+    <p class="page-subtitle">Vue globale de MindBoost</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card stat-blue">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info"><span class="stat-number">{{ userStats.total }}</span><span class="stat-label">Utilisateurs</span></div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">👑</div>
+        <div class="stat-info"><span class="stat-number">{{ userStats.admins }}</span><span class="stat-label">Admins</span></div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="stat-icon">🩺</div>
+        <div class="stat-info"><span class="stat-number">{{ userStats.psychologists }}</span><span class="stat-label">Psychologues</span></div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">🧑</div>
+        <div class="stat-info"><span class="stat-number">{{ userStats.users }}</span><span class="stat-label">Membres</span></div>
+    </div>
+</div>
+
+<div class="admin-grid-2">
+
+    {# Derniers inscrits #}
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h3>🆕 Derniers inscrits</h3>
+            <a href="{{ path('app_admin_user_list') }}" class="btn btn-sm btn-outline">Voir tout</a>
+        </div>
+        <table class="table table-sm">
+            <thead><tr><th>Email</th><th>Rôle</th><th>Date</th></tr></thead>
+            <tbody>
+            {% for u in recentUsers|slice(0, 8) %}
+            <tr>
+                <td><a href="{{ path('app_admin_user_show', {id: u.id}) }}">{{ u.email }}</a></td>
+                <td><span class="badge badge-{{ u.role }}">{{ u.role }}</span></td>
+                <td>{{ u.createdAt|date('d/m/Y') }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" class="text-muted text-center">Aucun utilisateur</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Répartition types de personnalité #}
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h3>🧠 Types de personnalité</h3>
+            <a href="{{ path('app_admin_profile_list') }}" class="btn btn-sm btn-outline">Profils</a>
+        </div>
+        {% if personalityStats %}
+            {% set maxVal = personalityStats|map(s => s.total)|max %}
+            {% for stat in personalityStats %}
+            <div class="stat-bar-row">
+                <span class="stat-bar-label badge badge-{{ stat.type|lower }}">{{ stat.type }}</span>
+                <div class="stat-bar-track">
+                    <div class="stat-bar-fill" style="width: {{ maxVal > 0 ? (stat.total / maxVal * 100) : 0 }}%"></div>
+                </div>
+                <span class="stat-bar-count">{{ stat.total }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Aucune donnée de personnalité.</p>
+        {% endif %}
+    </div>
+
+    {# Stats tests #}
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h3>🧪 Tests psychologiques</h3>
+            <a href="{{ path('app_admin_test_list') }}" class="btn btn-sm btn-outline">Gérer</a>
+        </div>
+        {% if testStats %}
+            {% for stat in testStats %}
+            <div class="stat-bar-row">
+                <span class="stat-bar-label badge {% if stat.status == 'ACTIVE' %}badge-success{% elseif stat.status == 'DRAFT' %}badge-warning{% else %}badge-danger{% endif %}">{{ stat.status }}</span>
+                <div class="stat-bar-track"><div class="stat-bar-fill" style="width: {{ stat.total * 20 }}%"></div></div>
+                <span class="stat-bar-count">{{ stat.total }}</span>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">Aucun test créé.</p>
+        {% endif %}
+    </div>
+
+    {# Actions rapides #}
+    <div class="admin-card">
+        <div class="admin-card-header"><h3>⚡ Actions rapides</h3></div>
+        <div class="quick-actions-grid">
+            <a href="{{ path('app_admin_user_new') }}" class="quick-action-btn">➕<span>Nouvel utilisateur</span></a>
+            <a href="{{ path('app_admin_user_list') }}" class="quick-action-btn">👥<span>Utilisateurs</span></a>
+            <a href="{{ path('app_admin_profile_list') }}" class="quick-action-btn">📋<span>Profils</span></a>
+            <a href="{{ path('app_admin_test_new') }}" class="quick-action-btn">🧪<span>Nouveau test</span></a>
+            <a href="{{ path('app_admin_test_list') }}" class="quick-action-btn">📊<span>Tests</span></a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

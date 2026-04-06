@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ tache.titre }}{% endblock %}
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1>{{ tache.titre }}</h1>
+        <span class="badge statut-badge statut-{{ tache.statut == 'Terminée' ? 'done' : (tache.statut == 'En cours' ? 'active' : 'pending') }}">{{ tache.statut }}</span>
+    </div>
+    <div class="header-actions">
+        <a href="{{ path('app_tache_edit', {id: tache.id}) }}" class="btn btn-warning">✏️ Modifier</a>
+        <a href="{{ path('app_tache_list') }}" class="btn btn-outline">← Retour</a>
+    </div>
+</div>
+
+<div class="detail-grid">
+    <div class="detail-card">
+        <h3>📌 Détails de la tâche</h3>
+        <dl class="definition-list">
+            {% if tache.objectifPrincipal %}<dt>Objectif</dt><dd>{{ tache.objectifPrincipal }}</dd>{% endif %}
+            <dt>Difficulté</dt><dd>{{ '⭐'|repeat(tache.niveauDifficulte) }} ({{ tache.niveauDifficulte }}/5)</dd>
+            <dt>Priorité</dt><dd>{{ tache.priorite }}/5</dd>
+            <dt>Score productivité</dt><dd><strong>{{ tache.scoreProductivite }}%</strong></dd>
+            {% if tache.heureDebut %}<dt>Plage horaire</dt><dd>{{ tache.heureDebut|date('H:i') }} → {{ tache.heureFin ? tache.heureFin|date('H:i') : '?' }} ({{ tache.dureeTotal }} min)</dd>{% endif %}
+            <dt>Créée le</dt><dd>{{ tache.createdAt|date('d/m/Y à H:i') }}</dd>
+        </dl>
+    </div>
+
+    <div class="detail-card">
+        <h3>📊 Progression</h3>
+        {% set total = tache.sousTaches|length %}
+        {% set done = tache.nombresSousTachesTerminees %}
+        <div class="big-progress">
+            <div class="big-progress-bar" style="width: {{ tache.progressionPourcentage }}%"></div>
+        </div>
+        <p class="text-center mt-1"><strong>{{ done }}/{{ total }}</strong> sous-tâches terminées ({{ tache.progressionPourcentage }}%)</p>
+    </div>
+</div>
+
+{# ── SOUS-TÂCHES ── #}
+<div class="section-header mt-4">
+    <h2>🔢 Sous-tâches ({{ tache.sousTaches|length }})</h2>
+    <a href="{{ path('app_sous_tache_new', {id: tache.id}) }}" class="btn btn-primary btn-sm">➕ Ajouter</a>
+</div>
+
+{% if tache.sousTaches|length > 0 %}
+<div class="table-container">
+    <table class="table">
+        <thead>
+            <tr><th>#</th><th>Description</th><th>Durée</th><th>Horaire</th><th>Priorité</th><th>État</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for st in tache.sousTaches %}
+            <tr class="{{ st.etat == 'Terminée' ? 'row-done' : '' }}">
+                <td>{{ loop.index }}</td>
+                <td>{{ st.description }}</td>
+                <td>{{ st.dureeRecommandee ? st.dureeRecommandee ~ ' min' : '—' }}</td>
+                <td>{{ st.heureDebut ? st.heureDebut|date('H:i') : '—' }} {% if st.heureFin %}→ {{ st.heureFin|date('H:i') }}{% endif %}</td>
+                <td>{{ st.priorite }}</td>
+                <td>
+                    <span class="badge statut-badge statut-{{ st.etat == 'Terminée' ? 'done' : (st.etat == 'En cours' ? 'active' : 'pending') }}">
+                        {{ st.etat }}
+                    </span>
+                </td>
+                <td class="actions-cell">
+                    <a href="{{ path('app_sous_tache_edit', {id: st.id}) }}" class="btn btn-xs btn-warning">✏️</a>
+                    <form method="post" action="{{ path('app_sous_tache_delete', {id: st.id}) }}" style="display:inline"
+                          onsubmit="return confirm('Supprimer cette sous-tâche ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_st_' ~ st.id) }}">
+                        <button class="btn btn-xs btn-danger">🗑</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>📭 Aucune sous-tâche. <a href="{{ path('app_sous_tache_new', {id: tache.id}) }}">Ajouter la première</a></p>
+</div>
+{% endif %}
+
+<div class="form-actions mt-4">
+    <form method="post" action="{{ path('app_tache_delete', {id: tache.id}) }}"
+          onsubmit="return confirm('Supprimer définitivement cette tâche et ses sous-tâches ?')">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete_tache_' ~ tache.id) }}">
+        <button class="btn btn-danger">🗑 Supprimer la tâche</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MindBoost{% endblock %} — Bien-être Mental</title>
+    <link rel="stylesheet" href="{{ asset('css/mindboost.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+{% if app.user %}
+<nav class="navbar">
+    <div class="navbar-brand">
+        <span class="brand-icon">🧠</span>
+        <span class="brand-name">MindBoost</span>
+    </div>
+    <ul class="navbar-links">
+        <li>
+            <a href="{{ path('app_dashboard') }}" class="{{ app.request.get('_route') == 'app_dashboard' ? 'active' : '' }}">
+                🏠 Accueil
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('app_profile_show') }}" class="{{ app.request.get('_route') starts with 'app_profile' ? 'active' : '' }}">
+                👤 Mon Profil
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('app_tache_list') }}" class="{{ app.request.get('_route') starts with 'app_tache' or app.request.get('_route') starts with 'app_sous_tache' ? 'active' : '' }}">
+                📋 Mes Tâches
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('app_test_list') }}" class="{{ app.request.get('_route') starts with 'app_test' ? 'active' : '' }}">
+                🧪 Tests Psy
+            </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li class="dropdown">
+            <a href="{{ path('app_admin_dashboard') }}" class="{{ app.request.get('_route') starts with 'app_admin' ? 'active' : '' }}">
+                ⚙️ Admin ▾
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('app_admin_dashboard') }}">📊 Dashboard</a></li>
+                <li><a href="{{ path('app_admin_user_list') }}">👥 Utilisateurs</a></li>
+                <li><a href="{{ path('app_admin_profile_list') }}">📋 Profils</a></li>
+                <li><a href="{{ path('app_admin_test_list') }}">🧪 Tests</a></li>
+            </ul>
+        </li>
+        {% endif %}
+    </ul>
+    <div class="navbar-user">
+        <span class="user-avatar">{{ app.user.displayName|slice(0,1)|upper }}</span>
+        <span class="user-email">{{ app.user.displayName }}</span>
+        <span class="badge badge-role badge-{{ app.user.role }}">{{ app.user.role }}</span>
+        <a href="{{ path('app_logout') }}" class="btn-logout">Déconnexion</a>
+    </div>
+</nav>
+{% endif %}
+
+<div class="flash-container">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash flash-{{ type }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<main class="main-content {% block main_class %}{% endblock %}">
+    {% block body %}{% endblock %}
+</main>
+
+<footer class="footer">
+    <p>© 2025 MindBoost — Application de bien-être mental | Sprint 1 Symfony</p>
+</footer>
+
+<script>
+    setTimeout(() => {
+        document.querySelectorAll('.flash').forEach(f => {
+            f.style.transition = 'opacity 0.5s';
+            f.style.opacity = '0';
+            setTimeout(() => f.remove(), 500);
+        });
+    }, 4000);
+</script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ test.title }}{% endblock %}
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1>🧪 {{ test.title }}</h1>
+        <span class="badge badge-success">✅ Actif</span>
+        <span class="badge badge-info">{{ test.questions|length }} question(s)</span>
+    </div>
+    <a href="{{ path('app_test_list') }}" class="btn btn-outline">← Retour</a>
+</div>
+
+{% if test.description %}
+<div class="test-description-box">
+    <p>{{ test.description }}</p>
+</div>
+{% endif %}
+
+{% if test.questions|length > 0 %}
+<div class="questions-container">
+    {% for question in test.questions %}
+    <div class="question-card">
+        <div class="question-header">
+            <span class="question-number">Q{{ loop.index }}</span>
+            <p class="question-text">{{ question.questionText }}</p>
+        </div>
+        {% if question.answers|length > 0 %}
+        <div class="answers-grid">
+            {% for answer in question.answers %}
+            <div class="answer-option">
+                <span class="answer-label label-{{ answer.answerLabel|lower }}">{{ answer.answerLabel }}</span>
+                <span class="answer-text">{{ answer.answerText }}</span>
+                <span class="answer-score">{{ answer.score }} pts</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">Aucune réponse définie.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>📭 Ce test ne contient pas encore de questions.</p>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin_test_questions', {id: test.id}) }}" class="btn btn-primary">+ Ajouter des questions</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

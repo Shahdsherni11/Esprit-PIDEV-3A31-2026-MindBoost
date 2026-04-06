@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ isNew ? 'Nouveau test' : 'Modifier ' ~ test.title }}{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>{{ isNew ? '➕ Nouveau test' : '✏️ Modifier le test' }}</h1>
+    <a href="{{ path('app_admin_test_list') }}" class="btn btn-outline">← Retour</a>
+</div>
+<div class="form-container">
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'mindboost-form'}}) }}
+    <div class="form-section">
+        <div class="form-group {% if form.title.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(form.title) }}
+            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.title) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.status) }}
+            {{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        <a href="{{ path('app_admin_test_list') }}" class="btn btn-outline">Annuler</a>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

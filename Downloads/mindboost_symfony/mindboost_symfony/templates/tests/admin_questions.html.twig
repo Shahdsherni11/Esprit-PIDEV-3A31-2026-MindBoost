@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block title %}Questions — {{ test.title }}{% endblock %}
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1>❓ Questions du test</h1>
+        <p class="page-subtitle">{{ test.title }} — <span class="badge badge-{{ test.status == 'ACTIVE' ? 'success' : 'warning' }}">{{ test.status }}</span></p>
+    </div>
+    <a href="{{ path('app_admin_test_list') }}" class="btn btn-outline">← Retour</a>
+</div>
+
+{# ── AJOUTER UNE QUESTION ── #}
+<div class="admin-card mb-4">
+    <h3>➕ Ajouter une question</h3>
+    <form method="post" class="inline-form">
+        <input type="hidden" name="action" value="add_question">
+        <div class="form-row-add">
+            <input type="text" name="question_text" class="form-control" placeholder="Texte de la question..." required>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </div>
+        <small class="form-hint">4 réponses A/B/C/D seront créées automatiquement (scores 100/75/50/25).</small>
+    </form>
+</div>
+
+{# ── LISTE DES QUESTIONS ── #}
+{% if test.questions|length > 0 %}
+<div class="questions-admin-list">
+    {% for question in test.questions %}
+    <div class="question-admin-card">
+        <div class="question-admin-header">
+            <span class="question-number">Q{{ loop.index }}</span>
+            <strong>{{ question.questionText }}</strong>
+            <form method="post" style="margin-left:auto" onsubmit="return confirm('Supprimer cette question ?')">
+                <input type="hidden" name="action" value="delete_question">
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                <button class="btn btn-xs btn-danger">🗑 Supprimer</button>
+            </form>
+        </div>
+
+        <div class="answers-admin-grid">
+            {% for answer in question.answers %}
+            <form method="post" class="answer-admin-form">
+                <input type="hidden" name="action" value="update_answer">
+                <input type="hidden" name="answer_id" value="{{ answer.id }}">
+                <span class="answer-label label-{{ answer.answerLabel|lower }}">{{ answer.answerLabel }}</span>
+                <input type="text" name="answer_text" value="{{ answer.answerText }}" class="form-control form-control-sm" required>
+                <input type="number" name="answer_score" value="{{ answer.score }}" class="form-control form-control-sm score-input" min="0" max="100">
+                <span class="score-hint">pts</span>
+                <button type="submit" class="btn btn-xs btn-success">✅</button>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>📭 Aucune question. Ajoutez-en une ci-dessus.</p>
+</div>
+{% endif %}
+{% endblock %}
