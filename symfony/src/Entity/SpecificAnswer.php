@@ -18,16 +18,16 @@ class SpecificAnswer
     #[ORM\JoinColumn(name: 'question_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?SpecificQuestion $question = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'answer_text', length: 255)]
     private ?string $answerText = null;
 
     #[ORM\Column]
     private ?int $score = 0;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'answer_order')]
     private ?int $answerOrder = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
     public function __construct()
@@ -36,47 +36,14 @@ class SpecificAnswer
     }
 
     public function getId(): ?int { return $this->id; }
-
-    public function getQuestion(): ?SpecificQuestion
-    {
-        return $this->question;
-    }
-
-    public function setQuestion(?SpecificQuestion $question): static
-    {
-        $this->question = $question;
-        return $this;
-    }
-
+    public function getQuestion(): ?SpecificQuestion { return $this->question; }
+    public function setQuestion(?SpecificQuestion $question): static { $this->question = $question; return $this; }
     public function getAnswerText(): ?string { return $this->answerText; }
-
-    public function setAnswerText(string $answerText): static
-    {
-        $this->answerText = $answerText;
-        return $this;
-    }
-
+    public function setAnswerText(string $answerText): static { $this->answerText = $answerText; return $this; }
     public function getScore(): ?int { return $this->score; }
-
-    public function setScore(int $score): static
-    {
-        $this->score = $score;
-        return $this;
-    }
-
+    public function setScore(int $score): static { $this->score = $score; return $this; }
     public function getAnswerOrder(): ?int { return $this->answerOrder; }
-
-    public function setAnswerOrder(int $answerOrder): static
-    {
-        $this->answerOrder = $answerOrder;
-        return $this;
-    }
-
+    public function setAnswerOrder(int $answerOrder): static { $this->answerOrder = $answerOrder; return $this; }
     public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
+    public function setCreatedAt(\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
 }

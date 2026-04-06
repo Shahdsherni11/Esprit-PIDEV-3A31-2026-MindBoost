@@ -14,13 +14,13 @@ class Score
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'user_id')]
     private ?int $userId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'general_test_id')]
     private ?int $generalTestId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'totalScore')]
     private ?int $totalScore = null;
 
     #[ORM\Column(nullable: true)]

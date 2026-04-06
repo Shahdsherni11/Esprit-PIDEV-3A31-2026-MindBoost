@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\SpecificTest;
+use App\Service\GeneralTestService;
 use App\Service\SpecificTestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,29 +13,40 @@ use Symfony\Component\Routing\Attribute\Route;
 class SpecificTestController extends AbstractController
 {
     private $testService;
+    private $generalTestService;
 
-    public function __construct(SpecificTestService $testService)
-    {
+    public function __construct(
+        SpecificTestService $testService,
+        GeneralTestService $generalTestService
+    ) {
         $this->testService = $testService;
+        $this->generalTestService = $generalTestService;
     }
 
     #[Route('/create', name: 'create', methods: ['GET', 'POST'])]
     public function create(Request $request): Response
     {
+        $generalTests = $this->generalTestService->getAllTests();
+
         if ($request->isMethod('POST')) {
             try {
+                $generalTestId = (int)($request->request->get('general_test_id') ?? 0);
                 $category = $request->request->get('category');
                 $title = $request->request->get('title');
                 $description = $request->request->get('description');
                 $createdBy = $request->request->get('created_by') ?? 1;
                 $questions = $request->request->all()['questions'] ?? [];
 
+                if ($generalTestId <= 0) {
+                    throw new \Exception("Le test général parent est obligatoire");
+                }
+
                 if (!$category || empty(trim($category))) {
                     throw new \Exception("La catégorie est obligatoire");
                 }
 
-                $validCategories = ['Dépression', 'Trouble de someil', 'Stress', 'Anxiété'];
-                if (!in_array($category, $validCategories)) {
+                $validCategories = ['Anxiete', 'Stress', 'Depression', 'Trouble du Sommeil'];
+                if (!in_array(trim($category), $validCategories, true)) {
                     throw new \Exception("Catégorie invalide");
                 }
 
@@ -55,7 +66,14 @@ class SpecificTestController extends AbstractController
                     throw new \Exception("Vous devez ajouter au moins une question");
                 }
 
-                $test = $this->testService->createTest(null, $category, trim($title), $description, (int)$createdBy, $questions);
+                $test = $this->testService->createTest(
+                    $generalTestId,
+                    trim($category),
+                    trim($title),
+                    $description,
+                    (int)$createdBy,
+                    $questions
+                );
 
                 $this->addFlash('success', 'Test créé avec succès avec ' . count($questions) . ' questions!');
                 return $this->redirectToRoute('specific_test_show', ['id' => $test->getId()]);
@@ -64,28 +82,37 @@ class SpecificTestController extends AbstractController
             }
         }
 
-        return $this->render('specific_test/create_specific.html.twig');
+        return $this->render('specific_test/create_specific.html.twig', [
+            'generalTests' => $generalTests
+        ]);
     }
 
     #[Route('/{id}/edit', name: 'edit', methods: ['GET', 'POST'])]
     public function edit(int $id, Request $request): Response
     {
+        $generalTests = $this->generalTestService->getAllTests();
+
         try {
             $test = $this->testService->getTestById($id);
             $questionsWithAnswers = $this->testService->getQuestionsWithAnswers($test);
 
             if ($request->isMethod('POST')) {
+                $generalTestId = (int)($request->request->get('general_test_id') ?? 0);
                 $category = $request->request->get('category');
                 $title = $request->request->get('title');
                 $description = $request->request->get('description');
                 $status = $request->request->get('status');
 
+                if ($generalTestId <= 0) {
+                    throw new \Exception("Le test général parent est obligatoire");
+                }
+
                 if (!$category || empty(trim($category))) {
                     throw new \Exception("La catégorie est obligatoire");
                 }
 
-                $validCategories = ['Dépression', 'Trouble de someil', 'Stress', 'Anxiété'];
-                if (!in_array($category, $validCategories)) {
+                $validCategories = ['Anxiete', 'Stress', 'Depression', 'Trouble du Sommeil'];
+                if (!in_array(trim($category), $validCategories, true)) {
                     throw new \Exception("Catégorie invalide");
                 }
 
@@ -101,11 +128,18 @@ class SpecificTestController extends AbstractController
                     throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
                 }
 
-                if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'])) {
+                if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'], true)) {
                     throw new \Exception("Statut invalide");
                 }
 
-                $test = $this->testService->updateTest($test, $category, trim($title), $description, $status);
+                $test = $this->testService->updateTest(
+                    $test,
+                    $generalTestId,
+                    trim($category),
+                    trim($title),
+                    $description,
+                    $status
+                );
 
                 $this->addFlash('success', 'Test mis à jour avec succès!');
                 return $this->redirectToRoute('specific_test_show', ['id' => $test->getId()]);
@@ -113,7 +147,8 @@ class SpecificTestController extends AbstractController
 
             return $this->render('specific_test/edit_specific.html.twig', [
                 'test' => $test,
-                'questionsWithAnswers' => $questionsWithAnswers
+                'questionsWithAnswers' => $questionsWithAnswers,
+                'generalTests' => $generalTests
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -168,15 +203,15 @@ class SpecificTestController extends AbstractController
 
             $search = $request->query->get('search');
             if ($search) {
-                $tests = array_filter($tests, function($test) use ($search) {
-                    return stripos($test->getTitle(), $search) !== false ||
-                           stripos($test->getCategory(), $search) !== false;
+                $tests = array_filter($tests, function ($test) use ($search) {
+                    return stripos($test->getTitle(), $search) !== false
+                        || stripos($test->getCategory(), $search) !== false;
                 });
             }
 
             $category = $request->query->get('category');
             if ($category) {
-                $tests = array_filter($tests, function($test) use ($category) {
+                $tests = array_filter($tests, function ($test) use ($category) {
                     return $test->getCategory() === $category;
                 });
             }

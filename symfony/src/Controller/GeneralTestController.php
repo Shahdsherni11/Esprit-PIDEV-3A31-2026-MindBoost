@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\GeneralTest;
 use App\Service\GeneralTestService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -156,7 +155,7 @@ class GeneralTestController extends AbstractController
                     'title_asc' => strcasecmp($a->getTitle(), $b->getTitle()),
                     'title_desc' => strcasecmp($b->getTitle(), $a->getTitle()),
                     'date_asc' => $a->getCreatedAt() <=> $b->getCreatedAt(),
-                    default => $b->getCreatedAt() <=> $a->getCreatedAt(), // date_desc
+                    default => $b->getCreatedAt() <=> $a->getCreatedAt(),
                 };
             });
 

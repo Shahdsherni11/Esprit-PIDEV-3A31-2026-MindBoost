@@ -8,14 +8,14 @@
         <h1 class="mb-2">
             <i class="fas fa-plus-circle"></i> Créer un Test Spécifique
         </h1>
-        <p class="text-muted">Créez un nouveau test spécifique avec catégorie</p>
+        <p class="text-muted">Créez un nouveau test spécifique lié à un test général</p>
     </div>
 </div>
 
 <div class="card">
     <div class="card-body">
         <form method="POST" id="testForm">
-            <div class="section-header mb-4">
+            <div class="section-header success mb-4">
                 <h3>
                     <i class="fas fa-info-circle"></i> Informations du Test
                 </h3>
@@ -25,19 +25,55 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group mb-3">
+                        <label for="general_test_id" class="form-label">
+                            <i class="fas fa-book"></i> Test Général Parent *
+                        </label>
+                        <select id="general_test_id" name="general_test_id" class="form-select" required>
+                            <option value="">-- Sélectionner un test général --</option>
+                            {% for generalTest in generalTests %}
+                                <option value="{{ generalTest.id }}">
+                                    {{ generalTest.title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-text text-muted">
+                            Le test spécifique doit appartenir à un test général.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
                         <label for="category" class="form-label">
                             <i class="fas fa-folder"></i> Catégorie *
                         </label>
                         <select id="category" name="category" class="form-select" required>
                             <option value="">-- Sélectionner une catégorie --</option>
-                            <option value="Dépression">Dépression</option>
-                            <option value="Trouble de someil">Trouble de someil</option>
+                            <option value="Anxiete">Anxiete</option>
                             <option value="Stress">Stress</option>
-                            <option value="Anxiété">Anxiété</option>
+                            <option value="Depression">Depression</option>
+                            <option value="Trouble du Sommeil">Trouble du Sommeil</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-md-6">
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group mb-3">
+                        <label for="title" class="form-label">
+                            <i class="fas fa-heading"></i> Titre du Test *
+                        </label>
+                        <input type="text" id="title" name="title" class="form-control"
+                               placeholder="Ex: Test approfondi - Anxiete generalisee"
+                               required minlength="3" maxlength="255">
+                        <small class="form-text text-muted">
+                            Le titre ne doit pas être uniquement des nombres.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="created_by" class="form-label">
                             <i class="fas fa-user"></i> ID Créateur
@@ -48,18 +84,6 @@
                 </div>
             </div>
 
-            <div class="form-group mb-3">
-                <label for="title" class="form-label">
-                    <i class="fas fa-heading"></i> Titre du Test *
-                </label>
-                <input type="text" id="title" name="title" class="form-control"
-                       placeholder="Ex: Test Dépression Avancé"
-                       required minlength="3" maxlength="255">
-                <small class="form-text text-muted">
-                    Le titre ne doit pas être uniquement des nombres.
-                </small>
-            </div>
-
             <div class="form-group mb-4">
                 <label for="description" class="form-label">
                     <i class="fas fa-align-left"></i> Description
@@ -68,7 +92,7 @@
                           rows="4" placeholder="Décrivez votre test spécifique..."></textarea>
             </div>
 
-            <div class="section-header mb-4">
+            <div class="section-header success mb-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <h3>
                         <i class="fas fa-question"></i> Questions du Test
@@ -238,13 +262,13 @@ function addAnswer(questionIndex) {
 }
 
 function removeQuestion(index) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
         document.getElementById('question-' + index).remove();
     }
 }
 
 function removeAnswer(button) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette réponse?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?')) {
         button.closest('.answer-card').remove();
     }
 }
@@ -254,13 +278,20 @@ window.addEventListener('load', function() {
 });
 
 document.getElementById('testForm').addEventListener('submit', function(e) {
+    const generalTestId = document.getElementById('general_test_id').value;
     const category = document.getElementById('category').value;
     const title = document.getElementById('title').value.trim();
     const questions = document.querySelectorAll('.question-card');
 
+    if (!generalTestId) {
+        e.preventDefault();
+        alert('Veuillez sélectionner un test général parent.');
+        return;
+    }
+
     if (!category) {
         e.preventDefault();
-        alert('Veuillez sélectionner une catégorie!');
+        alert('Veuillez sélectionner une catégorie.');
         return;
     }
 
@@ -278,7 +309,7 @@ document.getElementById('testForm').addEventListener('submit', function(e) {
 
     if (questions.length === 0) {
         e.preventDefault();
-        alert('Veuillez ajouter au moins une question!');
+        alert('Veuillez ajouter au moins une question.');
         return;
     }
 

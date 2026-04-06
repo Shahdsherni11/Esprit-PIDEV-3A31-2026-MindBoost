@@ -19,21 +19,20 @@
     </div>
 </div>
 
-<!-- Recherche et Filtres -->
 <div class="card mb-4">
     <div class="card-body">
         <form method="GET" class="row g-3">
             <div class="col-md-6">
-                <input type="text" name="search" class="form-control" placeholder="Rechercher par titre..." 
+                <input type="text" name="search" class="form-control" placeholder="Rechercher par titre..."
                        value="{{ search ?? '' }}">
             </div>
             <div class="col-md-6">
                 <select name="category" class="form-select">
                     <option value="">Toutes les catégories</option>
-                    <option value="Dépression" {% if category == 'Dépression' %}selected{% endif %}>Dépression</option>
-                    <option value="Trouble de someil" {% if category == 'Trouble de someil' %}selected{% endif %}>Trouble de someil</option>
+                    <option value="Anxiete" {% if category == 'Anxiete' %}selected{% endif %}>Anxiete</option>
                     <option value="Stress" {% if category == 'Stress' %}selected{% endif %}>Stress</option>
-                    <option value="Anxiété" {% if category == 'Anxiété' %}selected{% endif %}>Anxiété</option>
+                    <option value="Depression" {% if category == 'Depression' %}selected{% endif %}>Depression</option>
+                    <option value="Trouble du Sommeil" {% if category == 'Trouble du Sommeil' %}selected{% endif %}>Trouble du Sommeil</option>
                 </select>
             </div>
             <div class="col-md-12">
@@ -45,7 +44,6 @@
     </div>
 </div>
 
-<!-- Tests Spécifiques -->
 {% if specificTests|length > 0 %}
     <div class="card">
         <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
@@ -85,15 +83,15 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ path('specific_test_show', {id: test.id}) }}" 
+                                    <a href="{{ path('specific_test_show', {id: test.id}) }}"
                                        class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ path('specific_test_edit', {id: test.id}) }}" 
+                                    <a href="{{ path('specific_test_edit', {id: test.id}) }}"
                                        class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ path('specific_test_delete', {id: test.id}) }}" 
+                                    <a href="{{ path('specific_test_delete', {id: test.id}) }}"
                                        class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </a>

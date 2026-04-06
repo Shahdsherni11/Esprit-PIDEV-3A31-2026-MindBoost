@@ -15,21 +15,22 @@ class GeneralAnswer
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: GeneralQuestion::class, inversedBy: 'answers')]
-#[ORM\JoinColumn(name: 'question_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-private ?GeneralQuestion $question = null;
-    #[ORM\Column(length: 10)]
+    #[ORM\JoinColumn(name: 'question_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    private ?GeneralQuestion $question = null;
+
+    #[ORM\Column(name: 'answer_label', length: 10, options: ['default' => 'A'])]
     private ?string $answerLabel = 'A';
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'answer_text', length: 255)]
     private ?string $answerText = null;
 
     #[ORM\Column]
     private ?int $score = 0;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'answer_order')]
     private ?int $answerOrder = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
     public function __construct()

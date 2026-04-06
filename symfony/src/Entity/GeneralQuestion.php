@@ -17,19 +17,19 @@ class GeneralQuestion
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: GeneralTest::class, inversedBy: 'questions')]
-    #[ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'test_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private ?GeneralTest $test = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'question_text', type: 'text')]
     private ?string $questionText = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'question_order')]
     private ?int $questionOrder = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: GeneralAnswer::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'question', targetEntity: GeneralAnswer::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $answers;
 
     public function __construct()
@@ -48,4 +48,23 @@ class GeneralQuestion
     public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
     public function setCreatedAt(\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
     public function getAnswers(): Collection { return $this->answers; }
+
+    public function addAnswer(GeneralAnswer $answer): static
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers->add($answer);
+            $answer->setQuestion($this);
+        }
+        return $this;
+    }
+
+    public function removeAnswer(GeneralAnswer $answer): static
+    {
+        if ($this->answers->removeElement($answer)) {
+            if ($answer->getQuestion() === $this) {
+                $answer->setQuestion(null);
+            }
+        }
+        return $this;
+    }
 }

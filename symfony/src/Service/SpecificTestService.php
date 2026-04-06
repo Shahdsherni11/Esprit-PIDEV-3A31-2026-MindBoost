@@ -29,20 +29,30 @@ class SpecificTestService
         $this->entityManager = $entityManager;
     }
 
+    private function getValidCategories(): array
+    {
+        return ['Anxiete', 'Stress', 'Depression', 'Trouble du Sommeil'];
+    }
+
     public function createTest(
-        ?int $generalTestId,
+        int $generalTestId,
         string $category,
         string $title,
         ?string $description,
         int $createdBy,
         ?array $questions = null
     ): SpecificTest {
-        if (!$category || empty(trim($category))) {
+        if ($generalTestId <= 0) {
+            throw new \Exception("Le test général parent est obligatoire");
+        }
+
+        $category = trim($category);
+
+        if ($category === '') {
             throw new \Exception("La catégorie est obligatoire");
         }
 
-        $validCategories = ['Dépression', 'Trouble de someil', 'Stress', 'Anxiété'];
-        if (!in_array($category, $validCategories)) {
+        if (!in_array($category, $this->getValidCategories(), true)) {
             throw new \Exception("Catégorie invalide");
         }
 
@@ -64,7 +74,7 @@ class SpecificTestService
 
         $test = new SpecificTest();
         $test->setGeneralTestId($generalTestId);
-        $test->setCategory(trim($category));
+        $test->setCategory($category);
         $test->setTitle(trim($title));
         $test->setDescription($description ? trim($description) : null);
         $test->setStatus('DRAFT');
@@ -137,17 +147,23 @@ class SpecificTestService
 
     public function updateTest(
         SpecificTest $test,
+        int $generalTestId,
         string $category,
         string $title,
         ?string $description,
         string $status
     ): SpecificTest {
-        if (!$category || empty(trim($category))) {
+        if ($generalTestId <= 0) {
+            throw new \Exception("Le test général parent est obligatoire");
+        }
+
+        $category = trim($category);
+
+        if ($category === '') {
             throw new \Exception("La catégorie est obligatoire");
         }
 
-        $validCategories = ['Dépression', 'Trouble de someil', 'Stress', 'Anxiété'];
-        if (!in_array($category, $validCategories)) {
+        if (!in_array($category, $this->getValidCategories(), true)) {
             throw new \Exception("Catégorie invalide");
         }
 
@@ -163,15 +179,16 @@ class SpecificTestService
             throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
         }
 
-        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'])) {
+        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'], true)) {
             throw new \Exception("Statut invalide");
         }
 
-        // Restriction métier :
-        // un seul test spécifique ACTIVE par catégorie
-        if ($status === 'ACTIVE') {
+        $isNewActivation = $status === 'ACTIVE'
+            && ($test->getStatus() !== 'ACTIVE' || $test->getCategory() !== $category);
+
+        if ($isNewActivation) {
             $existingActiveTests = $this->repository->findBy([
-                'category' => trim($category),
+                'category' => $category,
                 'status' => 'ACTIVE'
             ]);
 
@@ -182,7 +199,8 @@ class SpecificTestService
             }
         }
 
-        $test->setCategory(trim($category));
+        $test->setGeneralTestId($generalTestId);
+        $test->setCategory($category);
         $test->setTitle(trim($title));
         $test->setDescription($description ? trim($description) : null);
         $test->setStatus($status);

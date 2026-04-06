@@ -6,9 +6,6 @@ use App\Entity\GeneralTest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<GeneralTest>
- */
 class GeneralTestRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,9 +13,6 @@ class GeneralTestRepository extends ServiceEntityRepository
         parent::__construct($registry, GeneralTest::class);
     }
 
-    /**
-     * Trouver tous les tests par statut
-     */
     public function findByStatus(string $status): array
     {
         return $this->createQueryBuilder('g')
@@ -29,20 +23,14 @@ class GeneralTestRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Trouver tous les tests triés par date de création
-     */
     public function findAllOrderedByCreatedAt(): array
     {
         return $this->createQueryBuilder('g')
-            ->orderBy('g.created_at', 'DESC')
+            ->orderBy('g.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
-    /**
-     * Trouver un test par titre
-     */
     public function findByTitle(string $title): ?GeneralTest
     {
         return $this->createQueryBuilder('g')

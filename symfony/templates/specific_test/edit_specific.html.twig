@@ -16,14 +16,29 @@
     <div class="card-body">
         <form method="POST" id="testForm">
             <div class="form-group mb-3">
+                <label for="general_test_id" class="form-label">
+                    <i class="fas fa-book"></i> Test Général Parent *
+                </label>
+                <select id="general_test_id" name="general_test_id" class="form-select" required>
+                    <option value="">-- Sélectionner un test général --</option>
+                    {% for generalTest in generalTests %}
+                        <option value="{{ generalTest.id }}"
+                            {% if test.generalTestId == generalTest.id %}selected{% endif %}>
+                            {{ generalTest.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
                 <label for="category" class="form-label">
                     <i class="fas fa-folder"></i> Catégorie *
                 </label>
                 <select id="category" name="category" class="form-select" required>
-                    <option value="Dépression" {% if test.category == 'Dépression' %}selected{% endif %}>Dépression</option>
-                    <option value="Trouble de someil" {% if test.category == 'Trouble de someil' %}selected{% endif %}>Trouble de someil</option>
+                    <option value="Anxiete" {% if test.category == 'Anxiete' %}selected{% endif %}>Anxiete</option>
                     <option value="Stress" {% if test.category == 'Stress' %}selected{% endif %}>Stress</option>
-                    <option value="Anxiété" {% if test.category == 'Anxiété' %}selected{% endif %}>Anxiété</option>
+                    <option value="Depression" {% if test.category == 'Depression' %}selected{% endif %}>Depression</option>
+                    <option value="Trouble du Sommeil" {% if test.category == 'Trouble du Sommeil' %}selected{% endif %}>Trouble du Sommeil</option>
                 </select>
             </div>
 
@@ -119,7 +134,14 @@
 
 <script>
 document.getElementById('testForm').addEventListener('submit', function(e) {
+    const generalTestId = document.getElementById('general_test_id').value;
     const title = document.getElementById('title').value.trim();
+
+    if (!generalTestId) {
+        e.preventDefault();
+        alert('Veuillez sélectionner un test général parent.');
+        return;
+    }
 
     if (title.length < 3) {
         e.preventDefault();

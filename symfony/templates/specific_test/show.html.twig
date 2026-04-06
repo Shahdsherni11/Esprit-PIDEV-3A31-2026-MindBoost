@@ -23,7 +23,6 @@
     </div>
 </div>
 
-<!-- Informations du Test -->
 <div class="card mb-4">
     <div class="card-header bg-success text-white">
         <h4 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h4>
@@ -40,6 +39,9 @@
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
+                <strong>Test général parent :</strong> #{{ test.generalTestId }}
+            </div>
+            <div class="col-md-6">
                 <strong>Statut :</strong>
                 <span class="badge badge-{{ test.status|lower }}">
                     {% if test.status == 'DRAFT' %}
@@ -51,8 +53,13 @@
                     {% endif %}
                 </span>
             </div>
+        </div>
+        <div class="row mb-3">
             <div class="col-md-6">
                 <strong>Créé le :</strong> {{ test.createdAt|date('d/m/Y H:i') }}
+            </div>
+            <div class="col-md-6">
+                <strong>Créé par :</strong> Utilisateur #{{ test.createdBy }}
             </div>
         </div>
         {% if test.description %}
@@ -66,7 +73,6 @@
     </div>
 </div>
 
-<!-- Questions et Réponses -->
 {% if questionsWithAnswers|length > 0 %}
     <div class="card">
         <div class="card-header bg-success text-white">
@@ -79,7 +85,7 @@
                         <span class="badge badge-success">Q{{ loop.index }}</span>
                         {{ item.question.questionText }}
                     </h5>
-                    
+
                     {% if item.answers|length > 0 %}
                         <div class="list-group">
                             {% for answer in item.answers %}

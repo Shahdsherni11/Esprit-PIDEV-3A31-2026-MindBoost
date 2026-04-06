@@ -6,9 +6,6 @@ use App\Entity\SpecificTest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<SpecificTest>
- */
 class SpecificTestRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,22 +13,16 @@ class SpecificTestRepository extends ServiceEntityRepository
         parent::__construct($registry, SpecificTest::class);
     }
 
-    /**
-     * Trouver tous les tests par ID de test général
-     */
     public function findByGeneralTestId(int $generalTestId): array
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.general_test_id = :generalTestId')
+            ->andWhere('s.generalTestId = :generalTestId')
             ->setParameter('generalTestId', $generalTestId)
             ->orderBy('s.id', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
-    /**
-     * Trouver tous les tests par catégorie
-     */
     public function findByCategory(string $category): array
     {
         return $this->createQueryBuilder('s')
@@ -42,20 +33,14 @@ class SpecificTestRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Trouver tous les tests triés par date de création
-     */
     public function findAllOrderedByCreatedAt(): array
     {
         return $this->createQueryBuilder('s')
-            ->orderBy('s.created_at', 'DESC')
+            ->orderBy('s.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
-    /**
-     * Trouver un test par titre et catégorie
-     */
     public function findByTitleAndCategory(string $title, string $category): ?SpecificTest
     {
         return $this->createQueryBuilder('s')

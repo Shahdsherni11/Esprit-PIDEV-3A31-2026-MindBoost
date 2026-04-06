@@ -40,21 +40,24 @@ class GeneralTestService
         $test->setDescription($description ? trim($description) : null);
         $test->setStatus('DRAFT');
         $test->setCreatedBy($createdBy);
+        $test->setCreatedAt(new \DateTime());
+        $test->setUpdatedAt(new \DateTime());
 
         if (!empty($questions) && is_array($questions)) {
             foreach ($questions as $questionIndex => $questionData) {
-                if (empty($questionData['text'])) {
+                if (empty(trim($questionData['text'] ?? ''))) {
                     continue;
                 }
 
                 $question = new GeneralQuestion();
                 $question->setTest($test);
                 $question->setQuestionText(trim($questionData['text']));
-                $question->setQuestionOrder($questionData['order'] ?? ($questionIndex + 1));
+                $question->setQuestionOrder((int)($questionData['order'] ?? ($questionIndex + 1)));
+                $question->setCreatedAt(new \DateTime());
 
                 if (!empty($questionData['answers']) && is_array($questionData['answers'])) {
                     foreach ($questionData['answers'] as $answerIndex => $answerData) {
-                        if (empty($answerData['text'])) {
+                        if (empty(trim($answerData['text'] ?? ''))) {
                             continue;
                         }
 
@@ -63,13 +66,14 @@ class GeneralTestService
                         $answer->setAnswerLabel($answerData['label'] ?? chr(65 + $answerIndex));
                         $answer->setAnswerText(trim($answerData['text']));
                         $answer->setScore((int)($answerData['score'] ?? 0));
-                        $answer->setAnswerOrder($answerData['order'] ?? ($answerIndex + 1));
+                        $answer->setAnswerOrder((int)($answerData['order'] ?? ($answerIndex + 1)));
+                        $answer->setCreatedAt(new \DateTime());
 
-                        $question->getAnswers()->add($answer);
+                        $question->addAnswer($answer);
                     }
                 }
 
-                $test->getQuestions()->add($question);
+                $test->addQuestion($question);
             }
         }
 
@@ -83,11 +87,16 @@ class GeneralTestService
     {
         $result = [];
         foreach ($test->getQuestions() as $question) {
+            $answers = $question->getAnswers()->toArray();
+            usort($answers, fn($a, $b) => $a->getAnswerOrder() <=> $b->getAnswerOrder());
+
             $result[] = [
                 'question' => $question,
-                'answers' => $question->getAnswers()->toArray()
+                'answers' => $answers
             ];
         }
+
+        usort($result, fn($a, $b) => $a['question']->getQuestionOrder() <=> $b['question']->getQuestionOrder());
 
         return $result;
     }

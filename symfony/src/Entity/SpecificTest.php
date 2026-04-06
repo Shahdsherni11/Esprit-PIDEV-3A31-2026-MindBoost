@@ -17,7 +17,7 @@ class SpecificTest
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'general_test_id')]
     private ?int $generalTestId = null;
 
     #[ORM\Column(length: 100)]
@@ -40,16 +40,16 @@ class SpecificTest
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, options: ['default' => 'DRAFT'])]
     private ?string $status = 'DRAFT';
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'created_by')]
     private ?int $createdBy = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'updated_at', type: 'datetime')]
     private ?\DateTimeInterface $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'test', targetEntity: SpecificQuestion::class, cascade: ['persist', 'remove'], orphanRemoval: true)]

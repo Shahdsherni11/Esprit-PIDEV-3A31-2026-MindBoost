@@ -14,28 +14,28 @@ class StudentAnswer
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'specific_score_id')]
     private ?int $specificScoreId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'user_id')]
     private ?int $userId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'specific_test_id')]
     private ?int $specificTestId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'question_id')]
     private ?int $questionId = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'question_text', type: 'text')]
     private ?string $questionText = null;
 
-    #[ORM\Column(type: 'text')]
+    #[ORM\Column(name: 'selected_answer_text', type: 'text')]
     private ?string $selectedAnswerText = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'answer_score')]
     private ?int $answerScore = 0;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'passed_at', type: 'datetime')]
     private ?\DateTimeInterface $passedAt = null;
 
     public function __construct()

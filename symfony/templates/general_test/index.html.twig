@@ -67,9 +67,7 @@
                 <tbody>
                     {% for test in generalTests %}
                         <tr>
-                            <td>
-                                <strong>{{ test.title }}</strong>
-                            </td>
+                            <td><strong>{{ test.title }}</strong></td>
                             <td>
                                 {% if test.description %}
                                     {{ test.description|slice(0, 50) }}...
@@ -88,21 +86,16 @@
                                     {% endif %}
                                 </span>
                             </td>
-                            <td>
-                                {{ test.createdAt|date('d/m/Y') }}
-                            </td>
+                            <td>{{ test.createdAt|date('d/m/Y') }}</td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{{ path('general_test_show', {id: test.id}) }}"
-                                       class="btn btn-info btn-sm">
+                                    <a href="{{ path('general_test_show', {id: test.id}) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ path('general_test_edit', {id: test.id}) }}"
-                                       class="btn btn-warning btn-sm">
+                                    <a href="{{ path('general_test_edit', {id: test.id}) }}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{{ path('general_test_delete', {id: test.id}) }}"
-                                       class="btn btn-danger btn-sm">
+                                    <a href="{{ path('general_test_delete', {id: test.id}) }}" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>

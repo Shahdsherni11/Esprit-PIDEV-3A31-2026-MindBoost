@@ -23,7 +23,6 @@
     </div>
 </div>
 
-<!-- Informations du Test -->
 <div class="card mb-4">
     <div class="card-header bg-primary text-white">
         <h4 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h4>
@@ -65,7 +64,6 @@
     </div>
 </div>
 
-<!-- Questions et Réponses -->
 {% if questionsWithAnswers|length > 0 %}
     <div class="card">
         <div class="card-header bg-primary text-white">
@@ -78,7 +76,7 @@
                         <span class="badge badge-primary">Q{{ loop.index }}</span>
                         {{ item.question.questionText }}
                     </h5>
-                    
+
                     {% if item.answers|length > 0 %}
                         <div class="list-group">
                             {% for answer in item.answers %}

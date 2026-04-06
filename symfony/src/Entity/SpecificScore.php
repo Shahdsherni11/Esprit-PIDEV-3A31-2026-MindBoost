@@ -14,16 +14,16 @@ class SpecificScore
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'user_id')]
     private ?int $userId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'specific_test_id')]
     private ?int $specificTestId = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'total_score')]
     private ?int $totalScore = 0;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'max_score')]
     private ?int $maxScore = 0;
 
     #[ORM\Column]
@@ -35,10 +35,10 @@ class SpecificScore
     #[ORM\Column(length: 20)]
     private ?string $level = 'Faible';
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'week_number')]
     private ?int $weekNumber = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(name: 'passed_at', type: 'datetime')]
     private ?\DateTimeInterface $passedAt = null;
 
     public function __construct()
