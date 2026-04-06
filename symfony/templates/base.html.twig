@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MindBoost{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
+            min-height: 100vh;
+            color: #E8E8F0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(to bottom, #0D0D1A, #1A1A2E) !important;
+            border-bottom: 1px solid rgba(108,99,255,0.3);
+            box-shadow: 0 2px 20px rgba(108,99,255,0.25);
+        }
+        .navbar-brand { font-weight: 700; font-size: 1.5rem; letter-spacing: 1px; color: #fff !important; }
+        .navbar-brand i { color: #6C63FF; }
+        .nav-link { color: rgba(255,255,255,0.6) !important; transition: all 0.2s ease; }
+        .nav-link:hover { color: #fff !important; background: rgba(108,99,255,0.18) !important; }
+        .nav-link.active { color: #fff !important; border-left: 3px solid #6C63FF; }
+        .card { background: rgba(255,255,255,0.06) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 16px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.3); color: #E8E8F0; }
+        .card-body { color: #E8E8F0; }
+        .btn { border-radius: 8px; }
+        .btn-primary { background: linear-gradient(to right, #6C63FF, #5A52D5) !important; border: none !important; color: #fff !important; font-weight: 600; }
+        .btn-primary:hover { background: linear-gradient(to right, #7B73FF, #6C63FF) !important; }
+        .btn-close { filter: invert(1) grayscale(1); }
+        .form-control, .form-select { background: rgba(255,255,255,0.08) !important; border: 1px solid rgba(255,255,255,0.15) !important; color: #E8E8F0 !important; border-radius: 8px !important; }
+        .form-control:focus, .form-select:focus { background: rgba(255,255,255,0.12) !important; border-color: #6C63FF !important; box-shadow: 0 0 0 0.2rem rgba(108,99,255,0.3) !important; color: #E8E8F0 !important; }
+        .form-control::placeholder { color: #9B9BB0 !important; }
+        .tag-badge { background: rgba(108,99,255,0.25); color: #9A8CFF; border: 1px solid rgba(108,99,255,0.4); border-radius: 20px; padding: 2px 10px; font-size: 0.8rem; }
+        footer { background: linear-gradient(to bottom, #0D0D1A, #1A1A2E); color: #9B9BB0; border-top: 1px solid rgba(255,255,255,0.06); }
+        .flash-messages { position: fixed; top: 70px; right: 20px; z-index: 9999; min-width: 280px; }
+        h1, h2, h3, h4, h5, h6 { color: #E8E8F0; }
+        .text-muted { color: #9B9BB0 !important; }
+        .text-dark { color: #E8E8F0 !important; }
+        a { color: #9A8CFF; }
+        a:hover { color: #6C63FF; }
+        hr { border-color: rgba(255,255,255,0.1); }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('app_home') }}">
+                <i class="bi bi-brain me-2"></i>MindBoost
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.pathInfo starts with '/posts' ? 'active' : '' }}" href="{{ path('post_index') }}">
+                            <i class="bi bi-file-post me-1"></i>Posts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.pathInfo starts with '/achievements' ? 'active' : '' }}" href="{{ path('achievement_index') }}">
+                            <i class="bi bi-trophy me-1"></i>Achievements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.pathInfo starts with '/saves' ? 'active' : '' }}" href="{{ path('saves_index') }}">
+                            <i class="bi bi-bookmark me-1"></i>Saves
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flash-messages">
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ type == 'success' ? 'success' : (type == 'error' ? 'danger' : 'info') }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <main class="container py-4">
+        {% block body %}{% endblock %}
+    </main>
+
+    <footer class="py-3 mt-5">
+        <div class="container text-center">
+            <small>&copy; {{ "now"|date("Y") }} MindBoost &mdash; Esprit PIDEV 3A31 2026</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

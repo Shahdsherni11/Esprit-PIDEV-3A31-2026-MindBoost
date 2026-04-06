@@ -1,0 +1,267 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}{{ post.title }} — MindBoost{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-8">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ path('front_post_index') }}">Posts</a></li>
+                <li class="breadcrumb-item active">{{ post.title|slice(0,40) }}</li>
+            </ol>
+        </nav>
+
+        <div class="card mb-4">
+            {% if post.imageUrl %}
+            <img src="{{ post.imageUrl }}" class="card-img-top" alt="Post image" style="max-height:350px;object-fit:cover;border-radius:12px 12px 0 0;">
+            {% endif %}
+            <div class="card-body">
+                <div class="mb-2">
+                    {% if post.tag %}
+                    <span class="tag-badge"><i class="bi bi-tag me-1"></i>{{ post.tag }}</span>
+                    {% endif %}
+                </div>
+                <h2 class="fw-bold">{{ post.title }}</h2>
+                <p id="post-content" class="text-body{% if postProfane %} profane-blur{% endif %}">{{ post.content }}</p>
+                {% if postProfane %}
+                <button class="btn btn-sm btn-outline-warning mt-1" onclick="toggleBlur(document.getElementById('post-content'))">
+                    <i class="bi bi-eye me-1"></i>Reveal content
+                </button>
+                {% endif %}
+
+                <div class="d-flex gap-3 mt-3 align-items-center flex-wrap">
+                    <form method="post" action="{{ path('front_post_react', {id: post.id}) }}" class="d-inline react-form">
+                        <input type="hidden" name="type" value="like">
+                        <button class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-hand-thumbs-up"></i> <span id="likes-count">{{ post.likes }}</span>
+                        </button>
+                    </form>
+                    <form method="post" action="{{ path('front_post_react', {id: post.id}) }}" class="d-inline react-form">
+                        <input type="hidden" name="type" value="dislike">
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-hand-thumbs-down"></i> <span id="dislikes-count">{{ post.dislikes }}</span>
+                        </button>
+                    </form>
+                    <span class="text-muted small"><i class="bi bi-speedometer2 me-1"></i>Help meter: {{ post.helpMeter }}</span>
+                </div>
+            </div>
+        </div>
+
+        {# AI Tools #}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="bi bi-robot me-2 text-primary"></i>AI Tools</h6>
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                    <button id="btn-summarize" class="btn btn-outline-primary btn-sm" onclick="summarizePost({{ post.id }})">
+                        <i class="bi bi-card-text me-1"></i>Summarize
+                    </button>
+                    <div class="input-group" style="max-width:300px;">
+                        <select class="form-select form-select-sm" id="translate-lang">
+                            <option value="fr">French</option>
+                            <option value="es">Spanish</option>
+                            <option value="ar">Arabic</option>
+                            <option value="de">German</option>
+                        </select>
+                        <button class="btn btn-outline-info btn-sm" onclick="translatePost({{ post.id }})">
+                            <i class="bi bi-translate me-1"></i>Translate
+                        </button>
+                    </div>
+                </div>
+                <div id="ai-result" class="d-none">
+                    <div class="alert alert-light border">
+                        <div class="d-flex justify-content-between">
+                            <strong id="ai-result-label">Result</strong>
+                            <button class="btn-close btn-sm" onclick="document.getElementById('ai-result').classList.add('d-none')"></button>
+                        </div>
+                        <p id="ai-result-text" class="mt-2 mb-0"></p>
+                    </div>
+                </div>
+                <div id="ai-loading" class="d-none text-muted small">
+                    <div class="spinner-border spinner-border-sm me-1"></div> Processing...
+                </div>
+            </div>
+        </div>
+
+        {# Comments #}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3"><i class="bi bi-chat-dots me-2 text-secondary"></i>Comments ({{ comments|length }})</h5>
+
+                {% if comments is empty %}
+                <p class="text-muted">No comments yet. Be the first!</p>
+                {% else %}
+                {% for comment in comments %}
+                <div class="d-flex mb-3 pb-3 border-bottom">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:38px;height:38px;font-size:.9rem;">
+                            {{ comment.userId }}
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <small class="fw-bold text-muted">User #{{ comment.userId }}</small>
+                            <div class="d-flex gap-1">
+                                <a href="{{ path('back_comment_edit', {postId: post.id, id: comment.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 6px;">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form method="post" action="{{ path('back_comment_delete', {postId: post.id, id: comment.id}) }}"
+                                      onsubmit="return confirm('Delete comment?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment' ~ comment.id) }}">
+                                    <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 6px;">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <p class="mb-1 comment-text{% if commentsProfane[comment.id] is defined and commentsProfane[comment.id] %} profane-blur{% endif %}">{{ comment.comment }}</p>
+                        {% if commentsProfane[comment.id] is defined and commentsProfane[comment.id] %}
+                        <button class="btn btn-xs btn-outline-warning mb-1" style="font-size:.75rem;padding:2px 6px;" onclick="toggleBlur(this.previousElementSibling)">
+                            <i class="bi bi-eye me-1"></i>Reveal
+                        </button>
+                        {% endif %}
+                        <div class="d-flex gap-1 align-items-center mt-1">
+                            <form method="post" action="{{ path('front_comment_react', {postId: post.id, id: comment.id}) }}" class="d-inline comment-react-form">
+                                <input type="hidden" name="type" value="like">
+                                <button class="btn btn-xs btn-outline-success" style="font-size:.75rem;padding:2px 6px;" title="Like">
+                                    <i class="bi bi-hand-thumbs-up"></i> <span class="comment-likes-count">{{ comment.likes }}</span>
+                                </button>
+                            </form>
+                            <form method="post" action="{{ path('front_comment_react', {postId: post.id, id: comment.id}) }}" class="d-inline comment-react-form">
+                                <input type="hidden" name="type" value="dislike">
+                                <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 6px;" title="Dislike">
+                                    <i class="bi bi-hand-thumbs-down"></i> <span class="comment-dislikes-count">{{ comment.dislikes }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <hr>
+                <h6 class="fw-bold mb-2">Add a Comment</h6>
+                {{ form_start(commentForm, {'attr': {'class': ''}}) }}
+                <div class="mb-2">
+                    {{ form_widget(commentForm.comment) }}
+                    {{ form_errors(commentForm.comment) }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-send me-1"></i>Post Comment
+                </button>
+                {{ form_end(commentForm) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="fw-bold">Actions</h6>
+                <div class="d-grid gap-2">
+                    <form method="post" action="{{ path('front_saves_save', {postId: post.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('save_post' ~ post.id) }}">
+                        <button class="btn btn-warning btn-sm w-100">
+                            <i class="bi bi-bookmark-plus me-1"></i>Save Post
+                        </button>
+                    </form>
+                    <a href="{{ path('front_saves_index') }}" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-bookmark me-1"></i>View Saves
+                    </a>
+                    <a href="{{ path('front_post_index') }}" class="btn btn-outline-dark btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Posts
+                    </a>
+                    <a href="{{ path('front_post_edit', {id: post.id}) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil me-1"></i>Edit Post
+                    </a>
+                    <form method="post" action="{{ path('front_post_delete', {id: post.id}) }}"
+                          onsubmit="return confirm('Delete this post and its comments?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                        <button class="btn btn-outline-danger btn-sm w-100">
+                            <i class="bi bi-trash me-1"></i>Delete Post
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.querySelectorAll('.react-form').forEach(form => {
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById('likes-count').textContent = data.likes;
+            document.getElementById('dislikes-count').textContent = data.dislikes;
+        }
+    });
+});
+
+async function summarizePost(id) {
+    showLoading();
+    try {
+        const res = await fetch(`/posts/${id}/summarize`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const data = await res.json();
+        showResult('Summary', data.summary || data.error);
+    } catch (e) {
+        showResult('Error', 'Failed to summarize.');
+    }
+}
+
+async function translatePost(id) {
+    showLoading();
+    const lang = document.getElementById('translate-lang').value;
+    const fd = new FormData();
+    fd.append('lang', lang);
+    try {
+        const res = await fetch(`/posts/${id}/translate`, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const data = await res.json();
+        showResult('Translation', data.translation || data.error);
+    } catch (e) {
+        showResult('Error', 'Failed to translate.');
+    }
+}
+
+function showLoading() {
+    document.getElementById('ai-loading').classList.remove('d-none');
+    document.getElementById('ai-result').classList.add('d-none');
+}
+
+function showResult(label, text) {
+    document.getElementById('ai-loading').classList.add('d-none');
+    document.getElementById('ai-result-label').textContent = label;
+    document.getElementById('ai-result-text').textContent = text;
+    document.getElementById('ai-result').classList.remove('d-none');
+}
+
+document.querySelectorAll('.comment-react-form').forEach(form => {
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        if (res.ok) {
+            const data = await res.json();
+            const commentBody = form.closest('.d-flex.gap-1');
+            commentBody.querySelector('.comment-likes-count').textContent = data.likes;
+            commentBody.querySelector('.comment-dislikes-count').textContent = data.dislikes;
+        }
+    });
+});
+
+function toggleBlur(el) {
+    el.classList.toggle('profane-blur');
+    const btn = el.nextElementSibling;
+    if (btn) {
+        btn.innerHTML = el.classList.contains('profane-blur')
+            ? '<i class="bi bi-eye me-1"></i>Reveal'
+            : '<i class="bi bi-eye-slash me-1"></i>Hide';
+    }
+}
+</script>
+{% endblock %}

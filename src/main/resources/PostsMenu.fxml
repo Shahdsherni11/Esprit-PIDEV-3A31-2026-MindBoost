@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PostsMenuController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Posts CRUD" styleClass="page-title"/>
+
+                <VBox spacing="12" styleClass="form-container">
+                    <Button text="Ajouter" styleClass="btn-primary" onAction="#goToAdd"/>
+                    <Button text="Modifier" styleClass="btn-primary" onAction="#goToEdit"/>
+                    <Button text="Supprimer" styleClass="btn-danger" onAction="#goToDelete"/>
+                    <Button text="Afficher" styleClass="btn-primary" onAction="#goToList"/>
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

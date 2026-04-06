@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AcheivementAddController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Ajouter un acheivement" styleClass="page-title"/>
+
+                <GridPane hgap="12" vgap="6" styleClass="form-container">
+                    <Label text="Name" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="nameField" styleClass="form-field" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label fx:id="nameError" styleClass="error-label" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Score" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="scoreField" styleClass="form-field" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label fx:id="scoreError" styleClass="error-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Button text="Ajouter" styleClass="btn-primary" onAction="#addAcheivement" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

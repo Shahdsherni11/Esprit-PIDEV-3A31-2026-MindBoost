@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.SavesDeleteController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Supprimer un save" styleClass="page-title"/>
+
+                <VBox spacing="6" styleClass="form-container">
+                    <Label text="Post ID" styleClass="form-label"/>
+                    <TextField fx:id="postIdField" styleClass="form-field"/>
+                    <Label fx:id="postIdError" styleClass="error-label"/>
+
+                    <Label text="User ID" styleClass="form-label"/>
+                    <TextField fx:id="userIdField" styleClass="form-field"/>
+                    <Label fx:id="userIdError" styleClass="error-label"/>
+
+                    <HBox spacing="10">
+                        <Button text="Supprimer" styleClass="btn-danger" onAction="#deleteSave"/>
+                        <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.CommentDeleteController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Supprimer un commentaire" styleClass="page-title"/>
+
+                <VBox spacing="6" styleClass="form-container">
+                    <Label text="Comment ID" styleClass="form-label"/>
+                    <TextField fx:id="commentIdField" styleClass="form-field"/>
+                    <Label fx:id="commentIdError" styleClass="error-label"/>
+
+                    <HBox spacing="10">
+                        <Button text="Supprimer" styleClass="btn-danger" onAction="#deleteComment"/>
+                        <Button text="Retour" styleClass="btn-primary" onAction="#goBack"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

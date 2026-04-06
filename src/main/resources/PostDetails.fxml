@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PostDetailsController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Détails du post" styleClass="page-title"/>
+
+                <VBox spacing="10" styleClass="card">
+                    <ImageView fx:id="postImage" fitWidth="600" fitHeight="300" preserveRatio="true"/>
+                    <Label fx:id="titleLabel" styleClass="post-title"/>
+                    <Label fx:id="contentLabel" wrapText="true" styleClass="post-content"/>
+                    <Button text="Save" styleClass="btn-primary"/>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

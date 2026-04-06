@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.AcheivementListController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16" VBox.vgrow="ALWAYS">
+                <Label text="Liste des acheivements" styleClass="page-title"/>
+
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="searchField" promptText="Rechercher ID..." styleClass="form-field" prefWidth="240"/>
+                    <Button text="Rechercher" styleClass="btn-primary" onAction="#searchAcheivements"/>
+                    <Button text="Retour liste" styleClass="btn-primary" onAction="#resetList"/>
+
+                    <Label text="Trier" styleClass="form-label"/>
+                    <ComboBox fx:id="sortCombo" prefWidth="180"/>
+                </HBox>
+
+                <Label fx:id="noResultLabel" text="Aucun résultat" styleClass="error-label" visible="false" managed="false"/>
+
+                <ListView fx:id="listView" styleClass="forum-list" VBox.vgrow="ALWAYS"/>
+
+                <HBox alignment="CENTER_RIGHT">
+                    <Button text="Retour" styleClass="btn-secondary" onAction="#goBack"/>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

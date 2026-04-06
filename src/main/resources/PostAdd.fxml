@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.PostAddController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Ajouter un post" styleClass="page-title"/>
+
+                <GridPane hgap="12" vgap="6" styleClass="form-container">
+                    <Label text="Content" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="contentField" styleClass="form-field" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label fx:id="contentError" styleClass="error-label" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Title" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="titleField" styleClass="form-field" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label fx:id="titleError" styleClass="error-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Label text="Tag" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="tagField" styleClass="form-field" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Label fx:id="tagError" styleClass="error-label" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                    <Label text="Image URL" styleClass="form-label" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                    <TextField fx:id="imageField" styleClass="form-field" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                    <Label fx:id="imageError" styleClass="error-label" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+                    <Label text="User ID" styleClass="form-label" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                    <TextField fx:id="userIdField" styleClass="form-field" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                    <Label fx:id="userIdError" styleClass="error-label" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+                    <Button text="Ajouter" styleClass="btn-primary" onAction="#addPost" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

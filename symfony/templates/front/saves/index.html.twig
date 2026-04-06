@@ -1,0 +1,40 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Saved Posts — MindBoost{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0"><i class="bi bi-bookmark me-2 text-info"></i>Saved Posts</h2>
+</div>
+
+{% if saves is empty %}
+<div class="text-center py-5 text-muted">
+    <i class="bi bi-bookmark display-4"></i>
+    <p class="mt-2">No saved posts. <a href="{{ path('front_post_index') }}">Browse posts</a> to read some!</p>
+</div>
+{% else %}
+<div class="row g-3">
+    {% for save in saves %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="fw-bold mb-1">
+                            <a href="{{ path('front_post_show', {id: save.postId}) }}" class="text-decoration-none" style="color:#9A8CFF;">
+                                <i class="bi bi-file-post me-1"></i>Post #{{ save.postId }}
+                            </a>
+                        </div>
+                        <small class="text-muted">User #{{ save.userId }}</small>
+                        {% if save.description %}
+                        <p class="mt-2 mb-0 text-muted small">{{ save.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

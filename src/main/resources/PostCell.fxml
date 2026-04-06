@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+
+<HBox spacing="12" styleClass="post-card"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.PostCellController">
+
+    <ImageView fx:id="postImage" fitWidth="120" fitHeight="80" preserveRatio="true"/>
+    <VBox spacing="4">
+        <Label fx:id="titleLabel" styleClass="post-title"/>
+        <Label fx:id="tagLabel" styleClass="post-meta"/>
+    </VBox>
+</HBox>

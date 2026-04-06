@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane stylesheets="@styles/app.css" styleClass="root main-bg"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.SavesEditController">
+
+    <left><fx:include source="Topbar.fxml"/></left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="16">
+                <Label text="Modifier un save" styleClass="page-title"/>
+
+                <GridPane hgap="12" vgap="6" styleClass="form-container">
+                    <Label text="Description" styleClass="form-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="descField" styleClass="form-field" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <Label fx:id="descError" styleClass="error-label" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Post ID" styleClass="form-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <TextField fx:id="postIdField" styleClass="form-field" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <Label fx:id="postIdError" styleClass="error-label" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Label text="User ID" styleClass="form-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="userIdField" styleClass="form-field" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                    <Label fx:id="userIdError" styleClass="error-label" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                    <Button text="Modifier" styleClass="btn-primary" onAction="#editSave" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                    <Button text="Retour" styleClass="btn-primary" onAction="#goBack" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
