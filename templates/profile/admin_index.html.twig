@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion Profils – MindBoost{% endblock %}
+{% block breadcrumb %}
+    <a href="{{ path('admin_dashboard') }}" class="text-decoration-none text-muted">Dashboard</a>
+    <i class="bi bi-chevron-right mx-1" style="font-size:.75rem;"></i>
+    <span>Profils</span>
+{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title mb-0"><i class="bi bi-person-badge me-2"></i>Gestion des Profils</h2>
+</div>
+
+<!-- Recherche -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold" style="font-size:.85rem;">Recherche</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" name="search" value="{{ search }}"
+                           placeholder="Prénom, nom, email, téléphone...">
+                </div>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search me-1"></i>Rechercher
+                </button>
+                <a href="{{ path('admin_profile_index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-table me-2 text-primary"></i>Liste des profils</span>
+        <span class="badge bg-secondary">{{ profiles|length }} profil(s)</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Nom complet</th>
+                        <th>Téléphone</th>
+                        <th>Personnalité</th>
+                        <th>Rôle</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in profiles %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                {% if profile.avatarUrl %}
+                                    <img src="{{ profile.avatarUrl }}" class="rounded-circle"
+                                         style="width:32px;height:32px;object-fit:cover;" alt="">
+                                {% else %}
+                                    <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                        {{ profile.firstName|slice(0,1)|upper }}
+                                    </div>
+                                {% endif %}
+                                <span style="font-size:.85rem;">{{ profile.user.email }}</span>
+                            </div>
+                        </td>
+                        <td style="font-weight:600;">{{ profile.fullName }}</td>
+                        <td style="font-size:.85rem;">{{ profile.phone ?? '—' }}</td>
+                        <td>
+                            {% if profile.personalityType %}
+                                <span class="badge bg-info-subtle text-info">{{ profile.personalityType }}</span>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ profile.user.role }}">{{ profile.user.role|capitalize }}</span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex gap-1 justify-content-center">
+                                <a href="{{ path('admin_profile_show', {id: profile.id}) }}"
+                                   class="btn btn-sm btn-outline-info" title="Voir">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form method="post"
+                                      action="{{ path('admin_profile_delete', {id: profile.id}) }}"
+                                      style="display:inline;">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('delete_profile' ~ profile.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer"
+                                            onclick="return confirm('Supprimer le profil de {{ profile.fullName }} ?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
+                            Aucun profil trouvé
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

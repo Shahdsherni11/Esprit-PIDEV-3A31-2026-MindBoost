@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter Utilisateur – MindBoost{% endblock %}
+{% block breadcrumb %}
+    <a href="{{ path('admin_user_index') }}" class="text-decoration-none text-muted">Utilisateurs</a>
+    <i class="bi bi-chevron-right mx-1" style="font-size:.75rem;"></i>
+    <span>Ajouter</span>
+{% endblock %}
+
+{% block body %}
+<h2 class="section-title"><i class="bi bi-person-plus me-2"></i>Ajouter un Utilisateur</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <i class="bi bi-person-fill me-2 text-primary"></i>Informations du compte
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <div class="mb-3">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email) }}
+                    {{ form_errors(form.email) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.role) }}
+                    {{ form_widget(form.role) }}
+                    {{ form_errors(form.role) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.plainPassword) }}
+                    {{ form_widget(form.plainPassword) }}
+                    <div style="font-size:.75rem; color:#9ca3af; margin-top:.25rem;">
+                        Minimum 8 caractères, 1 majuscule et 1 chiffre
+                    </div>
+                    {{ form_errors(form.plainPassword) }}
+                </div>
+
+                <div class="mb-4 form-check">
+                    {{ form_widget(form.isVerified) }}
+                    {{ form_label(form.isVerified, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Créer l'utilisateur
+                    </button>
+                    <a href="{{ path('admin_user_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Annuler
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

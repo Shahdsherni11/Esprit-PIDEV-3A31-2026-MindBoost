@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ isNew ? 'Créer' : 'Modifier' }} Profil – MindBoost{% endblock %}
+{% block breadcrumb %}
+    <a href="{{ path('app_profile_show') }}" class="text-decoration-none text-muted">Mon Profil</a>
+    <i class="bi bi-chevron-right mx-1" style="font-size:.75rem;"></i>
+    <span>{{ isNew ? 'Créer' : 'Modifier' }}</span>
+{% endblock %}
+
+{% block body %}
+<h2 class="section-title">
+    <i class="bi bi-{{ isNew ? 'person-plus' : 'pencil-square' }} me-2"></i>
+    {{ isNew ? 'Créer mon profil' : 'Modifier mon profil' }}
+</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-white">
+                <i class="bi bi-person me-2 text-primary"></i>Informations personnelles
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        {{ form_label(form.phone) }}
+                        {{ form_widget(form.phone) }}
+                        {{ form_errors(form.phone) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_label(form.personalityType) }}
+                        {{ form_widget(form.personalityType) }}
+                        {{ form_errors(form.personalityType) }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.avatarUrl) }}
+                    {{ form_widget(form.avatarUrl) }}
+                    <div style="font-size:.75rem; color:#9ca3af; margin-top:.25rem;">
+                        URL vers une image de profil (ex: https://i.pravatar.cc/150)
+                    </div>
+                    {{ form_errors(form.avatarUrl) }}
+                </div>
+
+                <div class="mb-4">
+                    {{ form_label(form.bio) }}
+                    {{ form_widget(form.bio) }}
+                    {{ form_errors(form.bio) }}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-{{ isNew ? 'plus-circle' : 'save' }} me-2"></i>
+                        {{ isNew ? 'Créer le profil' : 'Sauvegarder' }}
+                    </button>
+                    <a href="{{ path('app_profile_show') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Annuler
+                    </a>
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
