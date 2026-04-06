@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tableau de Bord{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <div>
+        <h1>👋 Bonjour, {{ user.displayName }} !</h1>
+        <p class="page-subtitle">Votre espace MindBoost — {{ 'now'|date('d/m/Y') }}</p>
+    </div>
+    <a href="{{ path('app_tache_new') }}" class="btn btn-primary">+ Nouvelle tâche</a>
+</div>
+
+{# ── STATS TÂCHES ── #}
+<div class="stats-grid">
+    <div class="stat-card stat-blue">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+            <span class="stat-number">{{ tacheStats.total }}</span>
+            <span class="stat-label">Tâches totales</span>
+        </div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+            <span class="stat-number">{{ tacheStats.terminees }}</span>
+            <span class="stat-label">Terminées</span>
+        </div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-info">
+            <span class="stat-number">{{ tacheStats.enCours }}</span>
+            <span class="stat-label">En cours</span>
+        </div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-info">
+            <span class="stat-number">{{ tacheStats.scoreMoyen }}%</span>
+            <span class="stat-label">Score moy. productivité</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-2col">
+
+    {# ── MES TÂCHES RÉCENTES ── #}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>📋 Mes tâches récentes</h2>
+            <a href="{{ path('app_tache_list') }}" class="btn btn-sm btn-outline">Voir tout →</a>
+        </div>
+        {% if taches %}
+            <div class="tache-cards">
+                {% for tache in taches %}
+                <div class="tache-card tache-{{ tache.statut|lower|replace({' ': '-', 'é': 'e', 'é': 'e'}) }}">
+                    <div class="tache-card-header">
+                        <span class="tache-title">{{ tache.titre }}</span>
+                        <span class="badge statut-badge statut-{{ tache.statut == 'Terminée' ? 'done' : (tache.statut == 'En cours' ? 'active' : 'pending') }}">
+                            {{ tache.statut }}
+                        </span>
+                    </div>
+                    {% if tache.objectifPrincipal %}
+                        <p class="tache-obj">{{ tache.objectifPrincipal|slice(0, 80) }}{% if tache.objectifPrincipal|length > 80 %}...{% endif %}</p>
+                    {% endif %}
+                    <div class="tache-meta">
+                        <span>⭐ Diff. {{ tache.niveauDifficulte }}/5</span>
+                        <span>🎯 {{ tache.scoreProductivite }}%</span>
+                        <span>{{ tache.sousTaches|length }} sous-tâche(s)</span>
+                    </div>
+                    {% if tache.sousTaches|length > 0 %}
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar" style="width: {{ tache.progressionPourcentage }}%"></div>
+                    </div>
+                    <span class="progress-label">{{ tache.progressionPourcentage }}% complété</span>
+                    {% endif %}
+                    <a href="{{ path('app_tache_show', {id: tache.id}) }}" class="btn btn-xs btn-outline mt-1">Voir →</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>📭 Aucune tâche pour l'instant.</p>
+                <a href="{{ path('app_tache_new') }}" class="btn btn-primary btn-sm">Créer ma première tâche</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {# ── TESTS PSY DISPONIBLES ── #}
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>🧪 Tests psychologiques</h2>
+            <a href="{{ path('app_test_list') }}" class="btn btn-sm btn-outline">Voir tout →</a>
+        </div>
+        {% if tests %}
+            <div class="test-cards">
+                {% for test in tests|slice(0, 4) %}
+                <div class="test-card">
+                    <div class="test-card-icon">🧪</div>
+                    <div class="test-card-body">
+                        <h4>{{ test.title }}</h4>
+                        {% if test.description %}
+                            <p>{{ test.description|slice(0, 80) }}{% if test.description|length > 80 %}...{% endif %}</p>
+                        {% endif %}
+                        <span class="badge badge-info">{{ test.questions|length }} questions</span>
+                    </div>
+                    <a href="{{ path('app_test_show', {id: test.id}) }}" class="btn btn-xs btn-primary">Passer →</a>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>🔬 Aucun test disponible pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+{# ── PROFIL RAPIDE ── #}
+{% if user.profile %}
+<div class="profile-quick-card">
+    <div class="pq-avatar">{{ user.displayName|slice(0,1)|upper }}</div>
+    <div class="pq-info">
+        <strong>{{ user.profile.fullName }}</strong>
+        {% if user.profile.personalityType %}
+            <span class="badge badge-{{ user.profile.personalityType|lower }}">{{ user.profile.personalityType }}</span>
+        {% endif %}
+        <p class="text-muted">{{ user.email }}</p>
+    </div>
+    <a href="{{ path('app_profile_edit') }}" class="btn btn-sm btn-outline">✏️ Modifier profil</a>
+</div>
+{% endif %}
+{% endblock %}

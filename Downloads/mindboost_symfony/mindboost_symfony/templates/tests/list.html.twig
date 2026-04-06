@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% block title %}Tests Psychologiques{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>🧪 Tests Psychologiques</h1>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_admin_test_list') }}" class="btn btn-primary">⚙️ Gérer les tests</a>
+    {% endif %}
+</div>
+
+<div class="search-bar">
+    <form method="get" class="search-form">
+        <input type="text" name="q" value="{{ keyword }}" placeholder="🔍 Rechercher un test..." class="form-control search-input">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+        {% if keyword %}<a href="{{ path('app_test_list') }}" class="btn btn-outline">Reset</a>{% endif %}
+    </form>
+</div>
+
+{% if tests %}
+<div class="test-grid">
+    {% for test in tests %}
+    <div class="test-card-full">
+        <div class="test-card-icon-lg">🧪</div>
+        <div class="test-card-body">
+            <h3>{{ test.title }}</h3>
+            {% if test.description %}
+                <p class="text-muted">{{ test.description|slice(0, 120) }}{% if test.description|length > 120 %}...{% endif %}</p>
+            {% endif %}
+            <div class="test-meta">
+                <span class="badge badge-info">{{ test.questions|length }} question(s)</span>
+                <span class="badge badge-success">✅ Actif</span>
+                <span class="text-muted small">Créé le {{ test.createdAt|date('d/m/Y') }}</span>
+            </div>
+        </div>
+        <a href="{{ path('app_test_show', {id: test.id}) }}" class="btn btn-primary">Voir le test →</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state-lg">
+    <span class="empty-icon">🔬</span>
+    <p>{% if keyword %}Aucun test ne correspond à « {{ keyword }} ».{% else %}Aucun test disponible pour le moment.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}

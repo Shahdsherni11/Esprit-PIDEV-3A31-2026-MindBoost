@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des Utilisateurs{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>👥 Gestion des Utilisateurs</h1>
+    <a href="{{ path('app_admin_user_new') }}" class="btn btn-primary">➕ Nouvel utilisateur</a>
+</div>
+
+<div class="search-bar">
+    <form method="get" class="search-form">
+        <input type="text" name="q" value="{{ keyword }}" placeholder="🔍 Rechercher par email ou nom..." class="form-control search-input">
+        <select name="role" class="form-control select-filter">
+            <option value="">Tous les rôles</option>
+            <option value="user"         {{ role == 'user'         ? 'selected' : '' }}>👤 Utilisateur</option>
+            <option value="psychologist" {{ role == 'psychologist' ? 'selected' : '' }}>🩺 Psychologue</option>
+            <option value="admin"        {{ role == 'admin'        ? 'selected' : '' }}>👑 Admin</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        <a href="{{ path('app_admin_user_list') }}" class="btn btn-outline">Reset</a>
+    </form>
+    <span class="total-count">{{ total }} utilisateur(s)</span>
+</div>
+
+<div class="table-container">
+    <table class="table table-hover">
+        <thead><tr><th>#</th><th>Email</th><th>Nom</th><th>Rôle</th><th>Vérifié</th><th>Inscription</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td><a href="{{ path('app_admin_user_show', {id: u.id}) }}">{{ u.email }}</a></td>
+            <td>{{ u.profile ? u.profile.fullName : '—' }}</td>
+            <td><span class="badge badge-{{ u.role }}">{{ u.role }}</span></td>
+            <td>{{ u.isVerified ? '✅' : '❌' }}</td>
+            <td>{{ u.createdAt|date('d/m/Y') }}</td>
+            <td class="actions-cell">
+                <a href="{{ path('app_admin_user_show', {id: u.id}) }}" class="btn btn-xs btn-info">👁</a>
+                <a href="{{ path('app_admin_user_edit', {id: u.id}) }}" class="btn btn-xs btn-warning">✏️</a>
+                <form method="post" action="{{ path('app_admin_user_delete', {id: u.id}) }}" style="display:inline"
+                      onsubmit="return confirm('Supprimer « {{ u.email }} » ? Ses données seront perdues.')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ u.id) }}">
+                    <button class="btn btn-xs btn-danger">🗑</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted">Aucun utilisateur trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

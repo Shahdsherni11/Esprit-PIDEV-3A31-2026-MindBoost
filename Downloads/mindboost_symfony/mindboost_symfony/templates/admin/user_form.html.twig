@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ isNew ? 'Nouvel utilisateur' : 'Modifier ' ~ user.email }}{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>{{ isNew ? '➕ Nouvel utilisateur' : '✏️ Modifier l\'utilisateur' }}</h1>
+    <a href="{{ path('app_admin_user_list') }}" class="btn btn-outline">← Retour</a>
+</div>
+<div class="form-container">
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'mindboost-form'}}) }}
+    <div class="form-section">
+        <div class="form-group {% if form.email.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(form.email, '📧 Email') }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+        {% if isNew %}
+        <div class="form-group {% if form.plainPassword.vars.errors|length %}has-error{% endif %}">
+            {{ form_label(form.plainPassword, '🔒 Mot de passe') }}
+            {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.plainPassword) }}
+        </div>
+        {% endif %}
+        <div class="form-group">
+            {{ form_label(form.role, '🎭 Rôle') }}
+            {{ form_widget(form.role, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class="form-check">
+            {{ form_widget(form.isVerified) }}
+            {{ form_label(form.isVerified, '✅ Email vérifié') }}
+        </div>
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+        <a href="{{ path('app_admin_user_list') }}" class="btn btn-outline">Annuler</a>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

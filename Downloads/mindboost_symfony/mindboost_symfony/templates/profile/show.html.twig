@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Profil{% endblock %}
+{% block body %}
+<div class="page-header">
+    <h1>👤 Mon Profil</h1>
+    <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">✏️ Modifier</a>
+</div>
+<div class="profile-container">
+    <div class="profile-card">
+        {% if profile and profile.avatarUrl %}
+            <img src="{{ profile.avatarUrl }}" alt="Avatar" class="profile-avatar">
+        {% else %}
+            <div class="profile-avatar-placeholder">{{ user.displayName|slice(0,1)|upper }}</div>
+        {% endif %}
+        {% if profile %}
+            <h2>{{ profile.fullName }}</h2>
+            {% if profile.personalityType %}
+                <span class="badge badge-{{ profile.personalityType|lower }}">{{ profile.personalityType }}</span>
+            {% endif %}
+            <div class="profile-details">
+                <div class="detail-row"><span class="detail-label">📧 Email</span><span class="detail-value">{{ user.email }}</span></div>
+                <div class="detail-row"><span class="detail-label">🎭 Rôle</span><span class="detail-value"><span class="badge badge-{{ user.role }}">{{ user.role }}</span></span></div>
+                {% if profile.phone %}<div class="detail-row"><span class="detail-label">📞 Téléphone</span><span class="detail-value">{{ profile.phone }}</span></div>{% endif %}
+                {% if profile.bio %}<div class="detail-row"><span class="detail-label">📝 Bio</span><span class="detail-value">{{ profile.bio }}</span></div>{% endif %}
+                <div class="detail-row"><span class="detail-label">📅 Inscrit le</span><span class="detail-value">{{ user.createdAt|date('d/m/Y') }}</span></div>
+            </div>
+        {% else %}
+            <p class="text-muted">Profil non renseigné.</p>
+            <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">+ Compléter mon profil</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
