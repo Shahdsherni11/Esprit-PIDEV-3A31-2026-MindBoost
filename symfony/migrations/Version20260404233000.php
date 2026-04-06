@@ -11,16 +11,25 @@ use Doctrine\Migrations\AbstractMigration;
  * Ensures all tables and columns defined in the ORM entities actually exist
  * in the database.  Uses CREATE TABLE IF NOT EXISTS so it is safe to run
  * against a database that was created manually before Doctrine migrations
- * were introduced, and ALTER TABLE … ADD COLUMN IF NOT EXISTS so it is safe
- * to run even when individual columns were already added by a previous
- * migration (e.g. Version20260404231432 for post_likes / post_dislikes /
- * help_meter).
+ * were introduced.  Column existence is checked via information_schema for
+ * compatibility with standard MySQL (ADD COLUMN IF NOT EXISTS is MariaDB-only).
  */
 final class Version20260404233000 extends AbstractMigration
 {
     public function getDescription(): string
     {
         return 'Create achievement, comment, saves, user tables if missing; add any missing columns to post, comment, saves, user';
+    }
+
+    private function columnExists(string $table, string $column): bool
+    {
+        return (int) $this->connection->executeQuery(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS
+              WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME   = ?
+                AND COLUMN_NAME  = ?",
+            [$table, $column]
+        )->fetchOne() > 0;
     }
 
     public function up(Schema $schema): void
@@ -48,8 +57,12 @@ final class Version20260404233000 extends AbstractMigration
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
         ");
         // Add likes / dislikes if the comment table already existed without them
-        $this->addSql('ALTER TABLE comment ADD COLUMN IF NOT EXISTS likes    INT NOT NULL DEFAULT 0');
-        $this->addSql('ALTER TABLE comment ADD COLUMN IF NOT EXISTS dislikes INT NOT NULL DEFAULT 0');
+        if (!$this->columnExists('comment', 'likes')) {
+            $this->addSql('ALTER TABLE comment ADD COLUMN likes    INT NOT NULL DEFAULT 0');
+        }
+        if (!$this->columnExists('comment', 'dislikes')) {
+            $this->addSql('ALTER TABLE comment ADD COLUMN dislikes INT NOT NULL DEFAULT 0');
+        }
 
         // ── saves ─────────────────────────────────────────────────────────────
         $this->addSql("
@@ -61,7 +74,9 @@ final class Version20260404233000 extends AbstractMigration
                 PRIMARY KEY (id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
         ");
-        $this->addSql('ALTER TABLE saves ADD COLUMN IF NOT EXISTS description LONGTEXT DEFAULT NULL');
+        if (!$this->columnExists('saves', 'description')) {
+            $this->addSql('ALTER TABLE saves ADD COLUMN description LONGTEXT DEFAULT NULL');
+        }
 
         // ── user ──────────────────────────────────────────────────────────────
         $this->addSql("
@@ -79,29 +94,59 @@ final class Version20260404233000 extends AbstractMigration
                 UNIQUE KEY user_email_unique (email)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB
         ");
-        $this->addSql('ALTER TABLE `user` ADD COLUMN IF NOT EXISTS bio        LONGTEXT     DEFAULT NULL');
-        $this->addSql('ALTER TABLE `user` ADD COLUMN IF NOT EXISTS phone      VARCHAR(20)  DEFAULT NULL');
-        $this->addSql('ALTER TABLE `user` ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(500) DEFAULT NULL');
+        if (!$this->columnExists('user', 'bio')) {
+            $this->addSql('ALTER TABLE `user` ADD COLUMN bio        LONGTEXT     DEFAULT NULL');
+        }
+        if (!$this->columnExists('user', 'phone')) {
+            $this->addSql('ALTER TABLE `user` ADD COLUMN phone      VARCHAR(20)  DEFAULT NULL');
+        }
+        if (!$this->columnExists('user', 'avatar_url')) {
+            $this->addSql('ALTER TABLE `user` ADD COLUMN avatar_url VARCHAR(500) DEFAULT NULL');
+        }
 
         // ── post (base columns not covered by Version20260404231432) ─────────
-        $this->addSql('ALTER TABLE post ADD COLUMN IF NOT EXISTS tag            VARCHAR(100) DEFAULT NULL');
-        $this->addSql('ALTER TABLE post ADD COLUMN IF NOT EXISTS image_url      VARCHAR(500) DEFAULT NULL');
-        $this->addSql('ALTER TABLE post ADD COLUMN IF NOT EXISTS acheivement_id INT          DEFAULT NULL');
+        if (!$this->columnExists('post', 'tag')) {
+            $this->addSql('ALTER TABLE post ADD COLUMN tag            VARCHAR(100) DEFAULT NULL');
+        }
+        if (!$this->columnExists('post', 'image_url')) {
+            $this->addSql('ALTER TABLE post ADD COLUMN image_url      VARCHAR(500) DEFAULT NULL');
+        }
+        if (!$this->columnExists('post', 'acheivement_id')) {
+            $this->addSql('ALTER TABLE post ADD COLUMN acheivement_id INT          DEFAULT NULL');
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE post DROP COLUMN IF EXISTS acheivement_id');
-        $this->addSql('ALTER TABLE post DROP COLUMN IF EXISTS image_url');
-        $this->addSql('ALTER TABLE post DROP COLUMN IF EXISTS tag');
+        if ($this->columnExists('post', 'acheivement_id')) {
+            $this->addSql('ALTER TABLE post DROP COLUMN acheivement_id');
+        }
+        if ($this->columnExists('post', 'image_url')) {
+            $this->addSql('ALTER TABLE post DROP COLUMN image_url');
+        }
+        if ($this->columnExists('post', 'tag')) {
+            $this->addSql('ALTER TABLE post DROP COLUMN tag');
+        }
 
-        $this->addSql('ALTER TABLE `user` DROP COLUMN IF EXISTS avatar_url');
-        $this->addSql('ALTER TABLE `user` DROP COLUMN IF EXISTS phone');
-        $this->addSql('ALTER TABLE `user` DROP COLUMN IF EXISTS bio');
+        if ($this->columnExists('user', 'avatar_url')) {
+            $this->addSql('ALTER TABLE `user` DROP COLUMN avatar_url');
+        }
+        if ($this->columnExists('user', 'phone')) {
+            $this->addSql('ALTER TABLE `user` DROP COLUMN phone');
+        }
+        if ($this->columnExists('user', 'bio')) {
+            $this->addSql('ALTER TABLE `user` DROP COLUMN bio');
+        }
 
-        $this->addSql('ALTER TABLE saves DROP COLUMN IF EXISTS description');
-        $this->addSql('ALTER TABLE comment DROP COLUMN IF EXISTS dislikes');
-        $this->addSql('ALTER TABLE comment DROP COLUMN IF EXISTS likes');
+        if ($this->columnExists('saves', 'description')) {
+            $this->addSql('ALTER TABLE saves DROP COLUMN description');
+        }
+        if ($this->columnExists('comment', 'dislikes')) {
+            $this->addSql('ALTER TABLE comment DROP COLUMN dislikes');
+        }
+        if ($this->columnExists('comment', 'likes')) {
+            $this->addSql('ALTER TABLE comment DROP COLUMN likes');
+        }
 
         $this->addSql('DROP TABLE IF EXISTS achievement');
         $this->addSql('DROP TABLE IF EXISTS comment');

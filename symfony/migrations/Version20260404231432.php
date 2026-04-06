@@ -16,19 +16,43 @@ final class Version20260404231432 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql("ALTER TABLE post
-            ADD COLUMN IF NOT EXISTS post_likes    INT NOT NULL DEFAULT 0,
-            ADD COLUMN IF NOT EXISTS post_dislikes INT NOT NULL DEFAULT 0,
-            ADD COLUMN IF NOT EXISTS help_meter    INT NOT NULL DEFAULT 0
-        ");
+        // ADD COLUMN IF NOT EXISTS is MariaDB-only; use information_schema checks
+        // for compatibility with standard MySQL.
+        $columns = [
+            'post_likes'    => 'INT NOT NULL DEFAULT 0',
+            'post_dislikes' => 'INT NOT NULL DEFAULT 0',
+            'help_meter'    => 'INT NOT NULL DEFAULT 0',
+        ];
+
+        foreach ($columns as $column => $definition) {
+            $exists = (int) $this->connection->executeQuery(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS
+                  WHERE TABLE_SCHEMA = DATABASE()
+                    AND TABLE_NAME   = 'post'
+                    AND COLUMN_NAME  = ?",
+                [$column]
+            )->fetchOne();
+
+            if ($exists === 0) {
+                $this->addSql("ALTER TABLE post ADD COLUMN $column $definition");
+            }
+        }
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE post
-            DROP COLUMN IF EXISTS post_likes,
-            DROP COLUMN IF EXISTS post_dislikes,
-            DROP COLUMN IF EXISTS help_meter
-        ');
+        foreach (['post_likes', 'post_dislikes', 'help_meter'] as $column) {
+            $exists = (int) $this->connection->executeQuery(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS
+                  WHERE TABLE_SCHEMA = DATABASE()
+                    AND TABLE_NAME   = 'post'
+                    AND COLUMN_NAME  = ?",
+                [$column]
+            )->fetchOne();
+
+            if ($exists > 0) {
+                $this->addSql("ALTER TABLE post DROP COLUMN $column");
+            }
+        }
     }
 }
