@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
+use App\Repository\AchievementRepository;
 use App\Repository\PostRepository;
 use App\Service\AIService;
 use App\Service\ProfanityService;
@@ -23,7 +24,8 @@ class PostController extends AbstractController
         private EntityManagerInterface $em,
         private PostRepository $postRepository,
         private AIService $aiService,
-        private ProfanityService $profanityService
+        private ProfanityService $profanityService,
+        private AchievementRepository $achievementRepository
     ) {}
 
     #[Route('', name: 'front_post_index', methods: ['GET'])]
@@ -80,6 +82,7 @@ class PostController extends AbstractController
             'commentForm' => $commentForm->createView(),
             'postProfane' => $postProfane,
             'commentsProfane' => $commentsProfane,
+            'achievements' => $this->achievementRepository->findBy([], ['achievementScore' => 'ASC']),
         ]);
     }
 
@@ -141,8 +144,6 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $post->setContent($this->profanityService->censor($post->getContent()));
-            $post->setTitle($this->profanityService->censor($post->getTitle()));
             $this->em->persist($post);
             $this->em->flush();
             $this->addFlash('success', 'Post created successfully!');
@@ -166,8 +167,6 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $post->setContent($this->profanityService->censor($post->getContent()));
-            $post->setTitle($this->profanityService->censor($post->getTitle()));
             $this->em->flush();
             $this->addFlash('success', 'Post updated successfully!');
             return $this->redirectToRoute('front_post_show', ['id' => $post->getId()]);

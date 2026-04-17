@@ -17,9 +17,24 @@
             <img src="{{ post.imageUrl }}" class="card-img-top" alt="Post image" style="max-height:350px;object-fit:cover;border-radius:12px 12px 0 0;">
             {% endif %}
             <div class="card-body">
-                <div class="mb-2">
+                <div class="mb-2 d-flex align-items-center gap-2 flex-wrap">
                     {% if post.tag %}
                     <span class="tag-badge"><i class="bi bi-tag me-1"></i>{{ post.tag }}</span>
+                    {% endif %}
+                    {# Achievement earned by this post (score = likes - dislikes) #}
+                    {% set postScore = post.likes - post.dislikes %}
+                    {% set earnedAchievement = null %}
+                    {% for ach in achievements %}
+                        {% if postScore >= ach.achievementScore %}
+                            {% set earnedAchievement = ach %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if earnedAchievement %}
+                    <span class="badge rounded-pill"
+                          style="background:linear-gradient(135deg,rgba(247,184,75,0.25),rgba(232,160,32,0.18));border:1px solid rgba(247,184,75,0.45);color:#c47c00;font-weight:800;"
+                          title="Required score: {{ earnedAchievement.achievementScore }}">
+                        <i class="bi bi-trophy-fill me-1"></i>{{ earnedAchievement.achievementName }}
+                    </span>
                     {% endif %}
                 </div>
                 <h2 class="fw-bold" style="color:#000;">{{ post.title }}</h2>
@@ -43,7 +58,11 @@
                             <i class="bi bi-hand-thumbs-down"></i> <span id="dislikes-count">{{ post.dislikes }}</span>
                         </button>
                     </form>
-                    <span class="text-muted small"><i class="bi bi-speedometer2 me-1"></i>Help meter: {{ post.helpMeter }}</span>
+                    <span class="badge rounded-pill"
+                          style="background:rgba(37,99,235,0.10);color:var(--primary);font-size:.82rem;"
+                          title="Score = likes − dislikes">
+                        <i class="bi bi-star-half me-1"></i>Score: <span id="post-score">{{ post.likes - post.dislikes }}</span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -199,6 +218,8 @@ document.querySelectorAll('.react-form').forEach(form => {
             const data = await res.json();
             document.getElementById('likes-count').textContent = data.likes;
             document.getElementById('dislikes-count').textContent = data.dislikes;
+            const scoreEl = document.getElementById('post-score');
+            if (scoreEl) scoreEl.textContent = data.likes - data.dislikes;
         }
     });
 });

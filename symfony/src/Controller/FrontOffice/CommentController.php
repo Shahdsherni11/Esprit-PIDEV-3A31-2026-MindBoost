@@ -33,7 +33,6 @@ class CommentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setComment($this->profanityService->censor($comment->getComment()));
             $this->em->persist($comment);
             $this->em->flush();
             $this->addFlash('success', 'Comment added!');
