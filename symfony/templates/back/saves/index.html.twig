@@ -3,6 +3,74 @@
 {% block title %}Manage Saves — Admin MindBoost{% endblock %}
 {% block page_title %}Manage Saves{% endblock %}
 
+{% block extra_css %}
+<style>
+    .saves-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .saves-list-item:last-child { border-bottom: none; }
+    .saves-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .save-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #19B5FE, #00D1C7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .save-post-link {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+        text-decoration: none;
+    }
+    .save-post-link:hover { color: #19B5FE; }
+
+    .save-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        font-size: .75rem;
+        font-weight: 700;
+        background: rgba(255,255,255,0.06);
+        color: #AAB6D3;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+    }
+
+    .desc-pill {
+        font-size: .78rem;
+        color: #7E8DB1;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 260px;
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <span class="text-muted">{{ saves|length }} save(s) total</span>
@@ -19,47 +87,44 @@
 {% else %}
 <div class="card">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Post</th>
-                        <th>User</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for save in saves %}
-                    <tr>
-                        <td>{{ save.id }}</td>
-                        <td>
-                            <a href="{{ path('front_post_show', {id: save.postId}) }}" class="text-decoration-none" target="_blank">
-                                Post #{{ save.postId }}
-                            </a>
-                        </td>
-                        <td>User #{{ save.userId }}</td>
-                        <td>{{ save.description|default('—') }}</td>
-                        <td>
-                            <div class="d-flex gap-1">
-                                <a href="{{ path('back_saves_edit', {id: save.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form method="post" action="{{ path('back_saves_delete', {id: save.id}) }}"
-                                      onsubmit="return confirm('Remove this save?')">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
-                                    <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 8px;">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% for save in saves %}
+            <div class="saves-list-item">
+                <div class="save-icon">
+                    <i class="bi bi-bookmark-fill"></i>
+                </div>
+
+                <div class="flex-grow-1 min-width-0">
+                    <a href="{{ path('front_post_show', {id: save.postId}) }}"
+                       class="save-post-link" target="_blank">
+                        Post #{{ save.postId }}
+                    </a>
+                    <div class="save-meta">
+                        <span class="user-pill">
+                            <i class="bi bi-person-fill"></i>User #{{ save.userId }}
+                        </span>
+                        {% if save.description %}
+                            <span class="desc-pill">{{ save.description|slice(0, 80) }}{% if save.description|length > 80 %}…{% endif %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('back_saves_edit', {id: save.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form method="post" action="{{ path('back_saves_delete', {id: save.id}) }}"
+                          onsubmit="return confirm('Remove this save?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
+                        <button class="btn btn-xs btn-outline-danger"
+                                style="font-size:.75rem;padding:3px 9px;" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endif %}
