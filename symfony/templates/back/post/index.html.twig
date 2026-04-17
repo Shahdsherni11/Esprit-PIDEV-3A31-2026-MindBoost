@@ -3,6 +3,122 @@
 {% block title %}Manage Posts — Admin MindBoost{% endblock %}
 {% block page_title %}Manage Posts{% endblock %}
 
+{% block extra_css %}
+<style>
+    .post-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .post-list-item:last-child { border-bottom: none; }
+    .post-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .post-index-num {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: rgba(47,107,255,0.15);
+        color: #4D83FF;
+        font-size: .78rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .post-body { flex: 1; min-width: 0; }
+    .post-title-link {
+        display: block;
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+    .post-title-link:hover { color: #4D83FF; }
+
+    .post-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .tag-pill {
+        display: inline-block;
+        padding: .2rem .6rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 700;
+        background: rgba(47,107,255,0.18);
+        color: #7BA5FF;
+        border: 1px solid rgba(47,107,255,0.25);
+    }
+
+    .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        font-size: .75rem;
+        font-weight: 700;
+        background: rgba(255,255,255,0.06);
+        color: #AAB6D3;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+    }
+
+    .vote-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        font-size: .75rem;
+        font-weight: 700;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+    }
+    .vote-up   { background: rgba(41,204,122,0.15); color: #29CC7A; }
+    .vote-down { background: rgba(255,90,116,0.15);  color: #FF5A74; }
+
+    .score-badge {
+        background: rgba(25,181,254,0.15);
+        color: #19B5FE;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .achiev-earned {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        background: linear-gradient(135deg, rgba(247,184,75,0.22), rgba(232,160,32,0.15));
+        border: 1px solid rgba(247,184,75,0.35);
+        color: #F7B84B;
+        border-radius: 999px;
+        padding: .2rem .6rem;
+        font-size: .75rem;
+        font-weight: 800;
+        white-space: nowrap;
+        animation: shimmer 2.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .75; }
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <span class="text-muted">{{ posts|length }} post(s) total</span>
@@ -19,54 +135,71 @@
 {% else %}
 <div class="card">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>User ID</th>
-                        <th>Tag</th>
-                        <th>Likes</th>
-                        <th>Dislikes</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for post in posts %}
-                    <tr>
-                        <td>{{ post.id }}</td>
-                        <td>
-                            <a href="{{ path('front_post_show', {id: post.id}) }}" class="text-decoration-none" target="_blank">
-                                {{ post.title|slice(0, 60) }}{% if post.title|length > 60 %}...{% endif %}
-                            </a>
-                        </td>
-                        <td><span class="badge bg-primary" title="Author User ID"><i class="bi bi-person-fill me-1"></i>{{ post.userId }}</span></td>
-                        <td>{% if post.tag %}<span class="badge bg-secondary">{{ post.tag }}</span>{% endif %}</td>
-                        <td><span class="badge bg-success">{{ post.likes }}</span></td>
-                        <td><span class="badge bg-danger">{{ post.dislikes }}</span></td>
-                        <td>
-                            <div class="d-flex gap-1">
-                                <a href="{{ path('back_post_stats', {id: post.id}) }}" class="btn btn-xs btn-outline-warning" style="font-size:.75rem;padding:2px 8px;" title="Stats">
-                                    <i class="bi bi-bar-chart-line"></i>
-                                </a>
-                                <a href="{{ path('back_post_edit', {id: post.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <form method="post" action="{{ path('back_post_delete', {id: post.id}) }}"
-                                      onsubmit="return confirm('Delete this post and its comments?')">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
-                                    <button class="btn btn-xs btn-outline-danger" style="font-size:.75rem;padding:2px 8px;" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% for post in posts %}
+            {# Find the highest achievement whose score the post's helpMeter meets #}
+            {% set postScore = post.helpMeter %}
+            {% set earnedAchievement = null %}
+            {% for ach in achievements %}
+                {% if postScore >= ach.achievementScore %}
+                    {% set earnedAchievement = ach %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="post-list-item">
+                <div class="post-index-num">{{ loop.index }}</div>
+
+                <div class="post-body">
+                    <a href="{{ path('front_post_show', {id: post.id}) }}"
+                       class="post-title-link" target="_blank">
+                        {{ post.title|slice(0, 70) }}{% if post.title|length > 70 %}…{% endif %}
+                    </a>
+                    <div class="post-meta">
+                        <span class="user-pill">
+                            <i class="bi bi-person-fill"></i>{{ post.userId }}
+                        </span>
+                        {% if post.tag %}
+                            <span class="tag-pill">{{ post.tag }}</span>
+                        {% endif %}
+                        <span class="vote-pill vote-up">
+                            <i class="bi bi-hand-thumbs-up-fill"></i> {{ post.likes }}
+                        </span>
+                        <span class="vote-pill vote-down">
+                            <i class="bi bi-hand-thumbs-down-fill"></i> {{ post.dislikes }}
+                        </span>
+                        <span class="score-badge" title="Help Meter score">
+                            <i class="bi bi-star-half me-1"></i>{{ postScore }}
+                        </span>
+                        {% if earnedAchievement %}
+                            <span class="achiev-earned" title="Required score: {{ earnedAchievement.achievementScore }}">
+                                <i class="bi bi-trophy-fill"></i>
+                                {{ earnedAchievement.achievementName }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('back_post_stats', {id: post.id}) }}"
+                       class="btn btn-xs btn-outline-warning"
+                       style="font-size:.75rem;padding:3px 9px;" title="Stats">
+                        <i class="bi bi-bar-chart-line"></i>
+                    </a>
+                    <a href="{{ path('back_post_edit', {id: post.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form method="post" action="{{ path('back_post_delete', {id: post.id}) }}"
+                          onsubmit="return confirm('Delete this post and its comments?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+                        <button class="btn btn-xs btn-outline-danger"
+                                style="font-size:.75rem;padding:3px 9px;" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endif %}
