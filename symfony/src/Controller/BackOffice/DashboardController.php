@@ -23,12 +23,15 @@ class DashboardController extends AbstractController
     #[Route('', name: 'back_dashboard', methods: ['GET'])]
     public function index(): Response
     {
+        $achievements = $this->achievementRepository->findBy([], ['achievementScore' => 'ASC']);
+
         return $this->render('back/dashboard/index.html.twig', [
             'totalPosts' => $this->postRepository->count([]),
             'totalComments' => $this->commentRepository->count([]),
             'totalAchievements' => $this->achievementRepository->count([]),
             'totalSaves' => $this->savesRepository->count([]),
             'recentPosts' => $this->postRepository->findBy([], ['id' => 'DESC'], 5),
+            'achievements' => $achievements,
         ]);
     }
 }
