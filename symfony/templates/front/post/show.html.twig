@@ -22,7 +22,7 @@
                     <span class="tag-badge"><i class="bi bi-tag me-1"></i>{{ post.tag }}</span>
                     {% endif %}
                 </div>
-                <h2 class="fw-bold">{{ post.title }}</h2>
+                <h2 class="fw-bold" style="color:#000;">{{ post.title }}</h2>
                 <p id="post-content" class="text-body{% if postProfane %} profane-blur{% endif %}">{{ post.content }}</p>
                 {% if postProfane %}
                 <button class="btn btn-sm btn-outline-warning mt-1" onclick="toggleBlur(document.getElementById('post-content'))">
