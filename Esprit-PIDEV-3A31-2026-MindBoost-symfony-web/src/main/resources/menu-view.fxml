@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.*?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.view.MenuViewController"
+            prefWidth="1200" prefHeight="750"
+            styleClass="main-bg"
+            stylesheets="@styles.css">
+    <left>
+        <VBox styleClass="sidebar" prefWidth="230" spacing="0">
+            <HBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding:30 20 20 20;">
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:white;">Mind</Text>
+                <Text style="-fx-font-size:20px; -fx-font-weight:bold; -fx-fill:#6C63FF;">Bood</Text>
+            </HBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox spacing="2" style="-fx-padding:10 0;">
+                <Button text="🎯  Tâches Focus" styleClass="nav-button" onMouseClicked="#openTacheView"/>
+                <Button text="✓  Sous-Tâches" styleClass="nav-button" onMouseClicked="#openSousTacheView"/>
+                <Button text="📊  Statistiques" styleClass="nav-button" onMouseClicked="#openStatistiqueView"/>
+            </VBox>
+            <Separator style="-fx-background-color:rgba(255,255,255,0.07);"/>
+            <VBox style="-fx-padding:15 20;" spacing="8">
+                <Label text="💬 Citation du jour" style="-fx-text-fill:rgba(255,255,255,0.4); -fx-font-size:11px; -fx-font-weight:bold;"/>
+                <Label fx:id="citationLabel" wrapText="true" style="-fx-text-fill:#9B9BB0; -fx-font-size:12px; -fx-font-style:italic;"/>
+                <Label fx:id="citationAuteurLabel" style="-fx-text-fill:#6C63FF; -fx-font-size:11px; -fx-font-weight:bold;"/>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="🚪  Quitter" styleClass="nav-button" onAction="#handleQuit" style="-fx-text-fill:#E74C3C; -fx-padding:15 20 20 25;"/>
+        </VBox>
+    </left>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color:transparent; -fx-background:transparent;">
+            <VBox styleClass="content-area" spacing="24">
+                <VBox spacing="4">
+                    <Label text="Bienvenue sur MindBood 🧠" styleClass="page-title"/>
+                    <Label text="Système de gestion de focus et productivité" styleClass="page-subtitle"/>
+                </VBox>
+                <HBox spacing="20">
+                    <VBox styleClass="stat-card, card-purple" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="📊 Tâches Focus" styleClass="stat-label"/>
+                        <Label fx:id="totalTachesLabel" text="0" styleClass="stat-number"/>
+                        <Label text="tâches actives" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card, card-teal" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="✓ Sous-Tâches" styleClass="stat-label"/>
+                        <Label fx:id="totalSousTachesLabel" text="0" styleClass="stat-number"/>
+                        <Label text="sous-tâches totales" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox styleClass="stat-card, card-green" HBox.hgrow="ALWAYS" spacing="8">
+                        <Label text="🚀 Score Moyen" styleClass="stat-label"/>
+                        <Label fx:id="avgScoreLabel" text="0%" styleClass="stat-number"/>
+                        <Label text="productivité globale" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+                <Label text="Accès Rapide" styleClass="section-title"/>
+                <HBox spacing="20">
+                    <VBox styleClass="stat-card, card-purple" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="15" prefHeight="180" onMouseClicked="#openTacheView" style="-fx-cursor:hand;">
+                        <Label text="🎯" style="-fx-font-size:48px;"/>
+                        <Label text="Tâches Focus" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:white;"/>
+                        <Label text="Créer et gérer vos tâches" style="-fx-font-size:12px; -fx-text-fill:#9B9BB0;" wrapText="true" alignment="CENTER"/>
+                    </VBox>
+                    <VBox styleClass="stat-card, card-teal" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="15" prefHeight="180" onMouseClicked="#openSousTacheView" style="-fx-cursor:hand;">
+                        <Label text="✓" style="-fx-font-size:48px;"/>
+                        <Label text="Sous-Tâches" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:white;"/>
+                        <Label text="Gérer les sous-étapes" style="-fx-font-size:12px; -fx-text-fill:#9B9BB0;" wrapText="true" alignment="CENTER"/>
+                    </VBox>
+                    <VBox styleClass="stat-card, card-pink" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="15" prefHeight="180" onMouseClicked="#openStatistiqueView" style="-fx-cursor:hand;">
+                        <Label text="📈" style="-fx-font-size:48px;"/>
+                        <Label text="Statistiques" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:white;"/>
+                        <Label text="Voir votre productivité" style="-fx-font-size:12px; -fx-text-fill:#9B9BB0;" wrapText="true" alignment="CENTER"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detail Tache Focus{% endblock %}
+
+{% block body %}
+    <h1 class="page-title">Detail de la tache focus</h1>
+
+    <form method="post" action="{{ path('app_tache_focus_ai', {'id': tache_focu.id}) }}" class="mb-4">
+        <input type="hidden" name="_token" value="{{ csrf_token('ai' ~ tache_focu.id) }}">
+        <button type="submit" class="btn btn-success">Generer des sous-taches avec IA</button>
+    </form>
+
+    <form method="post" action="{{ path('app_tache_focus_ai_advice', {'id': tache_focu.id}) }}" class="mb-4">
+        <input type="hidden" name="_token" value="{{ csrf_token('ai_advice' ~ tache_focu.id) }}">
+        <button type="submit" class="btn btn-primary">Analyser priorite et duree avec IA</button>
+    </form>
+
+    {% if ai_suggestions is not empty %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Suggestions IA</strong>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    {% for suggestion in ai_suggestions %}
+                        <li>{{ suggestion }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if ai_advice %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Analyse IA</strong>
+            </div>
+            <div class="card-body">
+                <p><strong>Priorite conseillee :</strong> {{ ai_advice.priorite }}/5</p>
+                <p><strong>Duree recommandee :</strong> {{ ai_advice.duree_minutes }} minutes</p>
+                <p class="mb-0"><strong>Conseil :</strong> {{ ai_advice.conseil }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ tache_focu.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ tache_focu.titre }}</td>
+            </tr>
+            <tr>
+                <th>Objectif</th>
+                <td>{{ tache_focu.objectifPrincipal }}</td>
+            </tr>
+            <tr>
+                <th>Difficulte</th>
+                <td>{{ tache_focu.niveauDifficulte }}</td>
+            </tr>
+            <tr>
+                <th>Statut</th>
+                <td>{{ tache_focu.statut }}</td>
+            </tr>
+            <tr>
+                <th>Score</th>
+                <td>{{ tache_focu.scoreProductivite }}</td>
+            </tr>
+            <tr>
+                <th>Heure debut</th>
+                <td>{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Heure fin</th>
+                <td>{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_tache_focus_index') }}" class="btn btn-secondary">Retour liste</a>
+    <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}" class="btn btn-warning">Modifier</a>
+
+    <div class="mt-3">
+        {{ include('tache_focus/_delete_form.html.twig') }}
+    </div>
+{% endblock %}
