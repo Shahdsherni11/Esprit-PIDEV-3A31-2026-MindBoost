@@ -1,7 +1,7 @@
-{% extends 'front/base.html.twig' %}
+{% extends 'back/base.html.twig' %}
 {% block title %}Sous-Tâches — Admin{% endblock %}
 {% block page_title %}Gestion des Sous-Tâches{% endblock %}
-{% block content %}
+{% block body %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="fw-bold mb-0"><i class="bi bi-list-check me-2" style="color:#6C63FF;"></i>Sous-Tâches</h4>
@@ -38,51 +38,66 @@
 </div>
 
 {% if sous_taches|length == 0 %}
-    <div class="text-center py-5 text-muted">
+    <div class="card p-5 text-center text-muted">
         <i class="bi bi-inbox display-4"></i>
         <p class="mt-2">Aucune sous-tâche trouvée.</p>
     </div>
 {% else %}
-    <div class="row g-3">
-        {% for sous_tache in sous_taches %}
-        <div class="col-md-6 col-xl-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <p class="fw-bold mb-0 small" style="color:#E8E8F0;max-width:200px;">{{ sous_tache.description|slice(0,70) }}{% if sous_tache.description|length > 70 %}…{% endif %}</p>
-                        {% if sous_tache.etat == 'Terminée' or sous_tache.etat == 'Terminee' %}
-                            <span class="badge bg-success">✓ Terminée</span>
-                        {% elseif sous_tache.etat == 'En cours' %}
-                            <span class="badge bg-primary">● En cours</span>
-                        {% elseif sous_tache.etat == 'À faire' or sous_tache.etat == 'A faire' %}
-                            <span class="badge bg-warning text-dark">◆ À faire</span>
-                        {% else %}
-                            <span class="badge bg-secondary">○ {{ sous_tache.etat }}</span>
-                        {% endif %}
-                    </div>
-                    {% if sous_tache.tacheFocus %}
-                    <p class="small mb-2" style="color:#9A8CFF;"><i class="bi bi-diagram-3 me-1"></i>{{ sous_tache.tacheFocus.titre|slice(0,40) }}</p>
-                    {% endif %}
-                    <div class="d-flex gap-2 flex-wrap mb-3">
-                        <span class="badge bg-secondary">Prio. {{ sous_tache.priorite }}</span>
-                        <span class="badge" style="background:rgba(108,99,255,0.2);color:#9A8CFF;">{{ sous_tache.dureeRecommandee }}min</span>
-                        {% if sous_tache.heureDebut %}
-                        <span class="badge bg-secondary">{{ sous_tache.heureDebut|date('H:i') }} → {{ sous_tache.heureFin ? sous_tache.heureFin|date('H:i') : '?' }}</span>
-                        {% endif %}
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="{{ path('app_sous_tache_show', {'id': sous_tache.id}) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i></a>
-                        <a href="{{ path('app_sous_tache_edit', {'id': sous_tache.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                        <form method="post" action="{{ path('app_sous_tache_delete', {'id': sous_tache.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ?')">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sous_tache.id) }}">
-                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Description</th>
+                        <th>Tâche parente</th>
+                        <th>État</th>
+                        <th>Priorité</th>
+                        <th>Durée</th>
+                        <th>Horaire</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sous_tache in sous_taches %}
+                    <tr>
+                        <td class="text-muted small">{{ sous_tache.id }}</td>
+                        <td class="fw-semibold">{{ sous_tache.description|slice(0,70) }}{% if sous_tache.description|length > 70 %}…{% endif %}</td>
+                        <td class="small text-muted">
+                            {% if sous_tache.tacheFocus %}{{ sous_tache.tacheFocus.titre|slice(0,40) }}{% else %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if sous_tache.etat == 'Terminée' or sous_tache.etat == 'Terminee' %}
+                                <span class="badge bg-success">✓ Terminée</span>
+                            {% elseif sous_tache.etat == 'En cours' %}
+                                <span class="badge bg-primary">● En cours</span>
+                            {% elseif sous_tache.etat == 'À faire' or sous_tache.etat == 'A faire' %}
+                                <span class="badge bg-warning text-dark">◆ À faire</span>
+                            {% else %}
+                                <span class="badge bg-secondary">○ {{ sous_tache.etat }}</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-secondary">{{ sous_tache.priorite }}</span></td>
+                        <td class="small text-muted">{{ sous_tache.dureeRecommandee }} min</td>
+                        <td class="small text-muted">
+                            {% if sous_tache.heureDebut %}{{ sous_tache.heureDebut|date('H:i') }} → {{ sous_tache.heureFin ? sous_tache.heureFin|date('H:i') : '?' }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end">
+                                <a href="{{ path('app_sous_tache_show', {'id': sous_tache.id}) }}" class="btn btn-outline-primary btn-sm" title="Voir"><i class="bi bi-eye"></i></a>
+                                <a href="{{ path('app_sous_tache_edit', {'id': sous_tache.id}) }}" class="btn btn-outline-warning btn-sm" title="Modifier"><i class="bi bi-pencil"></i></a>
+                                <form method="post" action="{{ path('app_sous_tache_delete', {'id': sous_tache.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ?')">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sous_tache.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        {% endfor %}
     </div>
 {% endif %}
 

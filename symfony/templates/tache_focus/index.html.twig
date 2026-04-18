@@ -1,8 +1,8 @@
-{% extends 'front/base.html.twig' %}
+{% extends 'back/base.html.twig' %}
 {% block title %}Tâches Focus — Admin{% endblock %}
 {% block page_title %}Gestion des Tâches Focus{% endblock %}
 
-{% block content %}
+{% block body %}
 
 {% if citation is defined %}
 <div class="alert" style="background:rgba(108,99,255,0.12);border-left:3px solid #6C63FF;color:#E8E8F0;border-radius:0 12px 12px 0;">
@@ -55,47 +55,66 @@
 </div>
 
 {% if tache_foci|length == 0 %}
-    <div class="text-center py-5 text-muted">
+    <div class="card p-5 text-center text-muted">
         <i class="bi bi-inbox display-4"></i>
         <p class="mt-2">Aucune tâche trouvée.</p>
     </div>
 {% else %}
-    <div class="row g-3">
-        {% for tache_focu in tache_foci %}
-        <div class="col-md-6 col-xl-4">
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h6 class="fw-bold mb-0" style="color:#E8E8F0;">{{ tache_focu.titre }}</h6>
-                        {% if tache_focu.statut == 'Terminée' %}
-                            <span class="badge bg-success">✓ Terminée</span>
-                        {% elseif tache_focu.statut == 'En cours' %}
-                            <span class="badge bg-primary">● En cours</span>
-                        {% else %}
-                            <span class="badge bg-secondary">○ Non commencée</span>
-                        {% endif %}
-                    </div>
-                    <p class="small mb-2" style="color:#9B9BB0;">{{ tache_focu.objectifPrincipal|slice(0,90) }}{% if tache_focu.objectifPrincipal|length > 90 %}…{% endif %}</p>
-                    <div class="d-flex gap-2 flex-wrap mb-3">
-                        <span class="badge" style="background:rgba(108,99,255,0.2);color:#9A8CFF;">Niv. {{ tache_focu.niveauDifficulte }}</span>
-                        <span class="badge" style="background:rgba(46,204,113,0.15);color:{% if tache_focu.scoreProductivite >= 75 %}#2ECC71{% elseif tache_focu.scoreProductivite >= 50 %}#F39C12{% else %}#E74C3C{% endif %};">{{ tache_focu.scoreProductivite }}%</span>
-                        {% if tache_focu.heureDebut %}
-                        <span class="badge bg-secondary">{{ tache_focu.heureDebut|date('H:i') }} → {{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '?' }}</span>
-                        {% endif %}
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="{{ path('app_tache_focus_show', {'id': tache_focu.id}) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i></a>
-                        <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                        <form method="post" action="{{ path('app_tache_focus_delete', {'id': tache_focu.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ?')">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache_focu.id) }}">
-                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Titre</th>
+                        <th>Objectif</th>
+                        <th>Statut</th>
+                        <th>Difficulté</th>
+                        <th>Score</th>
+                        <th>Horaire</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tache_focu in tache_foci %}
+                    <tr>
+                        <td class="text-muted small">{{ tache_focu.id }}</td>
+                        <td class="fw-semibold">{{ tache_focu.titre }}</td>
+                        <td class="small text-muted">{{ tache_focu.objectifPrincipal|slice(0,60) }}{% if tache_focu.objectifPrincipal|length > 60 %}…{% endif %}</td>
+                        <td>
+                            {% if tache_focu.statut == 'Terminée' %}
+                                <span class="badge bg-success">✓ Terminée</span>
+                            {% elseif tache_focu.statut == 'En cours' %}
+                                <span class="badge bg-primary">● En cours</span>
+                            {% else %}
+                                <span class="badge bg-secondary">○ Non commencée</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-secondary">Niv. {{ tache_focu.niveauDifficulte }}</span></td>
+                        <td>
+                            <span class="badge {% if tache_focu.scoreProductivite >= 75 %}bg-success{% elseif tache_focu.scoreProductivite >= 50 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                {{ tache_focu.scoreProductivite }}%
+                            </span>
+                        </td>
+                        <td class="small text-muted">
+                            {% if tache_focu.heureDebut %}{{ tache_focu.heureDebut|date('H:i') }} → {{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '?' }}{% else %}—{% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex gap-1 justify-content-end">
+                                <a href="{{ path('app_tache_focus_show', {'id': tache_focu.id}) }}" class="btn btn-outline-primary btn-sm" title="Voir"><i class="bi bi-eye"></i></a>
+                                <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}" class="btn btn-outline-warning btn-sm" title="Modifier"><i class="bi bi-pencil"></i></a>
+                                <form method="post" action="{{ path('app_tache_focus_delete', {'id': tache_focu.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ?')">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache_focu.id) }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        {% endfor %}
     </div>
 {% endif %}
 
