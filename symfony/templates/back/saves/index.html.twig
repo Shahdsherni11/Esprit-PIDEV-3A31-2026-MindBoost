@@ -18,30 +18,44 @@
 </div>
 {% else %}
 <div class="card">
-    <ul class="list-group list-group-flush">
-        {% for save in saves %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-                <a href="{{ path('front_post_show', {id: save.postId}) }}" class="fw-semibold text-decoration-none" target="_blank">
-                    <i class="bi bi-file-post me-1"></i>Post #{{ save.postId }}
-                </a>
-                <div class="small text-muted mt-1">
-                    User #{{ save.userId }}
-                    {% if save.description %}
-                        &nbsp;·&nbsp;{{ save.description|slice(0, 60) }}{% if save.description|length > 60 %}…{% endif %}
-                    {% endif %}
-                </div>
-            </div>
-            <div class="d-flex gap-1 ms-3 flex-shrink-0">
-                <a href="{{ path('back_saves_edit', {id: save.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                <form method="post" action="{{ path('back_saves_delete', {id: save.id}) }}" onsubmit="return confirm('Remove this save?')" class="d-inline">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
-                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                </form>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Post</th>
+                    <th>User</th>
+                    <th>Description</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for save in saves %}
+                <tr>
+                    <td class="text-muted small">{{ save.id }}</td>
+                    <td>
+                        <a href="{{ path('front_post_show', {id: save.postId}) }}" class="fw-semibold text-decoration-none" target="_blank">
+                            <i class="bi bi-file-post me-1"></i>Post #{{ save.postId }}
+                        </a>
+                    </td>
+                    <td class="small text-muted">User #{{ save.userId }}</td>
+                    <td class="small text-muted">
+                        {% if save.description %}{{ save.description|slice(0, 60) }}{% if save.description|length > 60 %}…{% endif %}{% else %}—{% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{{ path('back_saves_edit', {id: save.id}) }}" class="btn btn-outline-warning btn-sm" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <form method="post" action="{{ path('back_saves_delete', {id: save.id}) }}" onsubmit="return confirm('Remove this save?')" class="d-inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_save' ~ save.id) }}">
+                                <button class="btn btn-outline-danger btn-sm" title="Delete"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endif %}
 {% endblock %}
