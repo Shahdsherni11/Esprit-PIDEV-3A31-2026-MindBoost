@@ -125,4 +125,47 @@
         {% endif %}
     </div>
 </div>
+
+{# Quick Access to All Gestions #}
+<div class="row g-3 mt-2">
+    <div class="col-12">
+        <h6 class="fw-bold text-muted"><i class="bi bi-grid me-2"></i>Accès Rapide — Toutes les Gestions</h6>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('back_post_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #6C63FF;">
+                <i class="bi bi-file-post fs-3 mb-1" style="color:#6C63FF;"></i>
+                <div class="fw-semibold">Posts Forum</div>
+                <small class="text-muted">Gérer les posts</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_tache_focus_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #2ECC71;">
+                <i class="bi bi-check2-square fs-3 mb-1" style="color:#2ECC71;"></i>
+                <div class="fw-semibold">Tâches Focus</div>
+                <small class="text-muted">Gérer les tâches</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('general_test_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #4ECDC4;">
+                <i class="bi bi-clipboard2-pulse fs-3 mb-1" style="color:#4ECDC4;"></i>
+                <div class="fw-semibold">Tests Psy</div>
+                <small class="text-muted">Gérer les tests</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_admin_user_list') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #F39C12;">
+                <i class="bi bi-people fs-3 mb-1" style="color:#F39C12;"></i>
+                <div class="fw-semibold">Utilisateurs</div>
+                <small class="text-muted">Gérer les comptes</small>
+            </div>
+        </a>
+    </div>
+</div>
 {% endblock %}

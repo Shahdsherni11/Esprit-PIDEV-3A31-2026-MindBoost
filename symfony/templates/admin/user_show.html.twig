@@ -1,0 +1,57 @@
+{% extends 'back/base.html.twig' %}
+{% block title %}{{ user.email }} — Admin{% endblock %}
+{% block page_title %}Détail Utilisateur{% endblock %}
+
+{% block body %}
+<div class="mb-4 d-flex gap-2">
+    <a href="{{ path('app_admin_user_list') }}" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Retour
+    </a>
+    <a href="{{ path('app_admin_user_edit', {id: user.id}) }}" class="btn btn-warning btn-sm">
+        <i class="bi bi-pencil me-1"></i>Modifier
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-center p-4">
+            <div class="rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center fw-bold"
+                 style="width:80px;height:80px;background:linear-gradient(135deg,#6C63FF,#5A52D5);font-size:2rem;color:white;">
+                {{ user.displayName|slice(0,1)|upper }}
+            </div>
+            <h5 class="fw-bold">{{ user.displayName }}</h5>
+            <p class="text-muted small mb-2">{{ user.email }}</p>
+            <span class="badge bg-{{ user.role == 'admin' ? 'danger' : (user.role == 'psychologist' ? 'warning text-dark' : 'secondary') }}">
+                {{ user.role }}
+            </span>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h6 class="fw-bold mb-3">Informations</h6>
+            <dl class="row">
+                <dt class="col-sm-4 text-muted">ID</dt>
+                <dd class="col-sm-8">{{ user.id }}</dd>
+                <dt class="col-sm-4 text-muted">Email</dt>
+                <dd class="col-sm-8">{{ user.email }}</dd>
+                <dt class="col-sm-4 text-muted">Rôle</dt>
+                <dd class="col-sm-8">{{ user.role }}</dd>
+                <dt class="col-sm-4 text-muted">Vérifié</dt>
+                <dd class="col-sm-8">{{ user.isVerified ? '✅ Oui' : '❌ Non' }}</dd>
+                <dt class="col-sm-4 text-muted">Inscrit le</dt>
+                <dd class="col-sm-8">{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '—' }}</dd>
+                {% if user.profile %}
+                <dt class="col-sm-4 text-muted">Prénom</dt>
+                <dd class="col-sm-8">{{ user.profile.firstName }}</dd>
+                <dt class="col-sm-4 text-muted">Nom</dt>
+                <dd class="col-sm-8">{{ user.profile.lastName }}</dd>
+                <dt class="col-sm-4 text-muted">Téléphone</dt>
+                <dd class="col-sm-8">{{ user.profile.phone ?: '—' }}</dd>
+                <dt class="col-sm-4 text-muted">Personnalité</dt>
+                <dd class="col-sm-8">{{ user.profile.personalityType ?: '—' }}</dd>
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -11,6 +11,9 @@ class HomeController extends AbstractController
     #[Route('/', name: 'front_home')]
     public function index(): RedirectResponse
     {
-        return $this->redirectToRoute('front_post_index');
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_dashboard');
+        }
+        return $this->redirectToRoute('app_login');
     }
 }
