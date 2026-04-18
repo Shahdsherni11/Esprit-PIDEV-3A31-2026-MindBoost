@@ -395,6 +395,12 @@
             <span>Nouvelle Tâche</span>
         </a>
 
+        <a href="{{ path('app_sous_tache_index') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_sous_tache' %}active{% endif %}">
+            <i class="fas fa-list-check"></i>
+            <span>Sous-Tâches</span>
+        </a>
+
         <div class="front-sidebar-label">Mon Espace</div>
 
         <a href="{{ path('front_user_home') }}"
