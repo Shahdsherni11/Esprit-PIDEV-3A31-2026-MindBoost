@@ -5,6 +5,7 @@ namespace App\Controller\BackOffice;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Repository\AchievementRepository;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\SavesRepository;
@@ -24,6 +25,7 @@ class PostController extends AbstractController
         private PostRepository $postRepository,
         private CommentRepository $commentRepository,
         private SavesRepository $savesRepository,
+        private AchievementRepository $achievementRepository,
         private ProfanityService $profanityService,
         private UserSessionService $userSessionService
     ) {}
@@ -33,6 +35,7 @@ class PostController extends AbstractController
     {
         return $this->render('back/post/index.html.twig', [
             'posts' => $this->postRepository->findBy([], ['id' => 'DESC']),
+            'achievements' => $this->achievementRepository->findBy([], ['achievementScore' => 'ASC']),
         ]);
     }
 
