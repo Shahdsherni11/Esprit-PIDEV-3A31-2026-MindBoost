@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Service\AdminReminderMailer;
 use App\Service\AdminStatisticsService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\Chartjs\Builder\ChartBuilderInterface;
 use Symfony\UX\Chartjs\Model\Chart;
 
@@ -109,5 +111,20 @@ class AdminStatisticsController extends AbstractController
             'generalUsageChart' => $generalUsageChart,
             'specificUsageChart' => $specificUsageChart,
         ]);
+    }
+
+    #[Route('/admin/statistics/reminder/send', name: 'admin_statistics_send_reminder', methods: ['POST'])]
+    public function sendReminder(AdminReminderMailer $adminReminderMailer): Response
+    {
+        try {
+            $toEmail = 'test@example.com';
+            $testUrl = $this->generateUrl('general_test_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $adminReminderMailer->sendTestReminder($toEmail, 'Étudiant', $testUrl);
+            $this->addFlash('success', 'Email de rappel envoyé avec succès.');
+        } catch (\Throwable $e) {
+            $this->addFlash('error', 'Erreur envoi email: ' . $e->getMessage());
+        }
+
+        return $this->redirectToRoute('admin_statistics_dashboard');
     }
 }
