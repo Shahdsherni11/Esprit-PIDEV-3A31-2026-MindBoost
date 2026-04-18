@@ -50,9 +50,9 @@ class SousTacheController extends AbstractController
             return $this->redirectToRoute('app_sous_tache_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('sous_tache/new.html.twig', [
+        return $this->render('sous_tache/new.html.twig', [
             'sous_tache' => $sousTache,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -77,9 +77,9 @@ class SousTacheController extends AbstractController
             return $this->redirectToRoute('app_sous_tache_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('sous_tache/edit.html.twig', [
+        return $this->render('sous_tache/edit.html.twig', [
             'sous_tache' => $sousTache,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

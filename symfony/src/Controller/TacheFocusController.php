@@ -103,9 +103,9 @@ class TacheFocusController extends AbstractController
             return $this->redirectToRoute('app_tache_focus_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('tache_focus/new.html.twig', [
+        return $this->render('tache_focus/new.html.twig', [
             'tache_focu' => $tacheFocu,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -231,9 +231,9 @@ class TacheFocusController extends AbstractController
             return $this->redirectToRoute('app_tache_focus_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('tache_focus/edit.html.twig', [
+        return $this->render('tache_focus/edit.html.twig', [
             'tache_focu' => $tacheFocu,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
