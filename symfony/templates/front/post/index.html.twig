@@ -22,7 +22,7 @@
         {% if mostLiked %}
         <div class="card p-3">
             <div class="text-muted small mb-1"><i class="bi bi-heart-fill text-danger me-1"></i>Most Liked Post</div>
-            <a href="{{ path('front_post_show', {id: mostLiked.id}) }}" class="fw-bold text-decoration-none" style="color:#E8E8F0;">
+            <a href="{{ path('front_post_show', {id: mostLiked.id}) }}" class="fw-bold text-decoration-none" style="color:#17253a;">
                 {{ mostLiked.title }}
             </a>
             <span class="ms-2 badge bg-danger">{{ mostLiked.likes }} likes</span>
@@ -75,7 +75,7 @@
                         {% endif %}
                     </div>
                     <h5 class="card-title fw-bold">
-                        <a href="{{ path('front_post_show', {id: post.id}) }}" class="text-decoration-none" style="color:#E8E8F0;">{{ post.title }}</a>
+                        <a href="{{ path('front_post_show', {id: post.id}) }}" class="text-decoration-none" style="color:#111111;">{{ post.title }}</a>
                     </h5>
                     <p class="card-text flex-grow-1" style="color:#9B9BB0;overflow:hidden;max-height:80px;">
                         {{ post.content|slice(0, 150) }}{% if post.content|length > 150 %}...{% endif %}

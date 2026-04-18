@@ -1,114 +1,103 @@
-{% extends 'front/base.html.twig' %}
-{% block title %}Mes Tâches Focus{% endblock %}
+{% extends 'back/base.html.twig' %}
+{% block title %}Tâches Focus — Admin{% endblock %}
+{% block page_title %}Gestion des Tâches Focus{% endblock %}
+
 {% block content %}
 
 {% if citation is defined %}
-<div style="background:rgba(37,99,235,0.07);border-left:3px solid #2563eb;padding:14px 18px;margin-bottom:24px;border-radius:0 12px 12px 0;">
-    <p style="font-style:italic;margin:0;color:#6c7b95;font-size:.92rem;">💬 "{{ citation.q }}"</p>
-    <p style="font-weight:700;margin:5px 0 0;color:#2563eb;font-size:.88rem;">— {{ citation.a }}</p>
+<div class="alert" style="background:rgba(108,99,255,0.12);border-left:3px solid #6C63FF;color:#E8E8F0;border-radius:0 12px 12px 0;">
+    <p style="font-style:italic;margin:0;">💬 "{{ citation.q }}"</p>
+    <p style="font-weight:700;margin:5px 0 0;color:#9A8CFF;">— {{ citation.a }}</p>
 </div>
 {% endif %}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 style="margin:0;font-size:1.8rem;font-weight:900;color:#17253a;letter-spacing:-.02em;">🎯 Mes Tâches Focus</h1>
-        <p style="margin:.3rem 0 0;color:#6c7b95;font-size:.92rem;">Créez et gérez vos tâches de productivité</p>
+        <h4 class="fw-bold mb-0"><i class="bi bi-check2-square me-2" style="color:#6C63FF;"></i>Tâches Focus
+            <span class="badge bg-secondary ms-2">{{ tache_foci.getTotalItemCount }}</span>
+        </h4>
     </div>
-    <span style="background:#eef4ff;color:#2563eb;padding:.45rem 1.1rem;border-radius:50px;font-weight:700;font-size:.85rem;border:1px solid #dbe7ff;">
-        📋 {{ tache_foci.getTotalItemCount }} tâches
-    </span>
+    <a href="{{ path('app_tache_focus_new') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Nouvelle Tâche
+    </a>
 </div>
 
-<form method="GET" action="{{ path('app_tache_focus_index') }}" class="mb-4">
-    <div class="d-flex gap-2 flex-wrap align-items-center">
-        <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher..." class="form-control" style="width:220px;padding:.55rem 1rem;border-radius:12px;"/>
-        <select name="statut" class="form-select" style="width:160px;border-radius:12px;padding:.55rem 1rem;">
-            <option value="">Tous les statuts</option>
-            <option value="En cours" {{ statut == 'En cours' ? 'selected' : '' }}>En cours</option>
-            <option value="Non commencée" {{ statut == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
-            <option value="Terminée" {{ statut == 'Terminée' ? 'selected' : '' }}>Terminée</option>
-        </select>
-        <select name="tri" class="form-select" style="width:160px;border-radius:12px;padding:.55rem 1rem;">
-            <option value="id" {{ tri == 'id' ? 'selected' : '' }}>Trier par ID</option>
-            <option value="titre" {{ tri == 'titre' ? 'selected' : '' }}>Trier par Titre</option>
-            <option value="niveauDifficulte" {{ tri == 'niveauDifficulte' ? 'selected' : '' }}>Trier par Difficulté</option>
-            <option value="scoreProductivite" {{ tri == 'scoreProductivite' ? 'selected' : '' }}>Trier par Score</option>
-        </select>
-        <select name="ordre" class="form-select" style="width:130px;border-radius:12px;padding:.55rem 1rem;">
-            <option value="ASC" {{ ordre == 'ASC' ? 'selected' : '' }}>↑ Croissant</option>
-            <option value="DESC" {{ ordre == 'DESC' ? 'selected' : '' }}>↓ Décroissant</option>
-        </select>
-        <button type="submit" class="btn btn-primary" style="padding:.55rem 1.2rem;border-radius:12px;">Rechercher</button>
-        <a href="{{ path('app_tache_focus_index') }}" class="btn btn-secondary" style="padding:.55rem 1.1rem;border-radius:12px;">✕ Réinitialiser</a>
-        <a href="{{ path('app_tache_focus_new') }}" class="btn btn-success" style="padding:.55rem 1.2rem;border-radius:12px;font-weight:700;">＋ Ajouter</a>
+<div class="card mb-4 p-3">
+    <form method="GET" action="{{ path('app_tache_focus_index') }}" class="d-flex gap-2 flex-wrap align-items-end">
+        <div>
+            <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." class="form-control form-control-sm" style="width:200px;">
+        </div>
+        <div>
+            <select name="statut" class="form-select form-select-sm" style="width:150px;">
+                <option value="">Tous les statuts</option>
+                <option value="En cours" {{ statut == 'En cours' ? 'selected' : '' }}>En cours</option>
+                <option value="Non commencée" {{ statut == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
+                <option value="Terminée" {{ statut == 'Terminée' ? 'selected' : '' }}>Terminée</option>
+            </select>
+        </div>
+        <div>
+            <select name="tri" class="form-select form-select-sm" style="width:150px;">
+                <option value="id" {{ tri == 'id' ? 'selected' : '' }}>Trier par ID</option>
+                <option value="titre" {{ tri == 'titre' ? 'selected' : '' }}>Titre</option>
+                <option value="niveauDifficulte" {{ tri == 'niveauDifficulte' ? 'selected' : '' }}>Difficulté</option>
+                <option value="scoreProductivite" {{ tri == 'scoreProductivite' ? 'selected' : '' }}>Score</option>
+            </select>
+        </div>
+        <div>
+            <select name="ordre" class="form-select form-select-sm" style="width:120px;">
+                <option value="ASC" {{ ordre == 'ASC' ? 'selected' : '' }}>↑ Croissant</option>
+                <option value="DESC" {{ ordre == 'DESC' ? 'selected' : '' }}>↓ Décroissant</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filtrer</button>
+        <a href="{{ path('app_tache_focus_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+    </form>
+</div>
+
+{% if tache_foci|length == 0 %}
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-inbox display-4"></i>
+        <p class="mt-2">Aucune tâche trouvée.</p>
     </div>
-</form>
-
-<style>
-.tf-table{width:100%;border-collapse:collapse;}
-.tf-table thead tr{background:rgba(37,99,235,0.05);}
-.tf-table th{padding:.85rem 1rem;font-size:.78rem;font-weight:700;color:#6c7b95;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #eef2ff;text-align:left;}
-.tf-table td{padding:.9rem 1rem;border-bottom:1px solid #f4f6ff;vertical-align:middle;}
-.tf-table tr:hover td{background:rgba(37,99,235,0.025);}
-.tf-table tr:last-child td{border-bottom:none;}
-.badge-terminee{background:#dcfce7;color:#15803d;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;display:inline-block;}
-.badge-encours{background:#dbeafe;color:#1d4ed8;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;display:inline-block;}
-.badge-noncommence{background:#f1f5f9;color:#475569;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;display:inline-block;}
-.action-btn{width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;border:none;cursor:pointer;transition:all .18s ease;text-decoration:none;font-size:1rem;}
-.action-btn:hover{transform:translateY(-2px);}
-.btn-voir{background:#eff6ff;color:#2563eb;}
-.btn-voir:hover{background:#2563eb;color:white;}
-.btn-modifier{background:#fffbeb;color:#d97706;}
-.btn-modifier:hover{background:#f59e0b;color:white;}
-.btn-supprimer{background:#fff1f2;color:#e11d48;}
-.btn-supprimer:hover{background:#e11d48;color:white;}
-</style>
-
-<div style="background:white;border-radius:20px;overflow:hidden;border:1px solid #e8efff;box-shadow:0 2px 16px rgba(37,99,235,0.06);">
-    <table class="tf-table">
-        <thead>
-            <tr>
-                <th>#</th><th>Titre</th><th>Objectif</th><th>Niv.</th>
-                <th>Statut</th><th>Score</th><th>Début</th><th>Fin</th><th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+{% else %}
+    <div class="row g-3">
         {% for tache_focu in tache_foci %}
-            <tr>
-                <td style="color:#94a3b8;font-size:.85rem;font-weight:600;">{{ tache_focu.id }}</td>
-                <td><strong style="color:#17253a;font-size:.92rem;">{{ tache_focu.titre }}</strong></td>
-                <td style="color:#6c7b95;font-size:.88rem;max-width:160px;">{{ tache_focu.objectifPrincipal }}</td>
-                <td><span style="background:#f0f4ff;color:#4361ee;padding:.2rem .65rem;border-radius:8px;font-size:.78rem;font-weight:700;">N{{ tache_focu.niveauDifficulte }}</span></td>
-                <td>
-                    {% if tache_focu.statut == 'Terminée' %}
-                        <span class="badge-terminee">✓ Terminée</span>
-                    {% elseif tache_focu.statut == 'En cours' %}
-                        <span class="badge-encours">● En cours</span>
-                    {% else %}
-                        <span class="badge-noncommence">○ Non commencée</span>
-                    {% endif %}
-                </td>
-                <td><span style="font-weight:800;font-size:.95rem;color:{% if tache_focu.scoreProductivite >= 75 %}#16a34a{% elseif tache_focu.scoreProductivite >= 50 %}#d97706{% else %}#e11d48{% endif %};">{{ tache_focu.scoreProductivite }}%</span></td>
-                <td style="color:#94a3b8;font-size:.85rem;">{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i') : '—' }}</td>
-                <td style="color:#94a3b8;font-size:.85rem;">{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '—' }}</td>
-                <td>
-                    <div style="display:flex;gap:6px;align-items:center;">
-                        <a href="{{ path('app_tache_focus_show', {'id': tache_focu.id}) }}" class="action-btn btn-voir" title="Voir">👁</a>
-                        <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}" class="action-btn btn-modifier" title="Modifier">✏️</a>
-                        <form method="post" action="{{ path('app_tache_focus_delete', {'id': tache_focu.id}) }}" style="display:inline;" onsubmit="return confirm('Supprimer ?')">
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="fw-bold mb-0" style="color:#E8E8F0;">{{ tache_focu.titre }}</h6>
+                        {% if tache_focu.statut == 'Terminée' %}
+                            <span class="badge bg-success">✓ Terminée</span>
+                        {% elseif tache_focu.statut == 'En cours' %}
+                            <span class="badge bg-primary">● En cours</span>
+                        {% else %}
+                            <span class="badge bg-secondary">○ Non commencée</span>
+                        {% endif %}
+                    </div>
+                    <p class="small mb-2" style="color:#9B9BB0;">{{ tache_focu.objectifPrincipal|slice(0,90) }}{% if tache_focu.objectifPrincipal|length > 90 %}…{% endif %}</p>
+                    <div class="d-flex gap-2 flex-wrap mb-3">
+                        <span class="badge" style="background:rgba(108,99,255,0.2);color:#9A8CFF;">Niv. {{ tache_focu.niveauDifficulte }}</span>
+                        <span class="badge" style="background:rgba(46,204,113,0.15);color:{% if tache_focu.scoreProductivite >= 75 %}#2ECC71{% elseif tache_focu.scoreProductivite >= 50 %}#F39C12{% else %}#E74C3C{% endif %};">{{ tache_focu.scoreProductivite }}%</span>
+                        {% if tache_focu.heureDebut %}
+                        <span class="badge bg-secondary">{{ tache_focu.heureDebut|date('H:i') }} → {{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '?' }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('app_tache_focus_show', {'id': tache_focu.id}) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-eye"></i></a>
+                        <a href="{{ path('app_tache_focus_edit', {'id': tache_focu.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                        <form method="post" action="{{ path('app_tache_focus_delete', {'id': tache_focu.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer ?')">
                             <input type="hidden" name="_method" value="DELETE">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache_focu.id) }}">
-                            <button type="submit" class="action-btn btn-supprimer" title="Supprimer">🗑</button>
+                            <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
                         </form>
                     </div>
-                </td>
-            </tr>
-        {% else %}
-            <tr><td colspan="9" style="text-align:center;padding:50px;color:#94a3b8;"><div style="font-size:2.5rem;margin-bottom:.5rem;">📭</div><div style="font-weight:600;">Aucune tâche trouvée</div></td></tr>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-        </tbody>
-    </table>
-</div>
+    </div>
+{% endif %}
 
 <div class="mt-4 d-flex justify-content-center">
     {{ knp_pagination_render(tache_foci) }}

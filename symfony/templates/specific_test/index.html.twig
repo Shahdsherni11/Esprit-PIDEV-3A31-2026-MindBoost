@@ -47,63 +47,32 @@
 </div>
 
 {% if specificTests|length > 0 %}
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-table me-2"></i>Liste des Tests Spécifiques ({{ specificCount }})
-        </div>
-
-        <div class="card-body p-0 table-light-wrap">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Catégorie</th>
-                        <th>Description</th>
-                        <th>Créé</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for test in specificTests %}
-                        <tr>
-                            <td><strong>{{ test.title }}</strong></td>
-                            <td>
-                                <span class="badge bg-info text-dark">{{ test.category }}</span>
-                            </td>
-                            <td>
-                                {% if test.description %}
-                                    {{ test.description|slice(0, 60) }}{% if test.description|length > 60 %}...{% endif %}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>{{ test.createdAt|date('d/m/Y') }}</td>
-                            <td>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <a href="{{ path('specific_test_show', {id: test.id}) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ path('specific_test_edit', {id: test.id}) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                    <a href="{{ path('specific_test_delete', {id: test.id}) }}" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+    <div class="row g-3">
+        {% for test in specificTests %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="fw-bold mb-0" style="color:#E8E8F0;">{{ test.title }}</h6>
+                        <span class="badge bg-info text-dark">{{ test.category }}</span>
+                    </div>
+                    {% if test.description %}
+                    <p class="small mb-2" style="color:#9B9BB0;">{{ test.description|slice(0, 100) }}{% if test.description|length > 100 %}…{% endif %}</p>
+                    {% endif %}
+                    <p class="small mb-3" style="color:#9B9BB0;"><i class="bi bi-calendar3 me-1"></i>{{ test.createdAt|date('d/m/Y') }}</p>
+                    <div class="d-flex gap-2">
+                        <a href="{{ path('specific_test_show', {id: test.id}) }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye"></i></a>
+                        <a href="{{ path('specific_test_edit', {id: test.id}) }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-pen"></i></a>
+                        <a href="{{ path('specific_test_delete', {id: test.id}) }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
             </div>
         </div>
+        {% endfor %}
+    </div>
 
-        <div class="card-body">
-            <div class="d-flex justify-content-center">
-                {{ knp_pagination_render(specificTests) }}
-            </div>
-        </div>
+    <div class="mt-4 d-flex justify-content-center">
+        {{ knp_pagination_render(specificTests) }}
     </div>
 {% else %}
     <div class="text-center py-5">
