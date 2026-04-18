@@ -99,14 +99,6 @@ class UserAdminController extends AbstractController
         return $this->redirectToRoute('app_admin_user_list');
     }
 
-    // ── USERS : détail ───────────────────────────────────────
-    #[Route('/{id}', name: 'app_admin_user_show')]
-    public function userShow(User $user): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        return $this->render('admin/user_show.html.twig', ['user' => $user]);
-    }
-
     // ── PROFILES : liste ─────────────────────────────────────
     #[Route('/profiles', name: 'app_admin_profile_list')]
     public function profileList(Request $request, ProfileRepository $repo): Response
@@ -160,5 +152,13 @@ class UserAdminController extends AbstractController
             $this->addFlash('success', '🗑 Profil supprimé.');
         }
         return $this->redirectToRoute('app_admin_profile_list');
+    }
+
+    // ── USERS : détail ───────────────────────────────────────
+    #[Route('/{id}', name: 'app_admin_user_show')]
+    public function userShow(User $user): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        return $this->render('admin/user_show.html.twig', ['user' => $user]);
     }
 }
