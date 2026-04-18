@@ -1,15 +1,14 @@
-{% extends 'base.html.twig' %}
+{% extends 'base_front.html.twig' %}
 
-{% block title %}MindBood - Accueil{% endblock %}
+{% block title %}MindBoost - Accueil{% endblock %}
 
-{% block body %}
+{% block content %}
 
-{# ===== HERO SECTION ===== #}
 <div style="text-align: center; padding: 60px 20px; margin-bottom: 40px;">
-    <h1 style="font-size: 48px; font-weight: bold; color: white; margin-bottom: 15px;">
-        🧠 Mind<span style="color: #6C63FF;">Bood</span>
+    <h1 style="font-size: 48px; font-weight: bold; color: #17253a; margin-bottom: 15px;">
+        🧠 Mind<span style="color: #2563eb;">Boost</span>
     </h1>
-    <p style="font-size: 18px; color: #9B9BB0; margin-bottom: 30px;">
+    <p style="font-size: 18px; color: #6c7b95; margin-bottom: 30px;">
         Gérez votre focus et boostez votre productivité
     </p>
     <a href="{{ path('app_tache_focus_index') }}" 
@@ -18,98 +17,84 @@
     </a>
 </div>
 
-{# ===== STATISTIQUES ===== #}
 <div class="row mb-4">
     <div class="col-md-3">
-        <div class="stat-card card-purple text-center">
+        <div style="background:white;border-radius:20px;padding:1.5rem;border:1px solid #dbe7ff;text-align:center;box-shadow:0 4px 15px rgba(37,99,235,0.08);">
             <div style="font-size: 40px;">🎯</div>
-            <div class="stat-number">{{ totalTaches }}</div>
-            <div class="stat-label">Tâches Focus</div>
+            <div style="font-size:2rem;font-weight:900;color:#2563eb;">{{ totalTaches }}</div>
+            <div style="color:#6c7b95;">Tâches Focus</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card card-teal text-center">
+        <div style="background:white;border-radius:20px;padding:1.5rem;border:1px solid #dbe7ff;text-align:center;box-shadow:0 4px 15px rgba(37,99,235,0.08);">
             <div style="font-size: 40px;">✓</div>
-            <div class="stat-number">{{ totalSousTaches }}</div>
-            <div class="stat-label">Sous-Tâches</div>
+            <div style="font-size:2rem;font-weight:900;color:#06b6d4;">{{ totalSousTaches }}</div>
+            <div style="color:#6c7b95;">Sous-Tâches</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card card-green text-center">
+        <div style="background:white;border-radius:20px;padding:1.5rem;border:1px solid #dbe7ff;text-align:center;box-shadow:0 4px 15px rgba(37,99,235,0.08);">
             <div style="font-size: 40px;">✅</div>
-            <div class="stat-number">{{ tachesTerminees }}</div>
-            <div class="stat-label">Terminées</div>
+            <div style="font-size:2rem;font-weight:900;color:#16a34a;">{{ tachesTerminees }}</div>
+            <div style="color:#6c7b95;">Terminées</div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="stat-card card-pink text-center">
+        <div style="background:white;border-radius:20px;padding:1.5rem;border:1px solid #dbe7ff;text-align:center;box-shadow:0 4px 15px rgba(37,99,235,0.08);">
             <div style="font-size: 40px;">🚀</div>
-            <div class="stat-number">{{ scoreMoyen }}%</div>
-            <div class="stat-label">Score Moyen</div>
+            <div style="font-size:2rem;font-weight:900;color:#f59e0b;">{{ scoreMoyen }}%</div>
+            <div style="color:#6c7b95;">Score Moyen</div>
         </div>
     </div>
 </div>
 
-{# ===== LISTE DES TACHES (lecture seule) ===== #}
 <div class="mb-3">
-    <h2 style="color: white; font-size: 22px; font-weight: bold;">
-        📋 Tâches en cours
-    </h2>
-    <p style="color: #9B9BB0;">Vue publique — lecture seule</p>
+    <h2 style="color:#17253a;font-size:1.4rem;font-weight:800;">📋 Tâches en cours</h2>
+    <p style="color:#6c7b95;">Vue publique — lecture seule</p>
 </div>
 
-<div class="table-container">
-    <table class="table">
+<div style="background:white;border-radius:20px;overflow:hidden;border:1px solid #e8efff;box-shadow:0 2px 16px rgba(37,99,235,0.06);">
+    <table class="table" style="margin:0;">
         <thead>
-            <tr>
-                <th>Titre</th>
-                <th>Objectif</th>
-                <th>Difficulté</th>
-                <th>Statut</th>
-                <th>Score</th>
+            <tr style="background:rgba(37,99,235,0.05);">
+                <th>Titre</th><th>Objectif</th><th>Difficulté</th><th>Statut</th><th>Score</th>
             </tr>
         </thead>
         <tbody>
         {% for tache in taches %}
             <tr>
-                <td><strong>{{ tache.titre }}</strong></td>
-                <td>{{ tache.objectifPrincipal }}</td>
-                <td style="text-align: center;">
+                <td><strong style="color:#17253a;">{{ tache.titre }}</strong></td>
+                <td style="color:#6c7b95;">{{ tache.objectifPrincipal }}</td>
+                <td style="text-align:center;">
                     {% for i in 1..5 %}
-                        <span style="color: {{ i <= tache.niveauDifficulte ? '#6C63FF' : 'rgba(255,255,255,0.2)' }}">●</span>
+                        <span style="color:{{ i <= tache.niveauDifficulte ? '#2563eb' : '#e2e8f0' }}">●</span>
                     {% endfor %}
                 </td>
                 <td>
                     {% if tache.statut == 'Terminée' %}
-                        <span class="badge-terminee">✅ {{ tache.statut }}</span>
+                        <span style="background:#dcfce7;color:#15803d;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;">✓ Terminée</span>
                     {% elseif tache.statut == 'En cours' %}
-                        <span class="badge-encours">⏳ {{ tache.statut }}</span>
+                        <span style="background:#dbeafe;color:#1d4ed8;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;">● En cours</span>
                     {% else %}
-                        <span class="badge-noncommence">⭕ {{ tache.statut }}</span>
+                        <span style="background:#f1f5f9;color:#475569;padding:.3rem .75rem;border-radius:50px;font-size:.78rem;font-weight:700;">○ Non commencée</span>
                     {% endif %}
                 </td>
                 <td>
-                    <div style="background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100px;">
-                        <div style="background: {% if tache.scoreProductivite >= 75 %}#2ECC71{% elseif tache.scoreProductivite >= 50 %}#F39C12{% else %}#E74C3C{% endif %}; 
-                                    width: {{ tache.scoreProductivite }}%; height: 8px; border-radius: 10px;"></div>
+                    <div style="background:#f1f5f9;border-radius:10px;height:8px;width:100px;">
+                        <div style="background:{% if tache.scoreProductivite >= 75 %}#16a34a{% elseif tache.scoreProductivite >= 50 %}#f59e0b{% else %}#ef4444{% endif %};width:{{ tache.scoreProductivite }}%;height:8px;border-radius:10px;"></div>
                     </div>
-                    <small style="color: #9B9BB0;">{{ tache.scoreProductivite }}%</small>
+                    <small style="color:#6c7b95;">{{ tache.scoreProductivite }}%</small>
                 </td>
             </tr>
         {% else %}
-            <tr>
-                <td colspan="5" style="text-align: center; color: #9B9BB0; padding: 30px;">
-                    Aucune tâche disponible
-                </td>
-            </tr>
+            <tr><td colspan="5" style="text-align:center;color:#6c7b95;padding:30px;">Aucune tâche disponible</td></tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
 
-{# ===== FOOTER ===== #}
-<div style="text-align: center; margin-top: 40px; color: rgba(255,255,255,0.2); font-size: 13px;">
-    © 2026 MindBood — Gestion de Focus et Productivité
+<div style="text-align:center;margin-top:40px;color:#94a3b8;font-size:13px;">
+    © 2026 MindBoost — Gestion de Focus et Productivité
 </div>
 
 {% endblock %}

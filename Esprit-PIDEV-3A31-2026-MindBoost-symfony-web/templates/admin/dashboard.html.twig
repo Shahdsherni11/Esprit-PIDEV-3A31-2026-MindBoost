@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard Admin - MindBoost{% endblock %}
+{% block content %}
+
+<div class="page-heading">
+    <h1><i class="fas fa-brain me-2"></i>Dashboard MindBoost</h1>
+    <p>Vue d'ensemble des tâches focus et du bien-être</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ totalTaches }}</div>
+                    <div class="stat-label">Tâches Focus</div>
+                </div>
+                <i class="fas fa-bullseye fa-2x" style="color:#4D83FF;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ totalSousTaches }}</div>
+                    <div class="stat-label">Sous-Tâches</div>
+                </div>
+                <i class="fas fa-list-check fa-2x" style="color:#19B5FE;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ tachesTerminees }}</div>
+                    <div class="stat-label">Terminées</div>
+                </div>
+                <i class="fas fa-circle-check fa-2x" style="color:#00D1C7;"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ scoreMoyen }}%</div>
+                    <div class="stat-label">Score Moyen</div>
+                </div>
+                <i class="fas fa-chart-line fa-2x" style="color:#F7B84B;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <a href="{{ path('app_tache_focus_index') }}" class="quick-card">
+            <i class="fas fa-bullseye fa-xl" style="color:#4D83FF;"></i>
+            <h5>Gérer les tâches focus</h5>
+            <p>Consulter, rechercher, trier et modifier les tâches focus.</p>
+        </a>
+    </div>
+    <div class="col-lg-6">
+        <a href="{{ path('app_sous_tache_index') }}" class="quick-card">
+            <i class="fas fa-list-check fa-xl" style="color:#19B5FE;"></i>
+            <h5>Gérer les sous-tâches</h5>
+            <p>Filtrer et gérer les sous-tâches liées à chaque tâche focus.</p>
+        </a>
+    </div>
+    <div class="col-lg-6">
+        <a href="{{ path('app_tache_focus_new') }}" class="quick-card">
+            <i class="fas fa-plus-circle fa-xl" style="color:#00D1C7;"></i>
+            <h5>Créer une tâche focus</h5>
+            <p>Ajouter une nouvelle tâche avec objectif et priorité.</p>
+        </a>
+    </div>
+    <div class="col-lg-6">
+        <a href="{{ path('app_statistiques') }}" class="quick-card">
+            <i class="fas fa-chart-line fa-xl" style="color:#F7B84B;"></i>
+            <h5>Voir les statistiques</h5>
+            <p>Analyser la progression et les performances globales.</p>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

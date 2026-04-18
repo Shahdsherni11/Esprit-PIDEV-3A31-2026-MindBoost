@@ -15,17 +15,16 @@ class HomeController extends AbstractController
         TacheFocusRepository $tacheFocusRepository,
         SousTacheRepository $sousTacheRepository
     ): Response {
-        $taches = $tacheFocusRepository->findAll();
-        $sousTaches = $sousTacheRepository->findAll();
-
-        $totalTaches      = count($taches);
-        $totalSousTaches  = count($sousTaches);
-        $tachesTerminees  = count(array_filter($taches, fn($t) => $t->getStatut() === 'Terminée'));
-        $tachesEnCours    = count(array_filter($taches, fn($t) => $t->getStatut() === 'En cours'));
-        $scoreMoyen       = $totalTaches > 0
+        $taches          = $tacheFocusRepository->findAll();
+        $sousTaches      = $sousTacheRepository->findAll();
+        $totalTaches     = count($taches);
+        $totalSousTaches = count($sousTaches);
+        $tachesTerminees = count(array_filter($taches, fn($t) => $t->getStatut() === 'Terminée'));
+        $tachesEnCours   = count(array_filter($taches, fn($t) => $t->getStatut() === 'En cours'));
+        $scoreMoyen      = $totalTaches > 0
             ? round(array_sum(array_map(fn($t) => $t->getScoreProductivite(), $taches)) / $totalTaches)
             : 0;
-        $progression      = $totalTaches > 0
+        $progression     = $totalTaches > 0
             ? round(($tachesTerminees / $totalTaches) * 100)
             : 0;
 
@@ -35,6 +34,33 @@ class HomeController extends AbstractController
             'totalSousTaches' => $totalSousTaches,
             'tachesTerminees' => $tachesTerminees,
             'tachesEnCours'   => $tachesEnCours,
+            'scoreMoyen'      => $scoreMoyen,
+            'progression'     => $progression,
+        ]);
+    }
+
+    #[Route('/admin', name: 'app_admin')]
+    public function admin(
+        TacheFocusRepository $tacheFocusRepository,
+        SousTacheRepository $sousTacheRepository
+    ): Response {
+        $taches          = $tacheFocusRepository->findAll();
+        $sousTaches      = $sousTacheRepository->findAll();
+        $totalTaches     = count($taches);
+        $totalSousTaches = count($sousTaches);
+        $tachesTerminees = count(array_filter($taches, fn($t) => $t->getStatut() === 'Terminée'));
+        $scoreMoyen      = $totalTaches > 0
+            ? round(array_sum(array_map(fn($t) => $t->getScoreProductivite(), $taches)) / $totalTaches)
+            : 0;
+        $progression     = $totalTaches > 0
+            ? round(($tachesTerminees / $totalTaches) * 100)
+            : 0;
+
+        return $this->render('admin/dashboard.html.twig', [
+            'taches'          => $taches,
+            'totalTaches'     => $totalTaches,
+            'totalSousTaches' => $totalSousTaches,
+            'tachesTerminees' => $tachesTerminees,
             'scoreMoyen'      => $scoreMoyen,
             'progression'     => $progression,
         ]);
