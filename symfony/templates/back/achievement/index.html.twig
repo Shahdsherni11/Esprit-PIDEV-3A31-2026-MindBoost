@@ -18,46 +18,29 @@
 </div>
 {% else %}
 <div class="card">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Score</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for achievement in achievements %}
-                    <tr>
-                        <td class="text-muted small">{{ achievement.id }}</td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="rounded-circle d-flex align-items-center justify-content-center"
-                                      style="width:32px;height:32px;background:linear-gradient(135deg,#ffc107,#ff9800);color:#fff;font-size:0.9rem;flex-shrink:0;">
-                                    <i class="bi bi-trophy"></i>
-                                </span>
-                                <strong>{{ achievement.achievementName }}</strong>
-                            </div>
-                        </td>
-                        <td><span class="badge bg-warning text-dark">{{ achievement.achievementScore }} pts</span></td>
-                        <td>
-                            <div class="d-flex gap-1">
-                                <a href="{{ path('back_achievement_edit', {id: achievement.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
-                                <form method="post" action="{{ path('back_achievement_delete', {id: achievement.id}) }}" onsubmit="return confirm('Delete this achievement?')" class="d-inline">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_achievement' ~ achievement.id) }}">
-                                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <ul class="list-group list-group-flush">
+        {% for achievement in achievements %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <span class="rounded-circle d-flex align-items-center justify-content-center"
+                      style="width:32px;height:32px;background:linear-gradient(135deg,#ffc107,#ff9800);color:#fff;font-size:0.9rem;flex-shrink:0;">
+                    <i class="bi bi-trophy"></i>
+                </span>
+                <div>
+                    <strong>{{ achievement.achievementName }}</strong>
+                    <div class="small text-muted"><span class="badge bg-warning text-dark">{{ achievement.achievementScore }} pts</span></div>
+                </div>
+            </div>
+            <div class="d-flex gap-1 ms-3 flex-shrink-0">
+                <a href="{{ path('back_achievement_edit', {id: achievement.id}) }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-pencil"></i></a>
+                <form method="post" action="{{ path('back_achievement_delete', {id: achievement.id}) }}" onsubmit="return confirm('Delete this achievement?')" class="d-inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_achievement' ~ achievement.id) }}">
+                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
 </div>
 {% endif %}
 {% endblock %}
