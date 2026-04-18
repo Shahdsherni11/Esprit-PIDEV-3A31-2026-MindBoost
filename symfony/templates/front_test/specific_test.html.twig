@@ -1,0 +1,145 @@
+{% extends "base_front.html.twig" %}
+
+{% block title %}Test Spécifique - MindBoost{% endblock %}
+
+{% block content %}
+<style>
+    .specific-hero {
+        background: linear-gradient(135deg, rgba(37,99,235,0.10), rgba(20,184,166,0.08));
+        border: 1px solid #d7e5ff;
+        border-radius: 28px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .specific-hero h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #17253a;
+    }
+
+    .specific-hero p {
+        margin: 0.7rem 0 0;
+        font-size: 1.03rem;
+        color: #62738f;
+    }
+
+    .specific-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        background: rgba(37,99,235,0.12);
+        color: #2563eb;
+        font-weight: 800;
+        margin-top: 0.8rem;
+    }
+
+    .specific-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .question-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+        overflow: hidden;
+    }
+
+    .question-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        font-weight: 800;
+        color: #1f3352;
+        background: linear-gradient(90deg, rgba(37,99,235,0.08), rgba(6,182,212,0.08));
+        border-bottom: 1px solid #e2ebfb;
+    }
+
+    .question-card-body {
+        padding: 1.3rem;
+    }
+
+    .question-title {
+        font-size: 1.16rem;
+        line-height: 1.5;
+        font-weight: 800;
+        color: #17253a;
+        margin-bottom: 1rem;
+    }
+
+    .answer-option {
+        display: block;
+        background: #f8fbff;
+        border: 1px solid #d8e5fb;
+        border-radius: 18px;
+        padding: 0.95rem 1rem;
+        margin-bottom: 0.85rem;
+        transition: all 0.22s ease;
+        cursor: pointer;
+    }
+
+    .answer-option:hover {
+        background: #f0f6ff;
+        border-color: #8bb4ff;
+        transform: translateY(-1px);
+    }
+
+    .form-check-input {
+        transform: scale(1.12);
+        accent-color: #2563eb;
+    }
+</style>
+
+<div class="specific-hero">
+    <h1><i class="fas fa-layer-group"></i>{{ test.title }}</h1>
+    <p>Répondez avec sincérité à chaque question pour obtenir un résultat fiable.</p>
+    <div class="specific-badge">
+        <i class="fas fa-tag me-2"></i>{{ test.category }}
+    </div>
+</div>
+
+<form method="POST" action="{{ path('front_specific_test_submit', {id: test.id}) }}" id="specificTestForm">
+    <div class="specific-stack">
+        {% for item in questionsWithAnswers %}
+            <div class="question-card">
+                <div class="question-card-header">
+                    <i class="fas fa-circle-question"></i>
+                    Question {{ loop.index }}
+                </div>
+
+                <div class="question-card-body">
+                    <div class="question-title">{{ item.question.questionText }}</div>
+
+                    {% for answer in item.answers %}
+                        <label class="answer-option">
+                            <div class="d-flex align-items-center">
+                                <input class="form-check-input me-3"
+                                       type="radio"
+                                       name="answers[{{ item.question.id }}]"
+                                       value="{{ answer.id }}"
+                                       required>
+                                <div>{{ answer.answerText }}</div>
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="d-flex justify-content-end mt-4">
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check me-2"></i>Soumettre le test spécifique
+        </button>
+    </div>
+</form>
+{% endblock %}

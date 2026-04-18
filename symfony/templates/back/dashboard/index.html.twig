@@ -1,0 +1,128 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Dashboard — Admin MindBoost{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block body %}
+{# Stats row #}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#0d6efd;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-primary"><i class="bi bi-file-post"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalPosts }}</div>
+                    <div class="text-muted small">Total Posts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#198754;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-success"><i class="bi bi-chat-dots"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalComments }}</div>
+                    <div class="text-muted small">Total Comments</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#ffc107;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-warning"><i class="bi bi-trophy"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalAchievements }}</div>
+                    <div class="text-muted small">Achievements</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#0dcaf0;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-info"><i class="bi bi-bookmark"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalSaves }}</div>
+                    <div class="text-muted small">Saved Posts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Quick links #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <a href="{{ path('back_post_new') }}" class="btn btn-primary w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Post
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('back_achievement_new') }}" class="btn btn-warning w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Achievement
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('back_saves_new') }}" class="btn btn-info text-white w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Save
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('front_home') }}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-eye me-1"></i>View Site
+        </a>
+    </div>
+</div>
+
+{# Recent posts #}
+<div class="card">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-muted"></i>Recent Posts</h6>
+        {% if recentPosts is empty %}
+        <p class="text-muted">No posts yet.</p>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Tag</th>
+                        <th>Likes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in recentPosts %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>
+                            <a href="{{ path('front_post_show', {id: post.id}) }}" class="text-decoration-none">
+                                {{ post.title|slice(0, 50) }}{% if post.title|length > 50 %}...{% endif %}
+                            </a>
+                        </td>
+                        <td>
+                            {% if post.tag %}
+                            <span class="badge bg-secondary">{{ post.tag }}</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-success">{{ post.likes }}</span></td>
+                        <td>
+                            <a href="{{ path('back_post_edit', {id: post.id}) }}" class="btn btn-xs btn-outline-secondary" style="font-size:.75rem;padding:2px 8px;">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-2">
+            <a href="{{ path('back_post_index') }}" class="btn btn-sm btn-outline-primary">View all posts →</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
