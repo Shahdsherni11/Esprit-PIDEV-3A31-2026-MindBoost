@@ -1,129 +1,168 @@
 {% extends 'back/base.html.twig' %}
 
-{% block title %}Tests Généraux - MindBoost{% endblock %}
+{% block title %}Tests Généraux — Admin MindBoost{% endblock %}
+{% block page_title %}Tests Généraux{% endblock %}
+
+{% block extra_css %}
+<style>
+    .test-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .test-list-item:last-child { border-bottom: none; }
+    .test-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .test-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #2F6BFF, #19B5FE);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .test-title {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+    }
+
+    .test-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        border-radius: 999px;
+        padding: .2rem .6rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+    .status-active   { background: rgba(41,204,122,0.18);  color: #29CC7A; }
+    .status-draft    { background: rgba(255,255,255,0.08);  color: #AAB6D3; }
+    .status-inactive { background: rgba(255,90,116,0.15);   color: #FF5A74; }
+    .status-archived { background: rgba(255,255,255,0.05);  color: #7E8DB1; }
+
+    .date-pill {
+        font-size: .75rem;
+        color: #7E8DB1;
+    }
+
+    .desc-text {
+        font-size: .78rem;
+        color: #7E8DB1;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 320px;
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="page-heading d-flex flex-wrap justify-content-between align-items-start gap-3">
-    <div>
-        <h1><i class="fas fa-book-open me-2"></i>Tests Généraux</h1>
-        <p>Recherche, tri et gestion complète des tests généraux.</p>
-    </div>
 
-    <div class="d-flex flex-wrap gap-2">
-        <a href="{{ path('admin_ai_tests') }}" class="btn btn-warning">
-            <i class="fas fa-brain me-2"></i>Gérer test IA
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ generalCount }} test(s) au total</span>
+    <div class="d-flex gap-2">
+        <a href="{{ path('admin_ai_tests') }}" class="btn btn-warning btn-sm">
+            <i class="bi bi-robot me-1"></i>Gérer test IA
         </a>
-
-        <a href="{{ path('general_test_create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Nouveau Test
+        <a href="{{ path('general_test_create') }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Nouveau Test
         </a>
     </div>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" class="row g-3">
-            <div class="col-md-5">
-                <input
-                    type="text"
-                    name="search"
-                    class="form-control"
-                    placeholder="Rechercher par titre..."
-                    value="{{ search ?? '' }}"
-                >
-            </div>
-
-            <div class="col-md-4">
-                <select name="sort" class="form-select">
-                    <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Date - Plus récent</option>
-                    <option value="date_asc" {% if sort == 'date_asc' %}selected{% endif %}>Date - Plus ancien</option>
-                    <option value="title_asc" {% if sort == 'title_asc' %}selected{% endif %}>Titre A-Z</option>
-                    <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Titre Z-A</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-primary w-100">
-                    <i class="fas fa-search me-2"></i>Appliquer
-                </button>
-            </div>
-        </form>
-    </div>
+<div class="card mb-4 p-3">
+    <form method="GET" class="d-flex gap-2 flex-wrap align-items-end">
+        <input type="text" name="search" class="form-control form-control-sm"
+               placeholder="Rechercher par titre..." value="{{ search ?? '' }}" style="width:220px;">
+        <select name="sort" class="form-select form-select-sm" style="width:190px;">
+            <option value="date_desc"  {% if sort == 'date_desc'  %}selected{% endif %}>Date - Plus récent</option>
+            <option value="date_asc"   {% if sort == 'date_asc'   %}selected{% endif %}>Date - Plus ancien</option>
+            <option value="title_asc"  {% if sort == 'title_asc'  %}selected{% endif %}>Titre A-Z</option>
+            <option value="title_desc" {% if sort == 'title_desc' %}selected{% endif %}>Titre Z-A</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Appliquer</button>
+    </form>
 </div>
 
-{% if generalTests|length > 0 %}
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-table me-2"></i>Liste des Tests Généraux ({{ generalCount }})
-        </div>
-
-        <div class="card-body p-0 table-light-wrap">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Description</th>
-                        <th>Statut</th>
-                        <th>Créé</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for test in generalTests %}
-                        <tr>
-                            <td>
-                                <strong>{{ test.title }}</strong>
-                            </td>
-                            <td>
-                                {% if test.description %}
-                                    {{ test.description|slice(0, 65) }}{% if test.description|length > 65 %}...{% endif %}
-                                {% else %}
-                                    -
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if test.status == 'DRAFT' %}
-                                    <span class="badge bg-secondary">Brouillon</span>
-                                {% elseif test.status == 'ACTIVE' %}
-                                    <span class="badge bg-success">Actif</span>
-                                {% elseif test.status == 'INACTIVE' %}
-                                    <span class="badge bg-danger">Inactif</span>
-                                {% else %}
-                                    <span class="badge bg-dark">Archivé</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ test.createdAt|date('d/m/Y') }}</td>
-                            <td>
-                                <div class="d-flex gap-2 flex-wrap">
-                                    <a href="{{ path('general_test_show', {id: test.id}) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{ path('general_test_edit', {id: test.id}) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-pen"></i>
-                                    </a>
-                                    <a href="{{ path('general_test_delete', {id: test.id}) }}" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="card-body">
-            <div class="d-flex justify-content-center">
-                {{ knp_pagination_render(generalTests) }}
-            </div>
-        </div>
-    </div>
+{% if generalTests|length == 0 %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-inbox display-4"></i>
+    <p class="mt-2">Aucun test trouvé.</p>
+</div>
 {% else %}
-    <div class="text-center py-5">
-        <h3>Aucun test trouvé</h3>
-        <p>Aucun test général ne correspond à votre recherche.</p>
+<div class="card">
+    <div class="card-body p-0">
+        {% for test in generalTests %}
+            <div class="test-list-item">
+                <div class="test-icon">
+                    <i class="bi bi-journal-bookmark-fill"></i>
+                </div>
+
+                <div class="flex-grow-1 min-width-0">
+                    <div class="test-title">{{ test.title }}</div>
+                    <div class="test-meta">
+                        {% if test.status == 'ACTIVE' %}
+                            <span class="status-pill status-active"><i class="bi bi-check-circle-fill"></i>Actif</span>
+                        {% elseif test.status == 'DRAFT' %}
+                            <span class="status-pill status-draft"><i class="bi bi-pencil-square"></i>Brouillon</span>
+                        {% elseif test.status == 'INACTIVE' %}
+                            <span class="status-pill status-inactive"><i class="bi bi-x-circle-fill"></i>Inactif</span>
+                        {% else %}
+                            <span class="status-pill status-archived"><i class="bi bi-archive-fill"></i>Archivé</span>
+                        {% endif %}
+                        <span class="date-pill"><i class="bi bi-calendar3 me-1"></i>{{ test.createdAt|date('d/m/Y') }}</span>
+                        {% if test.description %}
+                            <span class="desc-text">{{ test.description|slice(0, 65) }}{% if test.description|length > 65 %}…{% endif %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('general_test_show', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-info"
+                       style="font-size:.75rem;padding:3px 9px;" title="Voir">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ path('general_test_edit', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ path('general_test_delete', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-danger"
+                       style="font-size:.75rem;padding:3px 9px;" title="Supprimer"
+                       onclick="return confirm('Supprimer ce test ?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
     </div>
+</div>
+
+<div class="mt-4 d-flex justify-content-center">
+    {{ knp_pagination_render(generalTests) }}
+</div>
 {% endif %}
+
 {% endblock %}
