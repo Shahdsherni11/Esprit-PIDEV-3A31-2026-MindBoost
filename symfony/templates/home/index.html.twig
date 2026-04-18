@@ -1,0 +1,66 @@
+{% extends 'base_front.html.twig' %}
+{% block title %}Accueil — MindBoost{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1><i class="fas fa-brain me-2"></i>Tableau de bord</h1>
+    <p>Bienvenue sur MindBoost — votre espace de productivité et bien-être.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-center p-3">
+            <div style="font-size:2rem;font-weight:900;color:var(--primary);">{{ totalTaches }}</div>
+            <div style="color:var(--text-soft);font-size:.9rem;">Tâches au total</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-center p-3">
+            <div style="font-size:2rem;font-weight:900;color:#16a34a;">{{ tachesTerminees }}</div>
+            <div style="color:var(--text-soft);font-size:.9rem;">Terminées</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-center p-3">
+            <div style="font-size:2rem;font-weight:900;color:#2563eb;">{{ tachesEnCours }}</div>
+            <div style="color:var(--text-soft);font-size:.9rem;">En cours</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card text-center p-3">
+            <div style="font-size:2rem;font-weight:900;color:var(--secondary);">{{ totalSousTaches }}</div>
+            <div style="color:var(--text-soft);font-size:.9rem;">Sous-tâches</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div style="font-weight:800;margin-bottom:.75rem;"><i class="fas fa-chart-line me-2 text-primary"></i>Progression globale</div>
+            <div class="progress" style="height:14px;border-radius:999px;background:rgba(37,99,235,0.1);">
+                <div class="progress-bar" role="progressbar" style="width:{{ progression }}%;background:linear-gradient(90deg,#2563eb,#3b82f6);border-radius:999px;" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div style="margin-top:.5rem;color:var(--text-soft);font-size:.9rem;">{{ progression }}% des tâches terminées</div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <div style="font-weight:800;margin-bottom:.75rem;"><i class="fas fa-star me-2 text-warning"></i>Score de productivité moyen</div>
+            <div style="font-size:2.5rem;font-weight:900;color:var(--primary);">{{ scoreMoyen }}<span style="font-size:1rem;color:var(--text-soft);">/100</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-3 flex-wrap">
+    <a href="{{ path('app_tache_focus_index') }}" class="btn btn-primary">
+        <i class="fas fa-bullseye me-2"></i>Voir mes tâches
+    </a>
+    <a href="{{ path('app_tache_focus_new') }}" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>Nouvelle tâche
+    </a>
+    <a href="{{ path('front_post_index') }}" class="btn btn-secondary">
+        <i class="fas fa-comments me-2"></i>Forum
+    </a>
+</div>
+{% endblock %}

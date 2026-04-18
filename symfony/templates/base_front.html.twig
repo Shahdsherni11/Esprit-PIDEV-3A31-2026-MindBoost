@@ -105,6 +105,13 @@
         <a href="{{ path('app_home') }}" class="front-sidebar-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">
             <i class="fas fa-house"></i><span>Accueil</span>
         </a>
+        <div class="front-sidebar-label">Forum</div>
+        <a href="{{ path('front_post_index') }}" class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'front_post' %}active{% endif %}">
+            <i class="fas fa-comments"></i><span>Forum</span>
+        </a>
+        <a href="{{ path('front_saves_index') }}" class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'front_saves' %}active{% endif %}">
+            <i class="fas fa-bookmark"></i><span>Sauvegardes</span>
+        </a>
         <div class="front-sidebar-label">Mes Tâches</div>
         <a href="{{ path('app_tache_focus_index') }}" class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_tache_focus' %}active{% endif %}">
             <i class="fas fa-bullseye"></i><span>Tâches Focus</span>
