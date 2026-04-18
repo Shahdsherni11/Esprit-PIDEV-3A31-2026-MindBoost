@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques Admin{% endblock %}
+
+{% block content %}
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+        background: linear-gradient(180deg, rgba(17,32,61,0.98), rgba(21,40,76,0.98));
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 24px;
+        padding: 1.2rem;
+        box-shadow: 0 16px 36px rgba(0,0,0,0.20);
+    }
+
+    .kpi-value {
+        font-size: 2rem;
+        font-weight: 900;
+        color: white;
+    }
+
+    .kpi-label {
+        margin-top: 0.35rem;
+        color: #aab6d3;
+        font-weight: 600;
+    }
+
+    .chart-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.2rem;
+    }
+
+    .chart-card {
+        background: white;
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        padding: 1.2rem;
+        box-shadow: 0 14px 30px rgba(8,26,58,0.08);
+    }
+
+    .chart-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #17253a;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 1100px) {
+        .stats-grid, .chart-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid, .chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="page-heading">
+    <h1><i class="fas fa-chart-pie me-2"></i>Statistiques Admin</h1>
+    <p>Nombre de personnes stressées, niveaux détectés, tranches de score et évolution hebdomadaire.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="kpi-card">
+        <div class="kpi-value">{{ stats.kpis.total_general_results }}</div>
+        <div class="kpi-label">Tests généraux passés</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{{ stats.kpis.total_specific_results }}</div>
+        <div class="kpi-label">Tests spécifiques passés</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{{ stats.kpis.total_students_tested }}</div>
+        <div class="kpi-label">Étudiants testés</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-value">{{ stats.kpis.average_general_score }}%</div>
+        <div class="kpi-label">Moyenne générale</div>
+    </div>
+</div>
+
+<div class="chart-grid">
+    <div class="chart-card">
+        <div class="chart-title">Répartition par catégorie</div>
+        {{ render_chart(categoryChart) }}
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Répartition par niveau</div>
+        {{ render_chart(levelChart) }}
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Tranches de score</div>
+        {{ render_chart(scoreRangeChart) }}
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Tests passés par semaine</div>
+        {{ render_chart(weeklyChart) }}
+    </div>
+</div>
+
+<div class="chart-grid mt-4">
+    <div class="chart-card">
+        <div class="chart-title">Tests généraux les plus utilisés</div>
+        {{ render_chart(generalUsageChart) }}
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Tests spécifiques les plus utilisés</div>
+        {{ render_chart(specificUsageChart) }}
+    </div>
+</div>
+{% endblock %}

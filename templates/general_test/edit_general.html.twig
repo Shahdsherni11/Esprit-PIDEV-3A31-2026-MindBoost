@@ -1,0 +1,75 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Éditer {{ test.title }} - MindBoost{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1><i class="fas fa-pen-to-square me-2"></i>Éditer le Test Général</h1>
+    <p>Modifiez les informations du test.</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" id="testForm">
+            <div class="form-group mb-3">
+                <label for="title" class="form-label">
+                    <i class="fas fa-heading"></i> Titre *
+                </label>
+                <input type="text" id="title" name="title" class="form-control"
+                       value="{{ test.title }}" required minlength="3" maxlength="255">
+                <small class="form-text">Le titre ne doit pas être uniquement des nombres.</small>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="description" class="form-label">
+                    <i class="fas fa-align-left"></i> Description
+                </label>
+                <textarea id="description" name="description" class="form-control"
+                          rows="5">{{ test.description ?? '' }}</textarea>
+            </div>
+
+            <div class="form-group mb-4">
+                <label for="status" class="form-label">
+                    <i class="fas fa-toggle-on"></i> Statut *
+                </label>
+                <select id="status" name="status" class="form-select" required>
+                    <option value="DRAFT" {% if test.status == 'DRAFT' %}selected{% endif %}>Brouillon</option>
+                    <option value="ACTIVE" {% if test.status == 'ACTIVE' %}selected{% endif %}>Actif</option>
+                    <option value="INACTIVE" {% if test.status == 'INACTIVE' %}selected{% endif %}>Inactif</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save"></i> Mettre à jour
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ path('general_test_show', {id: test.id}) }}" class="btn btn-secondary w-100">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('testForm').addEventListener('submit', function(e) {
+    const title = document.getElementById('title').value.trim();
+
+    if (title.length < 3) {
+        e.preventDefault();
+        alert('Le titre doit contenir au moins 3 caractères.');
+        return;
+    }
+
+    if (/^\d+$/.test(title)) {
+        e.preventDefault();
+        alert('Le titre ne doit pas être uniquement des nombres.');
+        return;
+    }
+});
+</script>
+{% endblock %}

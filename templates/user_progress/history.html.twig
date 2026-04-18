@@ -1,0 +1,201 @@
+{% extends "base_front.html.twig" %}
+
+{% block title %}Mon Historique{% endblock %}
+
+{% block content %}
+<style>
+    .history-hero {
+        margin-bottom: 1.5rem;
+    }
+
+    .history-hero h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin: 0;
+    }
+
+    .history-hero p {
+        margin: 0.5rem 0 0;
+        color: #6c7b95;
+        font-size: 1.02rem;
+    }
+
+    .history-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .history-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+        padding: 1.2rem;
+    }
+
+    .history-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+
+    .history-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-transform: capitalize;
+    }
+
+    .history-type.general {
+        background: rgba(37,99,235,0.12);
+        color: #2563eb;
+    }
+
+    .history-type.specific {
+        background: rgba(20,184,166,0.12);
+        color: #0f9e8f;
+    }
+
+    .history-date {
+        text-align: right;
+        color: #667892;
+        font-weight: 700;
+        font-size: 0.92rem;
+    }
+
+    .history-title {
+        font-size: 1.18rem;
+        font-weight: 900;
+        color: #17253a;
+        margin-bottom: 1rem;
+        line-height: 1.4;
+    }
+
+    .history-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.8rem;
+    }
+
+    .meta-tile {
+        background: #f3f8ff;
+        border: 1px solid #dce9fb;
+        border-radius: 16px;
+        padding: 0.85rem;
+    }
+
+    .meta-tile-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6f819b;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .meta-tile-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #17253a;
+    }
+
+    .history-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        background: white;
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+    }
+
+    .history-empty i {
+        font-size: 2.6rem;
+        color: #2563eb;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="history-hero">
+    <h1><i class="fas fa-clock-rotate-left"></i>Historique personnel</h1>
+    <p>Retrouvez tous vos tests passés, vos scores et vos résultats dans une vue plus claire.</p>
+</div>
+<div class="mb-4">
+    <a href="{{ path('user_history_pdf') }}" class="btn btn-primary">
+        <i class="fas fa-file-pdf me-2"></i>Exporter mon historique PDF
+    </a>
+</div>
+{% if history|length > 0 %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-layer-group me-2"></i>Mes résultats ({{ historyCount }})
+        </div>
+        <div class="card-body">
+            <div class="history-grid">
+                {% for row in history %}
+                    <div class="history-card">
+                        <div class="history-top">
+                            <div class="history-type {{ row.type }}">
+                                <i class="fas {% if row.type == 'general' %}fa-book-open{% else %}fa-layer-group{% endif %}"></i>
+                                {{ row.type }}
+                            </div>
+
+                            <div class="history-date">
+                                {% if row.date %}
+                                    {{ row.date|date('d/m/Y') }}<br>
+                                    <small>{{ row.date|date('H:i') }}</small>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="history-title">{{ row.title }}</div>
+
+                        <div class="history-meta">
+                            <div class="meta-tile">
+                                <div class="meta-tile-label">Score</div>
+                                <div class="meta-tile-value">{{ row.score }}</div>
+                            </div>
+
+                            <div class="meta-tile">
+                                <div class="meta-tile-label">Pourcentage</div>
+                                <div class="meta-tile-value">{{ row.percentage ?? '-' }}%</div>
+                            </div>
+
+                            <div class="meta-tile">
+                                <div class="meta-tile-label">Catégorie</div>
+                                <div class="meta-tile-value">{{ row.category }}</div>
+                            </div>
+
+                            <div class="meta-tile">
+                                <div class="meta-tile-label">Niveau</div>
+                                <div class="meta-tile-value">{{ row.level }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(history) }}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="history-empty">
+        <i class="fas fa-folder-open"></i>
+        <h3>Aucun historique disponible</h3>
+        <p class="mb-0">Vous n’avez pas encore passé de test enregistré.</p>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard - MindBoost{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h1><i class="fas fa-chart-line me-2"></i>Dashboard Admin</h1>
+    <p>Vue d’ensemble de la plateforme et des tests disponibles.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ generalTestsCount }}</div>
+                    <div class="stat-label">Tests généraux</div>
+                </div>
+                <i class="fas fa-book-open fa-2x" style="color:#4D83FF;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ specificTestsCount }}</div>
+                    <div class="stat-label">Tests spécifiques</div>
+                </div>
+                <i class="fas fa-layer-group fa-2x" style="color:#19B5FE;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ generalTestsCount + specificTestsCount }}</div>
+                    <div class="stat-label">Total des tests</div>
+                </div>
+                <i class="fas fa-chart-pie fa-2x" style="color:#00D1C7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">2026</div>
+                    <div class="stat-label">Session active</div>
+                </div>
+                <i class="fas fa-calendar-check fa-2x" style="color:#F7B84B;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <a href="{{ path('general_test_index') }}" class="quick-card">
+            <i class="fas fa-book-open fa-xl" style="color:#4D83FF;"></i>
+            <h5>Gérer les tests généraux</h5>
+            <p>Consulter, rechercher, trier et modifier les tests généraux.</p>
+        </a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="{{ path('specific_test_index') }}" class="quick-card">
+            <i class="fas fa-layer-group fa-xl" style="color:#19B5FE;"></i>
+            <h5>Gérer les tests spécifiques</h5>
+            <p>Filtrer par catégorie et appliquer les restrictions métier.</p>
+        </a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="{{ path('general_test_create') }}" class="quick-card">
+            <i class="fas fa-circle-plus fa-xl" style="color:#00D1C7;"></i>
+            <h5>Créer un test général</h5>
+            <p>Ajouter un nouveau QCM général avec questions et réponses.</p>
+        </a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="{{ path('specific_test_create') }}" class="quick-card">
+            <i class="fas fa-plus-circle fa-xl" style="color:#F7B84B;"></i>
+            <h5>Créer un test spécifique</h5>
+            <p>Lier un test à une catégorie et à un test général parent.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Historique Résultats Admin{% endblock %}
+
+{% block content %}
+<style>
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .result-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        padding: 1.25rem;
+        box-shadow: 0 16px 35px rgba(8, 26, 58, 0.10);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        color: #122033;
+    }
+
+    .result-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(8, 26, 58, 0.14);
+    }
+
+    .result-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .result-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.82rem;
+        text-transform: capitalize;
+    }
+
+    .result-type.general {
+        background: rgba(47,107,255,0.12);
+        color: #2157d5;
+    }
+
+    .result-type.specific {
+        background: rgba(0,209,199,0.12);
+        color: #008f88;
+    }
+
+    .result-user {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #5a6c88;
+    }
+
+    .result-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #122033;
+        line-height: 1.35;
+        margin-bottom: 1rem;
+    }
+
+    .result-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .meta-box {
+        background: #f2f7ff;
+        border: 1px solid #d9e6fb;
+        border-radius: 16px;
+        padding: 0.85rem;
+    }
+
+    .meta-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #6f7f99;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.3rem;
+    }
+
+    .meta-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #122033;
+    }
+
+    .result-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e4edfb;
+    }
+
+    .score-pill {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        background: linear-gradient(135deg, #2F6BFF, #4D83FF);
+        color: white;
+        border-radius: 18px;
+        padding: 0.7rem 1rem;
+        font-weight: 800;
+        box-shadow: 0 10px 22px rgba(47,107,255,0.18);
+    }
+
+    .date-info {
+        text-align: right;
+        color: #6a7a94;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .empty-box {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        color: #122033;
+    }
+
+    .empty-box i {
+        font-size: 2.8rem;
+        color: #2F6BFF;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="page-heading">
+    <h1><i class="fas fa-table-list me-2"></i>Historique et analyse des résultats</h1>
+    <p>Vue administrative plus claire et moderne des résultats enregistrés.</p>
+</div>
+
+{% if history|length > 0 %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-layer-group me-2"></i>Résultats enregistrés ({{ historyCount }})
+        </div>
+        <div class="card-body">
+            <div class="results-grid">
+                {% for row in history %}
+                    <div class="result-card">
+                        <div class="result-top">
+                            <div class="result-type {{ row.type }}">
+                                <i class="fas {% if row.type == 'general' %}fa-book-open{% else %}fa-layer-group{% endif %}"></i>
+                                {{ row.type }}
+                            </div>
+                            <div class="result-user">
+                                User #{{ row.user_id }}
+                            </div>
+                        </div>
+
+                        <div class="result-title">
+                            {{ row.test_title }}
+                        </div>
+
+                        <div class="result-meta">
+                            <div class="meta-box">
+                                <div class="meta-label">Catégorie</div>
+                                <div class="meta-value">{{ row.category ?: '-' }}</div>
+                            </div>
+
+                            <div class="meta-box">
+                                <div class="meta-label">Niveau</div>
+                                <div class="meta-value">{{ row.level ?: '-' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="result-footer">
+                            <div class="score-pill">
+                                <i class="fas fa-chart-line"></i>
+                                Score {{ row.score }} | {{ row.percentage ?? 0 }}%
+                            </div>
+
+                            <div class="date-info">
+                                {% if row.passed_at %}
+                                    {{ row.passed_at|date('d/m/Y') }}<br>
+                                    <small>{{ row.passed_at|date('H:i') }}</small>
+                                {% else %}
+                                    <span>-</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(history) }}
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="empty-box">
+        <i class="fas fa-folder-open"></i>
+        <h3>Aucun résultat enregistré</h3>
+        <p class="mb-0">Il n’y a pas encore de données à afficher dans l’historique.</p>
+    </div>
+{% endif %}
+{% endblock %}
