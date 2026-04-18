@@ -2,79 +2,133 @@
 
 namespace App\Service;
 
-use App\Entity\GeneralTest;
-use App\Entity\GeneralQuestion;
 use App\Entity\GeneralAnswer;
+use App\Entity\GeneralQuestion;
+use App\Entity\GeneralTest;
+use App\Repository\GeneralAnswerRepository;
+use App\Repository\GeneralQuestionRepository;
 use App\Repository\GeneralTestRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class GeneralTestService
 {
-    private $repository;
-    private $entityManager;
-
     public function __construct(
-        GeneralTestRepository $repository,
-        EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private GeneralTestRepository $testRepository,
+        private GeneralQuestionRepository $questionRepository,
+        private GeneralAnswerRepository $answerRepository
     ) {
-        $this->repository = $repository;
-        $this->entityManager = $entityManager;
     }
 
-    public function createTest(string $title, ?string $description, int $createdBy, ?array $questions = null): GeneralTest
+    public function getAllTests(): array
     {
-        if (empty(trim($title))) {
-            throw new \Exception("Le titre ne peut pas être vide");
+        return $this->testRepository->findBy([], ['createdAt' => 'DESC']);
+    }
+
+    public function getTestById(int $id): ?GeneralTest
+    {
+        $test = $this->testRepository->find($id);
+
+        if (!$test) {
+            throw new \Exception('Test général introuvable');
         }
 
-        if (preg_match('/^\d+$/', trim($title))) {
-            throw new \Exception("Le titre ne doit pas être uniquement des nombres");
+        return $test;
+    }
+
+    public function getQuestionsByTest(GeneralTest $test): array
+    {
+        return $this->questionRepository->findBy(['test' => $test], ['questionOrder' => 'ASC']);
+    }
+
+    public function getAnswersByQuestion(GeneralQuestion $question): array
+    {
+        return $this->answerRepository->findBy(['question' => $question], ['answerOrder' => 'ASC']);
+    }
+
+    public function getQuestionsWithAnswers(GeneralTest $test): array
+    {
+        $questions = $this->getQuestionsByTest($test);
+        $result = [];
+
+        foreach ($questions as $question) {
+            $result[] = [
+                'question' => $question,
+                'answers' => $this->getAnswersByQuestion($question),
+            ];
         }
 
-        if (strlen(trim($title)) < 3 || strlen(trim($title)) > 255) {
-            throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
+        return $result;
+    }
+
+    public function createTest(array $data): GeneralTest
+    {
+        $title = trim($data['title'] ?? '');
+        $description = trim($data['description'] ?? '');
+        $createdBy = (int) ($data['created_by'] ?? 1);
+        $questionsData = $data['questions'] ?? [];
+
+        if (empty($title)) {
+            throw new \Exception('Le titre est obligatoire');
+        }
+
+        if (is_numeric($title)) {
+            throw new \Exception('Le titre ne doit pas être uniquement des nombres');
+        }
+
+        if (strlen($title) < 3) {
+            throw new \Exception('Le titre doit contenir au moins 3 caractères');
+        }
+
+        if (empty($questionsData)) {
+            throw new \Exception('Le test doit contenir au moins une question');
         }
 
         $test = new GeneralTest();
-        $test->setTitle(trim($title));
-        $test->setDescription($description ? trim($description) : null);
+        $test->setTitle($title);
+        $test->setDescription($description ?: null);
         $test->setStatus('DRAFT');
         $test->setCreatedBy($createdBy);
-        $test->setCreatedAt(new \DateTime());
-        $test->setUpdatedAt(new \DateTime());
 
-        if (!empty($questions) && is_array($questions)) {
-            foreach ($questions as $questionIndex => $questionData) {
-                if (empty(trim($questionData['text'] ?? ''))) {
+        foreach ($questionsData as $questionData) {
+            $questionText = trim($questionData['text'] ?? '');
+            $questionOrder = (int) ($questionData['order'] ?? 0);
+            $answersData = $questionData['answers'] ?? [];
+
+            if (empty($questionText)) {
+                continue;
+            }
+
+            $question = new GeneralQuestion();
+            $question->setTest($test);
+            $question->setQuestionText($questionText);
+            $question->setQuestionOrder($questionOrder > 0 ? $questionOrder : 1);
+
+            $answerOrder = 1;
+            foreach ($answersData as $answerData) {
+                $answerText = trim($answerData['text'] ?? '');
+                $score = (int) ($answerData['score'] ?? 0);
+
+                if (empty($answerText)) {
                     continue;
                 }
 
-                $question = new GeneralQuestion();
-                $question->setTest($test);
-                $question->setQuestionText(trim($questionData['text']));
-                $question->setQuestionOrder((int)($questionData['order'] ?? ($questionIndex + 1)));
-                $question->setCreatedAt(new \DateTime());
+                $answer = new GeneralAnswer();
+                $answer->setQuestion($question);
+                $answer->setAnswerLabel(chr(64 + $answerOrder));
+                $answer->setAnswerText($answerText);
+                $answer->setScore($score);
+                $answer->setAnswerOrder($answerOrder);
 
-                if (!empty($questionData['answers']) && is_array($questionData['answers'])) {
-                    foreach ($questionData['answers'] as $answerIndex => $answerData) {
-                        if (empty(trim($answerData['text'] ?? ''))) {
-                            continue;
-                        }
-
-                        $answer = new GeneralAnswer();
-                        $answer->setQuestion($question);
-                        $answer->setAnswerLabel($answerData['label'] ?? chr(65 + $answerIndex));
-                        $answer->setAnswerText(trim($answerData['text']));
-                        $answer->setScore((int)($answerData['score'] ?? 0));
-                        $answer->setAnswerOrder((int)($answerData['order'] ?? ($answerIndex + 1)));
-                        $answer->setCreatedAt(new \DateTime());
-
-                        $question->addAnswer($answer);
-                    }
-                }
-
-                $test->addQuestion($question);
+                $question->addAnswer($answer);
+                $answerOrder++;
             }
+
+            $test->addQuestion($question);
+        }
+
+        if ($test->getQuestions()->isEmpty()) {
+            throw new \Exception('Le test doit contenir au moins une question valide');
         }
 
         $this->entityManager->persist($test);
@@ -83,63 +137,35 @@ class GeneralTestService
         return $test;
     }
 
-    public function getQuestionsWithAnswers(GeneralTest $test): array
+    public function updateTest(GeneralTest $test, array $data): GeneralTest
     {
-        $result = [];
-        foreach ($test->getQuestions() as $question) {
-            $answers = $question->getAnswers()->toArray();
-            usort($answers, fn($a, $b) => $a->getAnswerOrder() <=> $b->getAnswerOrder());
+        $title = trim($data['title'] ?? '');
+        $description = trim($data['description'] ?? '');
+        $status = trim($data['status'] ?? 'DRAFT');
 
-            $result[] = [
-                'question' => $question,
-                'answers' => $answers
-            ];
+        if (empty($title)) {
+            throw new \Exception('Le titre est obligatoire');
         }
 
-        usort($result, fn($a, $b) => $a['question']->getQuestionOrder() <=> $b['question']->getQuestionOrder());
-
-        return $result;
-    }
-
-    public function updateTest(GeneralTest $test, string $title, ?string $description, string $status): GeneralTest
-    {
-        if (empty(trim($title))) {
-            throw new \Exception("Le titre ne peut pas être vide");
+        if (is_numeric($title)) {
+            throw new \Exception('Le titre ne doit pas être uniquement des nombres');
         }
 
-        if (preg_match('/^\d+$/', trim($title))) {
-            throw new \Exception("Le titre ne doit pas être uniquement des nombres");
+        if (strlen($title) < 3) {
+            throw new \Exception('Le titre doit contenir au moins 3 caractères');
         }
 
-        if (strlen(trim($title)) < 3 || strlen(trim($title)) > 255) {
-            throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
+        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE', 'ARCHIVED'])) {
+            throw new \Exception('Statut invalide');
         }
 
-        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'])) {
-            throw new \Exception("Statut invalide");
-        }
-
-        $test->setTitle(trim($title));
-        $test->setDescription($description ? trim($description) : null);
+        $test->setTitle($title);
+        $test->setDescription($description ?: null);
         $test->setStatus($status);
         $test->setUpdatedAt(new \DateTime());
 
         $this->entityManager->flush();
 
-        return $test;
-    }
-
-    public function getAllTests()
-    {
-        return $this->repository->findAll();
-    }
-
-    public function getTestById(int $id): GeneralTest
-    {
-        $test = $this->repository->find($id);
-        if (!$test) {
-            throw new \Exception("Test non trouvé avec l'ID: " . $id);
-        }
         return $test;
     }
 

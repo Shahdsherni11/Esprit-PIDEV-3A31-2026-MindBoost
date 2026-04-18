@@ -3,14 +3,13 @@
 {% block title %}{{ test.title }} - Tests Généraux{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-8">
-        <h1 class="mb-2">
-            <i class="fas fa-book"></i> {{ test.title }}
-        </h1>
-        <p class="text-muted">Test Général</p>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+        <h1><i class="fas fa-book me-2"></i>{{ test.title }}</h1>
+        <p>Détail du test général.</p>
     </div>
-    <div class="col-md-4 text-end">
+
+    <div class="action-buttons">
         <a href="{{ path('general_test_edit', {id: test.id}) }}" class="btn btn-warning">
             <i class="fas fa-edit"></i> Éditer
         </a>
@@ -24,41 +23,35 @@
 </div>
 
 <div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <h4 class="mb-0"><i class="fas fa-info-circle"></i> Informations</h4>
+    <div class="card-header">
+        <i class="fas fa-circle-info me-2"></i>Informations
     </div>
     <div class="card-body">
         <div class="row mb-3">
-            <div class="col-md-6">
-                <strong>Titre :</strong> {{ test.title }}
-            </div>
+            <div class="col-md-6"><strong>Titre :</strong> {{ test.title }}</div>
             <div class="col-md-6">
                 <strong>Statut :</strong>
                 <span class="badge badge-{{ test.status|lower }}">
                     {% if test.status == 'DRAFT' %}
-                        <i class="fas fa-pencil"></i> Brouillon
+                        Brouillon
                     {% elseif test.status == 'ACTIVE' %}
-                        <i class="fas fa-check"></i> Actif
+                        Actif
                     {% else %}
-                        <i class="fas fa-ban"></i> Inactif
+                        Inactif
                     {% endif %}
                 </span>
             </div>
         </div>
+
         <div class="row mb-3">
-            <div class="col-md-6">
-                <strong>Créé par :</strong> Utilisateur #{{ test.createdBy }}
-            </div>
-            <div class="col-md-6">
-                <strong>Créé le :</strong> {{ test.createdAt|date('d/m/Y H:i') }}
-            </div>
+            <div class="col-md-6"><strong>Créé par :</strong> Utilisateur #{{ test.createdBy }}</div>
+            <div class="col-md-6"><strong>Créé le :</strong> {{ test.createdAt|date('d/m/Y H:i') }}</div>
         </div>
+
         {% if test.description %}
-            <div class="row">
-                <div class="col-md-12">
-                    <strong>Description :</strong>
-                    <p>{{ test.description }}</p>
-                </div>
+            <div>
+                <strong>Description :</strong>
+                <p class="mt-2 mb-0">{{ test.description }}</p>
             </div>
         {% endif %}
     </div>
@@ -66,43 +59,39 @@
 
 {% if questionsWithAnswers|length > 0 %}
     <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0"><i class="fas fa-question"></i> Questions ({{ questionsWithAnswers|length }})</h4>
+        <div class="card-header">
+            <i class="fas fa-question-circle me-2"></i>Questions ({{ questionsWithAnswers|length }})
         </div>
         <div class="card-body">
             {% for item in questionsWithAnswers %}
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #dee2e6;">
+                <div class="question-display mb-4">
                     <h5 class="mb-3">
-                        <span class="badge badge-primary">Q{{ loop.index }}</span>
+                        <span class="badge badge-primary me-2">Q{{ loop.index }}</span>
                         {{ item.question.questionText }}
                     </h5>
 
                     {% if item.answers|length > 0 %}
-                        <div class="list-group">
-                            {% for answer in item.answers %}
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">
-                                                <span class="badge badge-secondary">{{ answer.answerLabel }}</span>
-                                                {{ answer.answerText }}
-                                            </h6>
-                                        </div>
-                                        <span class="badge badge-info">Score: {{ answer.score }}</span>
+                        {% for answer in item.answers %}
+                            <div class="answer-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge badge-secondary me-2">{{ answer.answerLabel }}</span>
+                                        {{ answer.answerText }}
                                     </div>
+                                    <span class="badge badge-info">Score: {{ answer.score }}</span>
                                 </div>
-                            {% endfor %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     {% else %}
-                        <p class="text-muted"><i class="fas fa-exclamation-circle"></i> Pas de réponses</p>
+                        <p class="text-secondary mb-0">Pas de réponses.</p>
                     {% endif %}
                 </div>
             {% endfor %}
         </div>
     </div>
 {% else %}
-    <div class="alert alert-info" role="alert">
-        <i class="fas fa-info-circle"></i> Aucune question pour ce test
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>Aucune question pour ce test.
     </div>
 {% endif %}
 {% endblock %}

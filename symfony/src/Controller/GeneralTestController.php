@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\GeneralTestService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/tests/general', name: 'general_test_')]
 class GeneralTestController extends AbstractController
 {
-    private $testService;
+    private GeneralTestService $testService;
 
     public function __construct(GeneralTestService $testService)
     {
@@ -40,9 +41,9 @@ class GeneralTestController extends AbstractController
                     throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
                 }
 
-                $test = $this->testService->createTest(trim($title), $description, (int)$createdBy, $questions);
+                $test = $this->testService->createTest(trim($title), $description, (int) $createdBy, $questions);
 
-                $this->addFlash('success', 'Test créé avec succès avec ' . count($questions) . ' questions!');
+                $this->addFlash('success', 'Test créé avec succès avec ' . count($questions) . ' questions !');
                 return $this->redirectToRoute('general_test_show', ['id' => $test->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
@@ -82,13 +83,13 @@ class GeneralTestController extends AbstractController
 
                 $test = $this->testService->updateTest($test, trim($title), $description, $status);
 
-                $this->addFlash('success', 'Test mis à jour avec succès!');
+                $this->addFlash('success', 'Test mis à jour avec succès !');
                 return $this->redirectToRoute('general_test_show', ['id' => $test->getId()]);
             }
 
             return $this->render('general_test/edit_general.html.twig', [
                 'test' => $test,
-                'questionsWithAnswers' => $questionsWithAnswers
+                'questionsWithAnswers' => $questionsWithAnswers,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -104,13 +105,13 @@ class GeneralTestController extends AbstractController
 
             if ($request->isMethod('POST')) {
                 $this->testService->deleteTest($test);
-                $this->addFlash('success', 'Test supprimé avec succès!');
+                $this->addFlash('success', 'Test supprimé avec succès !');
                 return $this->redirectToRoute('general_test_index');
             }
 
             return $this->render('general_test/delete.html.twig', [
                 'test' => $test,
-                'type' => 'general'
+                'type' => 'general',
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -127,7 +128,7 @@ class GeneralTestController extends AbstractController
 
             return $this->render('general_test/show.html.twig', [
                 'test' => $test,
-                'questionsWithAnswers' => $questionsWithAnswers
+                'questionsWithAnswers' => $questionsWithAnswers,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -136,13 +137,13 @@ class GeneralTestController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         try {
             $tests = $this->testService->getAllTests();
 
-            $search = $request->query->get('search');
-            if ($search) {
+            $search = trim((string) $request->query->get('search', ''));
+            if ($search !== '') {
                 $tests = array_filter($tests, function ($test) use ($search) {
                     return stripos($test->getTitle(), $search) !== false;
                 });
@@ -159,12 +160,18 @@ class GeneralTestController extends AbstractController
                 };
             });
 
+            $pagination = $paginator->paginate(
+                array_values($tests),
+                $request->query->getInt('page', 1),
+                5
+            );
+
             return $this->render('general_test/index.html.twig', [
-                'generalTests' => array_values($tests),
+                'generalTests' => $pagination,
                 'generalCount' => count($tests),
                 'type' => 'general',
                 'search' => $search,
-                'sort' => $sort
+                'sort' => $sort,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());

@@ -1,98 +1,94 @@
 {% extends "base.html.twig" %}
 
-{% block title %}Dashboard - MindBoost Admin{% endblock %}
+{% block title %}Dashboard - MindBoost{% endblock %}
 
 {% block content %}
-<div class="row mb-5">
-    <div class="col-md-12">
-        <h1 class="mb-4">
-            <i class="fas fa-tachometer-alt"></i> Dashboard Admin
-        </h1>
-        <p class="text-muted">Bienvenue sur votre tableau de bord d'administration MindBoost</p>
-    </div>
+<div class="page-heading">
+    <h1><i class="fas fa-chart-line me-2"></i>Dashboard Admin</h1>
+    <p>Vue d’ensemble de la plateforme et des tests disponibles.</p>
 </div>
 
-<div class="row mb-5">
-    <div class="col-md-12">
-        <div class="card border-primary">
-            <div class="card-header">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h3 class="mb-0">
-                            <i class="fas fa-book"></i> Gérer Tests Généraux
-                        </h3>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <span class="badge badge-primary" style="font-size: 1.2rem;">
-                            {{ generalTestsCount }} test(s)
-                        </span>
-                    </div>
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ generalTestsCount }}</div>
+                    <div class="stat-label">Tests généraux</div>
                 </div>
+                <i class="fas fa-book-open fa-2x" style="color:#4D83FF;"></i>
             </div>
-            <div class="card-body">
-                <p class="card-text text-muted mb-4">
-                    <i class="fas fa-info-circle"></i>
-                    Créez, modifiez ou supprimez les tests généraux. Ces tests seront utilisés comme base pour les tests spécifiques.
-                </p>
+        </div>
+    </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ path('general_test_index') }}" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-list"></i>
-                            Voir Tous les Tests
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ path('general_test_create') }}" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-plus"></i>
-                            Créer un Nouveau Test
-                        </a>
-                    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ specificTestsCount }}</div>
+                    <div class="stat-label">Tests spécifiques</div>
                 </div>
+                <i class="fas fa-layer-group fa-2x" style="color:#19B5FE;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">{{ generalTestsCount + specificTestsCount }}</div>
+                    <div class="stat-label">Total des tests</div>
+                </div>
+                <i class="fas fa-chart-pie fa-2x" style="color:#00D1C7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-number">2026</div>
+                    <div class="stat-label">Session active</div>
+                </div>
+                <i class="fas fa-calendar-check fa-2x" style="color:#F7B84B;"></i>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <div class="card border-success">
-            <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h3 class="mb-0">
-                            <i class="fas fa-boxes"></i> Gérer Tests Spécifiques
-                        </h3>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <span class="badge badge-success" style="font-size: 1.2rem;">
-                            {{ specificTestsCount }} test(s)
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <p class="card-text text-muted mb-4">
-                    <i class="fas fa-info-circle"></i>
-                    Les tests spécifiques sont liés à un test général parent et à une catégorie.
-                </p>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <a href="{{ path('general_test_index') }}" class="quick-card">
+            <i class="fas fa-book-open fa-xl" style="color:#4D83FF;"></i>
+            <h5>Gérer les tests généraux</h5>
+            <p>Consulter, rechercher, trier et modifier les tests généraux.</p>
+        </a>
+    </div>
 
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ path('specific_test_index') }}" class="btn btn-success btn-lg w-100">
-                            <i class="fas fa-list"></i>
-                            Voir Tous les Tests
-                        </a>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <a href="{{ path('specific_test_create') }}" class="btn btn-success btn-lg w-100" style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); border: none;">
-                            <i class="fas fa-plus"></i>
-                            Créer un Nouveau Test
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="col-lg-6">
+        <a href="{{ path('specific_test_index') }}" class="quick-card">
+            <i class="fas fa-layer-group fa-xl" style="color:#19B5FE;"></i>
+            <h5>Gérer les tests spécifiques</h5>
+            <p>Filtrer par catégorie et appliquer les restrictions métier.</p>
+        </a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="{{ path('general_test_create') }}" class="quick-card">
+            <i class="fas fa-circle-plus fa-xl" style="color:#00D1C7;"></i>
+            <h5>Créer un test général</h5>
+            <p>Ajouter un nouveau QCM général avec questions et réponses.</p>
+        </a>
+    </div>
+
+    <div class="col-lg-6">
+        <a href="{{ path('specific_test_create') }}" class="quick-card">
+            <i class="fas fa-plus-circle fa-xl" style="color:#F7B84B;"></i>
+            <h5>Créer un test spécifique</h5>
+            <p>Lier un test à une catégorie et à un test général parent.</p>
+        </a>
     </div>
 </div>
 {% endblock %}

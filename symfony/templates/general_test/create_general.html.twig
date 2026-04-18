@@ -3,23 +3,17 @@
 {% block title %}Créer Test Général - MindBoost{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <h1 class="mb-2">
-            <i class="fas fa-plus-circle"></i> Créer un Test Général
-        </h1>
-        <p class="text-muted">Créez un nouveau test général avec des questions</p>
-    </div>
+<div class="page-heading">
+    <h1><i class="fas fa-plus-circle me-2"></i>Créer un Test Général</h1>
+    <p>Créez un nouveau test général avec ses questions et réponses.</p>
 </div>
 
 <div class="card">
     <div class="card-body">
         <form method="POST" id="testForm">
             <div class="section-header mb-4">
-                <h3>
-                    <i class="fas fa-info-circle"></i> Informations du Test
-                </h3>
-                <hr class="my-3">
+                <h3><i class="fas fa-circle-info me-2"></i>Informations du Test</h3>
+                <hr class="border-secondary opacity-25">
             </div>
 
             <div class="row">
@@ -31,11 +25,10 @@
                         <input type="text" id="title" name="title" class="form-control"
                                placeholder="Ex: Test Intelligence Émotionnelle"
                                required minlength="3" maxlength="255">
-                        <small class="form-text text-muted">
-                            Le titre doit contenir du texte, pas uniquement des nombres.
-                        </small>
+                        <small class="form-text">Le titre doit contenir du texte, pas uniquement des nombres.</small>
                     </div>
                 </div>
+
                 <div class="col-md-4">
                     <div class="form-group mb-3">
                         <label for="created_by" class="form-label">
@@ -57,19 +50,17 @@
 
             <div class="section-header mb-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h3>
-                        <i class="fas fa-question"></i> Questions du Test
-                    </h3>
-                    <button type="button" class="btn btn-sm btn-primary" id="addQuestionBtn">
+                    <h3><i class="fas fa-question me-2"></i>Questions du Test</h3>
+                    <button type="button" class="btn btn-primary" id="addQuestionBtn">
                         <i class="fas fa-plus"></i> Ajouter une Question
                     </button>
                 </div>
-                <hr class="my-3">
+                <hr class="border-secondary opacity-25">
             </div>
 
             <div id="questionsContainer"></div>
 
-            <div class="row mt-5">
+            <div class="row mt-4">
                 <div class="col-md-6">
                     <button type="submit" class="btn btn-primary w-100">
                         <i class="fas fa-save"></i> Créer le Test
@@ -84,34 +75,6 @@
         </form>
     </div>
 </div>
-
-<style>
-.section-header h3 {
-    color: #5b73d1;
-    font-weight: 600;
-}
-.question-card {
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: #f8f9fa;
-}
-.question-card:hover {
-    border-color: #5b73d1;
-    box-shadow: 0 4px 12px rgba(91, 115, 209, 0.1);
-}
-.answer-card {
-    background-color: white;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 10px;
-}
-.answer-card:hover {
-    border-color: #5b73d1;
-}
-</style>
 
 <script>
 let questionCount = 0;
@@ -137,7 +100,7 @@ function addQuestion(index) {
                 <textarea name="questions[${index}][text]" class="form-control question-text"
                           placeholder="Entrez votre question..."
                           rows="2" required minlength="5"></textarea>
-                <small class="form-text text-muted">Min 5 caractères</small>
+                <small class="form-text">Min 5 caractères</small>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Ordre *</label>
@@ -149,7 +112,7 @@ function addQuestion(index) {
         <div class="mb-3">
             <label class="form-label d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-list"></i> Réponses</span>
-                <button type="button" class="btn btn-sm btn-success" onclick="addAnswer(${index})">
+                <button type="button" class="btn btn-success btn-sm" onclick="addAnswer(${index})">
                     <i class="fas fa-plus"></i> Ajouter Réponse
                 </button>
             </label>
@@ -168,7 +131,7 @@ function addQuestion(index) {
                                        placeholder="Score" value="0" min="0">
                             </div>
                             <div class="col-md-2">
-                                <button type="button" class="btn btn-sm btn-danger"
+                                <button type="button" class="btn btn-danger btn-sm"
                                         onclick="removeAnswer(this)">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -180,11 +143,10 @@ function addQuestion(index) {
         </div>
 
         <div class="text-end mb-3">
-            <button type="button" class="btn btn-sm btn-danger" onclick="removeQuestion(${index})">
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(${index})">
                 <i class="fas fa-trash"></i> Supprimer cette Question
             </button>
         </div>
-        <hr>
     `;
 
     container.appendChild(questionCard);
@@ -210,7 +172,7 @@ function addAnswer(questionIndex) {
                        placeholder="Score" value="0" min="0">
             </div>
             <div class="col-md-2">
-                <button type="button" class="btn btn-sm btn-danger" onclick="removeAnswer(this)">
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeAnswer(this)">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -221,13 +183,13 @@ function addAnswer(questionIndex) {
 }
 
 function removeQuestion(index) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette question?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) {
         document.getElementById('question-' + index).remove();
     }
 }
 
 function removeAnswer(button) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette réponse?')) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette réponse ?')) {
         button.closest('.answer-card').remove();
     }
 }
@@ -254,7 +216,7 @@ document.getElementById('testForm').addEventListener('submit', function(e) {
 
     if (questions.length === 0) {
         e.preventDefault();
-        alert('Veuillez ajouter au moins une question!');
+        alert('Veuillez ajouter au moins une question.');
         return;
     }
 

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\GeneralTestService;
 use App\Service\SpecificTestService;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,8 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/tests/specific', name: 'specific_test_')]
 class SpecificTestController extends AbstractController
 {
-    private $testService;
-    private $generalTestService;
+    private SpecificTestService $testService;
+    private GeneralTestService $generalTestService;
 
     public function __construct(
         SpecificTestService $testService,
@@ -30,7 +31,7 @@ class SpecificTestController extends AbstractController
 
         if ($request->isMethod('POST')) {
             try {
-                $generalTestId = (int)($request->request->get('general_test_id') ?? 0);
+                $generalTestId = (int) ($request->request->get('general_test_id') ?? 0);
                 $category = $request->request->get('category');
                 $title = $request->request->get('title');
                 $description = $request->request->get('description');
@@ -71,11 +72,11 @@ class SpecificTestController extends AbstractController
                     trim($category),
                     trim($title),
                     $description,
-                    (int)$createdBy,
+                    (int) $createdBy,
                     $questions
                 );
 
-                $this->addFlash('success', 'Test créé avec succès avec ' . count($questions) . ' questions!');
+                $this->addFlash('success', 'Test créé avec succès avec ' . count($questions) . ' questions !');
                 return $this->redirectToRoute('specific_test_show', ['id' => $test->getId()]);
             } catch (\Exception $e) {
                 $this->addFlash('error', $e->getMessage());
@@ -83,7 +84,7 @@ class SpecificTestController extends AbstractController
         }
 
         return $this->render('specific_test/create_specific.html.twig', [
-            'generalTests' => $generalTests
+            'generalTests' => $generalTests,
         ]);
     }
 
@@ -97,7 +98,7 @@ class SpecificTestController extends AbstractController
             $questionsWithAnswers = $this->testService->getQuestionsWithAnswers($test);
 
             if ($request->isMethod('POST')) {
-                $generalTestId = (int)($request->request->get('general_test_id') ?? 0);
+                $generalTestId = (int) ($request->request->get('general_test_id') ?? 0);
                 $category = $request->request->get('category');
                 $title = $request->request->get('title');
                 $description = $request->request->get('description');
@@ -141,14 +142,14 @@ class SpecificTestController extends AbstractController
                     $status
                 );
 
-                $this->addFlash('success', 'Test mis à jour avec succès!');
+                $this->addFlash('success', 'Test mis à jour avec succès !');
                 return $this->redirectToRoute('specific_test_show', ['id' => $test->getId()]);
             }
 
             return $this->render('specific_test/edit_specific.html.twig', [
                 'test' => $test,
                 'questionsWithAnswers' => $questionsWithAnswers,
-                'generalTests' => $generalTests
+                'generalTests' => $generalTests,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -164,13 +165,13 @@ class SpecificTestController extends AbstractController
 
             if ($request->isMethod('POST')) {
                 $this->testService->deleteTest($test);
-                $this->addFlash('success', 'Test supprimé avec succès!');
+                $this->addFlash('success', 'Test supprimé avec succès !');
                 return $this->redirectToRoute('specific_test_index');
             }
 
             return $this->render('specific_test/delete.html.twig', [
                 'test' => $test,
-                'type' => 'specific'
+                'type' => 'specific',
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -187,7 +188,7 @@ class SpecificTestController extends AbstractController
 
             return $this->render('specific_test/show.html.twig', [
                 'test' => $test,
-                'questionsWithAnswers' => $questionsWithAnswers
+                'questionsWithAnswers' => $questionsWithAnswers,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());
@@ -196,32 +197,38 @@ class SpecificTestController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(Request $request): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         try {
             $tests = $this->testService->getAllTests();
 
-            $search = $request->query->get('search');
-            if ($search) {
+            $search = trim((string) $request->query->get('search', ''));
+            if ($search !== '') {
                 $tests = array_filter($tests, function ($test) use ($search) {
                     return stripos($test->getTitle(), $search) !== false
                         || stripos($test->getCategory(), $search) !== false;
                 });
             }
 
-            $category = $request->query->get('category');
-            if ($category) {
+            $category = trim((string) $request->query->get('category', ''));
+            if ($category !== '') {
                 $tests = array_filter($tests, function ($test) use ($category) {
                     return $test->getCategory() === $category;
                 });
             }
 
+            $pagination = $paginator->paginate(
+                array_values($tests),
+                $request->query->getInt('page', 1),
+                5
+            );
+
             return $this->render('specific_test/index.html.twig', [
-                'specificTests' => array_values($tests),
+                'specificTests' => $pagination,
                 'specificCount' => count($tests),
                 'type' => 'specific',
                 'search' => $search,
-                'category' => $category
+                'category' => $category,
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', $e->getMessage());

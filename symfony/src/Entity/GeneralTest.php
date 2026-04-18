@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: GeneralTestRepository::class)]
 #[ORM\Table(name: 'general_tests')]
@@ -17,6 +18,7 @@ class GeneralTest
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Gedmo\Translatable]
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
     #[Assert\Length(
@@ -31,6 +33,7 @@ class GeneralTest
     )]
     private ?string $title = null;
 
+    #[Gedmo\Translatable]
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
@@ -46,6 +49,9 @@ class GeneralTest
     #[ORM\Column(name: 'updated_at', type: 'datetime')]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[Gedmo\Locale]
+    private ?string $locale = null;
+
     #[ORM\OneToMany(mappedBy: 'test', targetEntity: GeneralQuestion::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $questions;
 
@@ -56,19 +62,81 @@ class GeneralTest
         $this->questions = new ArrayCollection();
     }
 
-    public function getId(): ?int { return $this->id; }
-    public function getTitle(): ?string { return $this->title; }
-    public function setTitle(string $title): static { $this->title = $title; return $this; }
-    public function getDescription(): ?string { return $this->description; }
-    public function setDescription(?string $description): static { $this->description = $description; return $this; }
-    public function getStatus(): ?string { return $this->status; }
-    public function setStatus(string $status): static { $this->status = $status; return $this; }
-    public function getCreatedBy(): ?int { return $this->createdBy; }
-    public function setCreatedBy(int $createdBy): static { $this->createdBy = $createdBy; return $this; }
-    public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
-    public function setCreatedAt(\DateTimeInterface $createdAt): static { $this->createdAt = $createdAt; return $this; }
-    public function getUpdatedAt(): ?\DateTimeInterface { return $this->updatedAt; }
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): static { $this->updatedAt = $updatedAt; return $this; }
+    public function setTranslatableLocale(string $locale): void
+    {
+        $this->locale = $locale;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getCreatedBy(): ?int
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(int $createdBy): static
+    {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
 
     public function getQuestions(): Collection
     {
@@ -81,6 +149,7 @@ class GeneralTest
             $this->questions->add($question);
             $question->setTest($this);
         }
+
         return $this;
     }
 
@@ -91,6 +160,7 @@ class GeneralTest
                 $question->setTest(null);
             }
         }
+
         return $this;
     }
 }

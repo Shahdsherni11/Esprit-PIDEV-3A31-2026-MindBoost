@@ -1,31 +1,32 @@
 {% extends "base.html.twig" %}
 
-{% set type = 'specific' %}
-
 {% block title %}Tests Spécifiques - MindBoost{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col-md-10">
-        <h1 class="mb-2">
-            <i class="fas fa-boxes"></i> Tests Spécifiques
-        </h1>
-        <p class="text-muted">Gérez vos tests spécifiques par catégorie</p>
+<div class="page-heading d-flex flex-wrap justify-content-between align-items-start gap-3">
+    <div>
+        <h1><i class="fas fa-layer-group me-2"></i>Tests Spécifiques</h1>
+        <p>Filtrez et gérez les tests spécifiques par catégorie.</p>
     </div>
-    <div class="col-md-2 text-end">
-        <a href="{{ path('specific_test_create') }}" class="btn btn-success">
-            <i class="fas fa-plus"></i> Nouveau Test
-        </a>
-    </div>
+
+    <a href="{{ path('specific_test_create') }}" class="btn btn-success">
+        <i class="fas fa-plus me-2"></i>Nouveau Test
+    </a>
 </div>
 
 <div class="card mb-4">
     <div class="card-body">
         <form method="GET" class="row g-3">
             <div class="col-md-6">
-                <input type="text" name="search" class="form-control" placeholder="Rechercher par titre..."
-                       value="{{ search ?? '' }}">
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Rechercher par titre..."
+                    value="{{ search ?? '' }}"
+                >
             </div>
+
             <div class="col-md-6">
                 <select name="category" class="form-select">
                     <option value="">Toutes les catégories</option>
@@ -35,9 +36,10 @@
                     <option value="Trouble du Sommeil" {% if category == 'Trouble du Sommeil' %}selected{% endif %}>Trouble du Sommeil</option>
                 </select>
             </div>
+
             <div class="col-md-12">
                 <button type="submit" class="btn btn-success w-100">
-                    <i class="fas fa-search"></i> Rechercher
+                    <i class="fas fa-search me-2"></i>Rechercher
                 </button>
             </div>
         </form>
@@ -46,75 +48,67 @@
 
 {% if specificTests|length > 0 %}
     <div class="card">
-        <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
-            <h4 class="mb-0">
-                <i class="fas fa-boxes"></i> Tests Spécifiques ({{ specificCount }})
-            </h4>
+        <div class="card-header">
+            <i class="fas fa-table me-2"></i>Liste des Tests Spécifiques ({{ specificCount }})
         </div>
-        <div class="card-body">
-            <table class="table table-hover">
-                <thead>
+
+        <div class="card-body p-0 table-light-wrap">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
                     <tr>
-                        <th><i class="fas fa-tag"></i> Titre</th>
-                        <th><i class="fas fa-folder"></i> Catégorie</th>
-                        <th><i class="fas fa-align-left"></i> Description</th>
-                        <th><i class="fas fa-calendar"></i> Créé</th>
-                        <th><i class="fas fa-cog"></i> Actions</th>
+                        <th>Titre</th>
+                        <th>Catégorie</th>
+                        <th>Description</th>
+                        <th>Créé</th>
+                        <th>Actions</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% for test in specificTests %}
                         <tr>
+                            <td><strong>{{ test.title }}</strong></td>
                             <td>
-                                <strong>{{ test.title }}</strong>
-                            </td>
-                            <td>
-                                <span class="badge badge-info">{{ test.category }}</span>
+                                <span class="badge bg-info text-dark">{{ test.category }}</span>
                             </td>
                             <td>
                                 {% if test.description %}
-                                    {{ test.description|slice(0, 40) }}...
+                                    {{ test.description|slice(0, 60) }}{% if test.description|length > 60 %}...{% endif %}
                                 {% else %}
-                                    <span class="text-muted">-</span>
+                                    -
                                 {% endif %}
                             </td>
+                            <td>{{ test.createdAt|date('d/m/Y') }}</td>
                             <td>
-                                {{ test.createdAt|date('d/m/Y') }}
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <a href="{{ path('specific_test_show', {id: test.id}) }}"
-                                       class="btn btn-info btn-sm">
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{{ path('specific_test_show', {id: test.id}) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ path('specific_test_edit', {id: test.id}) }}"
-                                       class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i>
+                                    <a href="{{ path('specific_test_edit', {id: test.id}) }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-pen"></i>
                                     </a>
-                                    <a href="{{ path('specific_test_delete', {id: test.id}) }}"
-                                       class="btn btn-danger btn-sm">
+                                    <a href="{{ path('specific_test_delete', {id: test.id}) }}" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i>
                                     </a>
                                 </div>
                             </td>
                         </tr>
                     {% endfor %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="d-flex justify-content-center">
+                {{ knp_pagination_render(specificTests) }}
+            </div>
         </div>
     </div>
 {% else %}
-    <div class="no-data">
-        <i class="fas fa-inbox"></i>
+    <div class="text-center py-5">
         <h3>Aucun test trouvé</h3>
-        <p>Aucun test ne correspond à votre recherche.</p>
-        <div class="row mt-4">
-            <div class="col-md-6 mx-auto">
-                <a href="{{ path('specific_test_create') }}" class="btn btn-success w-100">
-                    <i class="fas fa-plus"></i> Créer Test Spécifique
-                </a>
-            </div>
-        </div>
+        <p>Aucun test spécifique ne correspond à votre recherche.</p>
     </div>
 {% endif %}
 {% endblock %}

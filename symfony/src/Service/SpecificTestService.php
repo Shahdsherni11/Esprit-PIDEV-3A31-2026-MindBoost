@@ -2,226 +2,206 @@
 
 namespace App\Service;
 
-use App\Entity\SpecificTest;
-use App\Entity\SpecificQuestion;
 use App\Entity\SpecificAnswer;
-use App\Repository\SpecificTestRepository;
-use App\Repository\SpecificQuestionRepository;
+use App\Entity\SpecificQuestion;
+use App\Entity\SpecificTest;
 use App\Repository\SpecificAnswerRepository;
+use App\Repository\SpecificQuestionRepository;
+use App\Repository\SpecificTestRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class SpecificTestService
 {
-    private $repository;
-    private $questionRepository;
-    private $answerRepository;
-    private $entityManager;
-
     public function __construct(
-        SpecificTestRepository $repository,
-        SpecificQuestionRepository $questionRepository,
-        SpecificAnswerRepository $answerRepository,
-        EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private SpecificTestRepository $testRepository,
+        private SpecificQuestionRepository $questionRepository,
+        private SpecificAnswerRepository $answerRepository
     ) {
-        $this->repository = $repository;
-        $this->questionRepository = $questionRepository;
-        $this->answerRepository = $answerRepository;
-        $this->entityManager = $entityManager;
     }
 
-    private function getValidCategories(): array
+    public function getAllTests(): array
     {
-        return ['Anxiete', 'Stress', 'Depression', 'Trouble du Sommeil'];
+        return $this->testRepository->findBy([], ['createdAt' => 'DESC']);
     }
 
-    public function createTest(
-        int $generalTestId,
-        string $category,
-        string $title,
-        ?string $description,
-        int $createdBy,
-        ?array $questions = null
-    ): SpecificTest {
-        if ($generalTestId <= 0) {
-            throw new \Exception("Le test général parent est obligatoire");
+    public function getTestById(int $id): ?SpecificTest
+    {
+        $test = $this->testRepository->find($id);
+
+        if (!$test) {
+            throw new \Exception('Test spécifique introuvable');
         }
-
-        $category = trim($category);
-
-        if ($category === '') {
-            throw new \Exception("La catégorie est obligatoire");
-        }
-
-        if (!in_array($category, $this->getValidCategories(), true)) {
-            throw new \Exception("Catégorie invalide");
-        }
-
-        if (!$title || empty(trim($title))) {
-            throw new \Exception("Le titre est obligatoire");
-        }
-
-        if (preg_match('/^\d+$/', trim($title))) {
-            throw new \Exception("Le titre ne doit pas être uniquement des nombres");
-        }
-
-        if (strlen(trim($title)) < 3 || strlen(trim($title)) > 255) {
-            throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
-        }
-
-        if (empty($questions) || !is_array($questions)) {
-            throw new \Exception("Vous devez ajouter au moins une question");
-        }
-
-        $test = new SpecificTest();
-        $test->setGeneralTestId($generalTestId);
-        $test->setCategory($category);
-        $test->setTitle(trim($title));
-        $test->setDescription($description ? trim($description) : null);
-        $test->setStatus('DRAFT');
-        $test->setCreatedBy((int)$createdBy);
-        $test->setCreatedAt(new \DateTime());
-        $test->setUpdatedAt(new \DateTime());
-
-        $this->entityManager->persist($test);
-        $this->entityManager->flush();
-
-        foreach ($questions as $questionIndex => $questionData) {
-            if (empty(trim($questionData['text'] ?? ''))) {
-                continue;
-            }
-
-            $question = new SpecificQuestion();
-            $question->setTest($test);
-            $question->setQuestionText(trim($questionData['text']));
-            $question->setQuestionOrder((int)($questionData['order'] ?? ($questionIndex + 1)));
-            $question->setCreatedAt(new \DateTime());
-
-            $this->entityManager->persist($question);
-            $this->entityManager->flush();
-
-            if (!empty($questionData['answers']) && is_array($questionData['answers'])) {
-                foreach ($questionData['answers'] as $answerIndex => $answerData) {
-                    if (empty(trim($answerData['text'] ?? ''))) {
-                        continue;
-                    }
-
-                    $answer = new SpecificAnswer();
-                    $answer->setQuestion($question);
-                    $answer->setAnswerText(trim($answerData['text']));
-                    $answer->setScore((int)($answerData['score'] ?? 0));
-                    $answer->setAnswerOrder((int)($answerData['order'] ?? ($answerIndex + 1)));
-                    $answer->setCreatedAt(new \DateTime());
-
-                    $this->entityManager->persist($answer);
-                }
-            }
-        }
-
-        $this->entityManager->flush();
 
         return $test;
     }
 
+    public function getQuestionsByTest(SpecificTest $test): array
+    {
+        return $this->questionRepository->findBy(['test' => $test], ['questionOrder' => 'ASC']);
+    }
+
+    public function getAnswersByQuestion(SpecificQuestion $question): array
+    {
+        return $this->answerRepository->findBy(['question' => $question], ['answerOrder' => 'ASC']);
+    }
+
     public function getQuestionsWithAnswers(SpecificTest $test): array
     {
-        $questions = $this->questionRepository->findBy(
-            ['test' => $test],
-            ['questionOrder' => 'ASC']
-        );
-
+        $questions = $this->getQuestionsByTest($test);
         $result = [];
-        foreach ($questions as $question) {
-            $answers = $this->answerRepository->findBy(
-                ['question' => $question],
-                ['answerOrder' => 'ASC']
-            );
 
+        foreach ($questions as $question) {
             $result[] = [
                 'question' => $question,
-                'answers' => $answers
+                'answers' => $this->getAnswersByQuestion($question),
             ];
         }
 
         return $result;
     }
 
-    public function updateTest(
-        SpecificTest $test,
-        int $generalTestId,
-        string $category,
-        string $title,
-        ?string $description,
-        string $status
-    ): SpecificTest {
+    public function createTest(array $data): SpecificTest
+    {
+        $generalTestId = (int) ($data['general_test_id'] ?? 0);
+        $category = trim($data['category'] ?? '');
+        $title = trim($data['title'] ?? '');
+        $description = trim($data['description'] ?? '');
+        $createdBy = (int) ($data['created_by'] ?? 1);
+        $questionsData = $data['questions'] ?? [];
+
         if ($generalTestId <= 0) {
-            throw new \Exception("Le test général parent est obligatoire");
+            throw new \Exception('Le test général parent est obligatoire');
         }
 
-        $category = trim($category);
-
-        if ($category === '') {
-            throw new \Exception("La catégorie est obligatoire");
+        if (empty($category)) {
+            throw new \Exception('La catégorie est obligatoire');
         }
 
-        if (!in_array($category, $this->getValidCategories(), true)) {
-            throw new \Exception("Catégorie invalide");
+        if (empty($title)) {
+            throw new \Exception('Le titre est obligatoire');
         }
 
-        if (!$title || empty(trim($title))) {
-            throw new \Exception("Le titre est obligatoire");
+        if (is_numeric($title)) {
+            throw new \Exception('Le titre ne doit pas être uniquement des nombres');
         }
 
-        if (preg_match('/^\d+$/', trim($title))) {
-            throw new \Exception("Le titre ne doit pas être uniquement des nombres");
+        if (strlen($title) < 3) {
+            throw new \Exception('Le titre doit contenir au moins 3 caractères');
         }
 
-        if (strlen(trim($title)) < 3 || strlen(trim($title)) > 255) {
-            throw new \Exception("Le titre doit avoir entre 3 et 255 caractères");
+        if (empty($questionsData)) {
+            throw new \Exception('Le test doit contenir au moins une question');
         }
 
-        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE'], true)) {
-            throw new \Exception("Statut invalide");
-        }
-
-        $isNewActivation = $status === 'ACTIVE'
-            && ($test->getStatus() !== 'ACTIVE' || $test->getCategory() !== $category);
-
-        if ($isNewActivation) {
-            $existingActiveTests = $this->repository->findBy([
-                'category' => $category,
-                'status' => 'ACTIVE'
-            ]);
-
-            foreach ($existingActiveTests as $existingTest) {
-                if ($existingTest->getId() !== $test->getId()) {
-                    throw new \Exception("Il existe déjà un test spécifique actif pour la catégorie : " . $category);
-                }
-            }
-        }
-
+        $test = new SpecificTest();
         $test->setGeneralTestId($generalTestId);
         $test->setCategory($category);
-        $test->setTitle(trim($title));
-        $test->setDescription($description ? trim($description) : null);
-        $test->setStatus($status);
-        $test->setUpdatedAt(new \DateTime());
+        $test->setTitle($title);
+        $test->setDescription($description ?: null);
+        $test->setStatus('DRAFT');
+        $test->setCreatedBy($createdBy);
 
+        foreach ($questionsData as $questionData) {
+            $questionText = trim($questionData['text'] ?? '');
+            $questionOrder = (int) ($questionData['order'] ?? 0);
+            $answersData = $questionData['answers'] ?? [];
+
+            if (empty($questionText)) {
+                continue;
+            }
+
+            $question = new SpecificQuestion();
+            $question->setTest($test);
+            $question->setQuestionText($questionText);
+            $question->setQuestionOrder($questionOrder > 0 ? $questionOrder : 1);
+            $question->setCreatedAt(new \DateTime());
+
+            $answerOrder = 1;
+            foreach ($answersData as $answerData) {
+                $answerText = trim($answerData['text'] ?? '');
+                $score = (int) ($answerData['score'] ?? 0);
+
+                if (empty($answerText)) {
+                    continue;
+                }
+
+                $answer = new SpecificAnswer();
+                $answer->setQuestion($question);
+                $answer->setAnswerText($answerText);
+                $answer->setScore($score);
+                $answer->setAnswerOrder($answerOrder);
+                $answer->setCreatedAt(new \DateTime());
+
+                $question->addAnswer($answer);
+                $answerOrder++;
+            }
+
+            $test->addQuestion($question);
+        }
+
+        if ($test->getQuestions()->isEmpty()) {
+            throw new \Exception('Le test doit contenir au moins une question valide');
+        }
+
+        $this->entityManager->persist($test);
         $this->entityManager->flush();
 
         return $test;
     }
 
-    public function getAllTests()
+    public function updateTest(SpecificTest $test, array $data): SpecificTest
     {
-        return $this->repository->findAll();
-    }
+        $generalTestId = (int) ($data['general_test_id'] ?? 0);
+        $category = trim($data['category'] ?? '');
+        $title = trim($data['title'] ?? '');
+        $description = trim($data['description'] ?? '');
+        $status = trim($data['status'] ?? 'DRAFT');
 
-    public function getTestById(int $id): SpecificTest
-    {
-        $test = $this->repository->find($id);
-        if (!$test) {
-            throw new \Exception("Test spécifique non trouvé avec l'ID: " . $id);
+        if ($generalTestId <= 0) {
+            throw new \Exception('Le test général parent est obligatoire');
         }
+
+        if (empty($category)) {
+            throw new \Exception('La catégorie est obligatoire');
+        }
+
+        if (empty($title)) {
+            throw new \Exception('Le titre est obligatoire');
+        }
+
+        if (is_numeric($title)) {
+            throw new \Exception('Le titre ne doit pas être uniquement des nombres');
+        }
+
+        if (strlen($title) < 3) {
+            throw new \Exception('Le titre doit contenir au moins 3 caractères');
+        }
+
+        if (!in_array($status, ['DRAFT', 'ACTIVE', 'INACTIVE', 'ARCHIVED'])) {
+            throw new \Exception('Statut invalide');
+        }
+
+        if ($status === 'ACTIVE') {
+            $existingActive = $this->testRepository->findOneBy([
+                'category' => $category,
+                'status' => 'ACTIVE'
+            ]);
+
+            if ($existingActive && $existingActive->getId() !== $test->getId()) {
+                throw new \Exception('Un seul test spécifique peut être actif par catégorie');
+            }
+        }
+
+        $test->setGeneralTestId($generalTestId);
+        $test->setCategory($category);
+        $test->setTitle($title);
+        $test->setDescription($description ?: null);
+        $test->setStatus($status);
+        $test->setUpdatedAt(new \DateTime());
+
+        $this->entityManager->flush();
+
         return $test;
     }
 
