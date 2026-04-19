@@ -102,6 +102,28 @@
 </div>
 {% endif %}
 
+{# ── Counters ── #}
+<div class="row g-3 mb-4">
+    <div class="col-4">
+        <div class="card text-center p-3">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--primary,#2563eb);">{{ totalTaches }}</div>
+            <div class="text-muted small fw-bold mt-1">Total tâches</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card text-center p-3">
+            <div style="font-size:1.8rem;font-weight:900;color:#29CC7A;">{{ nbTerminees }}</div>
+            <div class="text-muted small fw-bold mt-1">Terminées</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card text-center p-3">
+            <div style="font-size:1.8rem;font-weight:900;color:#F7B84B;">{{ scoreMoyen }}%</div>
+            <div class="text-muted small fw-bold mt-1">Score moyen</div>
+        </div>
+    </div>
+</div>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <span class="text-muted">{{ tache_foci.getTotalItemCount }} tâche(s) au total</span>
     <a href="{{ path('app_tache_focus_new') }}" class="btn btn-primary btn-sm">

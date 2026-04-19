@@ -26,12 +26,22 @@ class SousTacheController extends AbstractController
         $sousTaches = $sousTacheRepository->findBySearchAndFilter($search, $etat, $tacheId);
         $taches = $tacheFocusRepository->findAll();
 
+        $allSousTaches = $sousTacheRepository->findAll();
+        $nbTerminees = 0;
+        foreach ($allSousTaches as $st) {
+            if (in_array($st->getEtat(), ['Terminée', 'Terminee'], true)) {
+                $nbTerminees++;
+            }
+        }
+
         return $this->render('sous_tache/index.html.twig', [
             'sous_taches' => $sousTaches,
             'search' => $search,
             'etat' => $etat,
             'tache_id' => $tacheId,
             'taches' => $taches,
+            'nbTerminees' => $nbTerminees,
+            'totalSousTaches' => count($allSousTaches),
         ]);
     }
 

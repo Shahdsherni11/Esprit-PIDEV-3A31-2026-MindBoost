@@ -39,6 +39,19 @@ class TacheFocusController extends AbstractController
             5
         );
 
+        // Counters over the full unfiltered set
+        $allTaches = $tacheFocusRepository->findAll();
+        $nbTerminees = 0;
+        $scoreSum = 0;
+        foreach ($allTaches as $t) {
+            if ($t->getStatut() === 'Terminée') {
+                $nbTerminees++;
+            }
+            $scoreSum += (int) $t->getScoreProductivite();
+        }
+        $totalAll = count($allTaches);
+        $scoreMoyen = $totalAll > 0 ? round($scoreSum / $totalAll) : 0;
+
         $citation = $this->getCitationMotivante();
 
         return $this->render('tache_focus/index.html.twig', [
@@ -48,6 +61,9 @@ class TacheFocusController extends AbstractController
             'tri' => $tri,
             'ordre' => $ordre,
             'citation' => $citation,
+            'nbTerminees' => $nbTerminees,
+            'scoreMoyen' => $scoreMoyen,
+            'totalTaches' => $totalAll,
         ]);
     }
 

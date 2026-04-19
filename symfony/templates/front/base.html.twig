@@ -409,6 +409,24 @@
             <span>Tests Psy</span>
         </a>
 
+        <a href="{{ path('user_test_history') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') == 'user_test_history' or app.request.attributes.get('_route') == 'user_test_evolution' %}active{% endif %}">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>Historique</span>
+        </a>
+
+        <a href="{{ path('user_statistics_dashboard') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'user_statistics' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Statistiques &amp; Mailing</span>
+        </a>
+
+        <a href="{{ path('user_ai_chat') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'user_ai_' %}active{% endif %}">
+            <i class="fas fa-robot"></i>
+            <span>Coach IA</span>
+        </a>
+
         <a href="{{ path('app_profile_show') }}"
            class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_profile' %}active{% endif %}">
             <i class="fas fa-user-circle"></i>
