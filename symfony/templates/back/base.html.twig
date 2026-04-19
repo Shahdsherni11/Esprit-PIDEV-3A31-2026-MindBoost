@@ -519,11 +519,11 @@
 
         <hr class="sidebar-divider">
         <div class="sidebar-label">Tâches</div>
-        <a href="{{ path('app_tache_focus_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_tache_focus' %}active{% endif %}">
+        <a href="{{ path('back_tache_focus_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_tache_focus' %}active{% endif %}">
             <i class="fas fa-square-check"></i>
             <span>Tâches Focus</span>
         </a>
-        <a href="{{ path('app_sous_tache_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_sous_tache' %}active{% endif %}">
+        <a href="{{ path('back_sous_tache_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_sous_tache' %}active{% endif %}">
             <i class="fas fa-list-check"></i>
             <span>Sous-Tâches</span>
         </a>

@@ -1,0 +1,188 @@
+{% extends 'back/base.html.twig' %}
+{% block title %}Tâches Focus — Admin{% endblock %}
+{% block page_title %}Tâches Focus{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .tache-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .tache-list-item:last-child { border-bottom: none; }
+    .tache-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .tache-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #6C63FF, #4D83FF);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .tache-title {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+    }
+
+    .tache-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        border-radius: 999px;
+        padding: .2rem .6rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+    .status-done    { background: rgba(41,204,122,0.18); color: #29CC7A; }
+    .status-ongoing { background: rgba(47,107,255,0.18); color: #4D83FF; }
+    .status-pending { background: rgba(255,255,255,0.08); color: #AAB6D3; }
+
+    .diff-pill {
+        background: rgba(255,255,255,0.07);
+        color: #AAB6D3;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .score-pill {
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+    .score-good { background: rgba(41,204,122,0.18); color: #29CC7A; }
+    .score-mid  { background: rgba(247,184,75,0.18);  color: #F7B84B; }
+    .score-low  { background: rgba(255,90,116,0.18);  color: #FF5A74; }
+
+    .time-pill {
+        font-size: .75rem;
+        color: #7E8DB1;
+        font-style: italic;
+    }
+
+    .obj-text {
+        font-size: .78rem;
+        color: #7E8DB1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 280px;
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ tache_foci.getTotalItemCount }} tâche(s) au total</span>
+</div>
+
+<div class="card mb-4 p-3">
+    <form method="GET" action="{{ path('back_tache_focus_index') }}" class="d-flex gap-2 flex-wrap align-items-end">
+        <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." class="form-control form-control-sm" style="width:200px;">
+        <select name="statut" class="form-select form-select-sm" style="width:160px;">
+            <option value="">Tous les statuts</option>
+            <option value="En cours"      {{ statut == 'En cours'      ? 'selected' : '' }}>En cours</option>
+            <option value="Non commencée" {{ statut == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
+            <option value="Terminée"      {{ statut == 'Terminée'      ? 'selected' : '' }}>Terminée</option>
+        </select>
+        <select name="tri" class="form-select form-select-sm" style="width:160px;">
+            <option value="id"               {{ tri == 'id'               ? 'selected' : '' }}>Trier par ID</option>
+            <option value="titre"            {{ tri == 'titre'            ? 'selected' : '' }}>Titre</option>
+            <option value="niveauDifficulte" {{ tri == 'niveauDifficulte' ? 'selected' : '' }}>Difficulté</option>
+            <option value="scoreProductivite"{{ tri == 'scoreProductivite'? 'selected' : '' }}>Score</option>
+        </select>
+        <select name="ordre" class="form-select form-select-sm" style="width:130px;">
+            <option value="ASC"  {{ ordre == 'ASC'  ? 'selected' : '' }}>↑ Croissant</option>
+            <option value="DESC" {{ ordre == 'DESC' ? 'selected' : '' }}>↓ Décroissant</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filtrer</button>
+        <a href="{{ path('back_tache_focus_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+    </form>
+</div>
+
+{% if tache_foci|length == 0 %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-inbox display-4"></i>
+    <p class="mt-2">Aucune tâche trouvée.</p>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body p-0">
+        {% for tache_focu in tache_foci %}
+            <div class="tache-list-item">
+                <div class="tache-icon">
+                    <i class="bi bi-check2-square"></i>
+                </div>
+
+                <div class="flex-grow-1 min-width-0">
+                    <div class="tache-title">{{ tache_focu.titre }}</div>
+                    <div class="tache-meta">
+                        {% if tache_focu.statut == 'Terminée' %}
+                            <span class="status-pill status-done"><i class="bi bi-check-circle-fill"></i>Terminée</span>
+                        {% elseif tache_focu.statut == 'En cours' %}
+                            <span class="status-pill status-ongoing"><i class="bi bi-circle-fill" style="font-size:.5rem;"></i>En cours</span>
+                        {% else %}
+                            <span class="status-pill status-pending"><i class="bi bi-circle"></i>Non commencée</span>
+                        {% endif %}
+                        <span class="diff-pill">Niv. {{ tache_focu.niveauDifficulte }}</span>
+                        <span class="score-pill {% if tache_focu.scoreProductivite >= 75 %}score-good{% elseif tache_focu.scoreProductivite >= 50 %}score-mid{% else %}score-low{% endif %}">
+                            <i class="bi bi-speedometer2 me-1"></i>{{ tache_focu.scoreProductivite }}%
+                        </span>
+                        {% if tache_focu.heureDebut %}
+                            <span class="time-pill"><i class="bi bi-clock me-1"></i>{{ tache_focu.heureDebut|date('H:i') }} → {{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '?' }}</span>
+                        {% endif %}
+                        {% if tache_focu.objectifPrincipal %}
+                            <span class="obj-text">{{ tache_focu.objectifPrincipal|slice(0,60) }}{% if tache_focu.objectifPrincipal|length > 60 %}…{% endif %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('app_tache_focus_edit', {id: tache_focu.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form method="post" action="{{ path('app_tache_focus_delete', {id: tache_focu.id}) }}"
+                          onsubmit="return confirm('Supprimer cette tâche ?')">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ tache_focu.id) }}">
+                        <button class="btn btn-xs btn-outline-danger"
+                                style="font-size:.75rem;padding:3px 9px;" title="Supprimer">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="mt-4 d-flex justify-content-center">
+    {{ knp_pagination_render(tache_foci) }}
+</div>
+
+{% endblock %}
