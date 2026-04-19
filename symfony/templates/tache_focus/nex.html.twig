@@ -21,39 +21,39 @@
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-6">
-                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.04);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Objectif</div>
-                        <div style="color: #E8E8F0; font-weight: 600;">{{ tache_focu.objectifPrincipal }}</div>
+                    <div class="p-3 rounded" style="background: #f0f5ff; border: 1px solid #dbe7ff;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Objectif</div>
+                        <div style="color: #17253a; font-weight: 600;">{{ tache_focu.objectifPrincipal }}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="p-3 rounded text-center" style="background: rgba(108,99,255,0.08);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Difficulte</div>
-                        <div style="color: #6C63FF; font-size: 24px; font-weight: 700;">{{ tache_focu.niveauDifficulte }}</div>
+                    <div class="p-3 rounded text-center" style="background: #ede8ff; border: 1px solid #c9c0f5;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Difficulté</div>
+                        <div style="color: #4c3fb5; font-size: 24px; font-weight: 700;">{{ tache_focu.niveauDifficulte }}</div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="p-3 rounded text-center" style="background: rgba(78,205,196,0.08);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Score</div>
-                        <div style="color: #4ECDC4; font-size: 24px; font-weight: 700;">{{ tache_focu.scoreProductivite }}%</div>
+                    <div class="p-3 rounded text-center" style="background: #e0faf8; border: 1px solid #9ee6e0;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Score</div>
+                        <div style="color: #0e7c77; font-size: 24px; font-weight: 700;">{{ tache_focu.scoreProductivite }}%</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.04);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Statut</div>
-                        <div style="color: #E8E8F0; font-weight: 600;">{{ tache_focu.statut }}</div>
+                    <div class="p-3 rounded" style="background: #f0f5ff; border: 1px solid #dbe7ff;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Statut</div>
+                        <div style="color: #17253a; font-weight: 600;">{{ tache_focu.statut }}</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.04);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Heure debut</div>
-                        <div style="color: #E8E8F0; font-weight: 600;">{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i') : '-' }}</div>
+                    <div class="p-3 rounded" style="background: #f0f5ff; border: 1px solid #dbe7ff;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Heure début</div>
+                        <div style="color: #17253a; font-weight: 600;">{{ tache_focu.heureDebut ? tache_focu.heureDebut|date('H:i') : '-' }}</div>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.04);">
-                        <div style="color: #9B9BB0; font-size: 13px;">Heure fin</div>
-                        <div style="color: #E8E8F0; font-weight: 600;">{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '-' }}</div>
+                    <div class="p-3 rounded" style="background: #f0f5ff; border: 1px solid #dbe7ff;">
+                        <div style="color: #6c7b95; font-size: 13px; font-weight: 600; margin-bottom: .25rem;">Heure fin</div>
+                        <div style="color: #17253a; font-weight: 600;">{{ tache_focu.heureFin ? tache_focu.heureFin|date('H:i') : '-' }}</div>
                     </div>
                 </div>
             </div>
