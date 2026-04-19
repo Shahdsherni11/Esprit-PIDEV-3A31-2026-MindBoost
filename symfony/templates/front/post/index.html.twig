@@ -73,6 +73,18 @@
                         {% if post.tag %}
                         <span class="tag-badge"><i class="bi bi-tag me-1"></i>{{ post.tag }}</span>
                         {% endif %}
+                        {% set postScore = post.likes - post.dislikes %}
+                        {% set earnedAchievement = null %}
+                        {% for achievement in achievements %}
+                            {% if earnedAchievement is null and postScore >= achievement.achievementScore %}
+                                {% set earnedAchievement = achievement %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if earnedAchievement is not null %}
+                        <span class="badge bg-warning text-dark ms-1" title="{{ earnedAchievement.achievementName }} ({{ earnedAchievement.achievementScore }} pts)">
+                            🏆 {{ earnedAchievement.achievementName }}
+                        </span>
+                        {% endif %}
                     </div>
                     <h5 class="card-title fw-bold">
                         <a href="{{ path('front_post_show', {id: post.id}) }}" class="text-decoration-none" style="color:#111111;">{{ post.title }}</a>

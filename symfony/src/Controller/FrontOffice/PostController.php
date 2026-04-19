@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Form\PostType;
+use App\Repository\AchievementRepository;
 use App\Repository\PostRepository;
 use App\Service\AIService;
 use App\Service\ProfanityService;
@@ -23,6 +24,7 @@ class PostController extends AbstractController
     public function __construct(
         private EntityManagerInterface $em,
         private PostRepository $postRepository,
+        private AchievementRepository $achievementRepository,
         private AIService $aiService,
         private ProfanityService $profanityService,
         private UserSessionService $userSessionService
@@ -44,6 +46,7 @@ class PostController extends AbstractController
 
         $totalPosts = $this->postRepository->count([]);
         $mostLiked = $this->postRepository->findMostLiked();
+        $achievements = $this->achievementRepository->findBy([], ['achievementScore' => 'DESC']);
 
         return $this->render('front/post/index.html.twig', [
             'posts' => $posts,
@@ -51,6 +54,7 @@ class PostController extends AbstractController
             'mostLiked' => $mostLiked,
             'search' => $search,
             'tag' => $tag,
+            'achievements' => $achievements,
         ]);
     }
 
