@@ -26,6 +26,6 @@ return [
         'version' => '7.3.0',
     ],
     'chart.js' => [
-        'version' => '4.4.8',
+        'url' => 'https://cdn.jsdelivr.net/npm/chart.js@4.4.8/+esm',
     ],
 ];
