@@ -48,18 +48,6 @@ Rules:
 TXT;
 
         $raw = $this->geminiClientService->generateText($prompt, 0.4);
-
-        // Detect error JSON returned by GeminiClientService (e.g. HTTP 4xx/5xx)
-        $quickCheck = json_decode($raw, true);
-        if (is_array($quickCheck) && isset($quickCheck['error'])) {
-            return [
-                'ok' => false,
-                'raw' => $raw,
-                'json' => $raw,
-                'error' => 'Erreur API Gemini : ' . (is_string($quickCheck['error']) ? $quickCheck['error'] : json_encode($quickCheck['error'])),
-            ];
-        }
-
         $json = $this->normalizeJson($raw);
         $data = json_decode($json, true);
 

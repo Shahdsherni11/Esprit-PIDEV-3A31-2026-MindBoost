@@ -34,7 +34,7 @@ services:
     App\Service\GeminiClientService:
         arguments:
             $apiKey: '%env(GEMINI_API_KEY)%'
-            $model: '%env(default:gemini-2.0-flash:GEMINI_MODEL)%'
+            $model: '%env(GEMINI_MODEL)%'
 
     # Groq (User chatbot)
     App\Service\GroqClientService:
