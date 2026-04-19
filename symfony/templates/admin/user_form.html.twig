@@ -1,0 +1,42 @@
+{% extends 'back/base.html.twig' %}
+{% block title %}{{ isNew ? 'Nouvel Utilisateur' : 'Modifier Utilisateur' }} — Admin{% endblock %}
+{% block page_title %}{{ isNew ? 'Nouvel Utilisateur' : 'Modifier : ' ~ user.email }}{% endblock %}
+
+{% block body %}
+<div class="mb-4">
+    <a href="{{ path('app_admin_user_list') }}" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+    </a>
+</div>
+
+<div class="card p-4" style="max-width:600px;">
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.email, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.email) }}
+        <div class="text-danger small">{{ form_errors(form.email) }}</div>
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.role, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.role) }}
+    </div>
+    <div class="mb-3 form-check">
+        {{ form_widget(form.isVerified) }}
+        {{ form_label(form.isVerified, null, {'label_attr': {'class': 'form-check-label'}}) }}
+    </div>
+    {% if isNew %}
+    <div class="mb-3">
+        {{ form_label(form.plainPassword, null, {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.plainPassword) }}
+        <div class="text-danger small">{{ form_errors(form.plainPassword) }}</div>
+    </div>
+    {% endif %}
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save me-1"></i>{{ isNew ? 'Créer' : 'Enregistrer' }}
+        </button>
+        <a href="{{ path('app_admin_user_list') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

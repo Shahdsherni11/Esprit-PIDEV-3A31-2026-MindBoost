@@ -183,7 +183,12 @@
             font-weight: 700;
             box-shadow: 0 10px 25px rgba(37,99,235,0.08);
             white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
+
+        .front-chip:hover { background: #eef4ff; color: var(--primary); }
 
         .front-page { padding: 2rem; }
 
@@ -210,6 +215,18 @@
             margin: .5rem 0 0;
             color: var(--text-soft);
             font-size: 1.02rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: .25rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-soft);
+            font-size: 1rem;
         }
 
         .btn {
@@ -282,6 +299,13 @@
         .table td { border-color: var(--border); vertical-align: middle; }
         .table tbody tr:hover { background: rgba(37,99,235,0.04); }
 
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
         .badge { font-size: .8rem; font-weight: 700; padding: .5rem .85rem; border-radius: 999px; }
 
         .alert { border: none; border-radius: 18px; }
@@ -325,10 +349,18 @@
 
         <div class="front-sidebar-label">Navigation</div>
 
-        <a href="{{ path('front_post_index') }}"
-           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'front_post_' %}active{% endif %}">
+        <a href="{{ path('app_home') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') == 'app_home' %}active{% endif %}">
             <i class="fas fa-house"></i>
             <span>Accueil</span>
+        </a>
+
+        <div class="front-sidebar-label">Forum</div>
+
+        <a href="{{ path('front_post_index') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'front_post_' and app.request.attributes.get('_route') != 'front_post_new' %}active{% endif %}">
+            <i class="fas fa-comments"></i>
+            <span>Posts</span>
         </a>
 
         <a href="{{ path('front_post_new') }}"
@@ -349,12 +381,85 @@
             <span>Achievements</span>
         </a>
 
-        <hr class="front-sidebar-divider">
+        <div class="front-sidebar-label">Productivité</div>
 
-        <a href="{{ path('back_dashboard') }}" class="front-sidebar-link">
+        <a href="{{ path('app_tache_focus_index') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_tache_focus' or app.request.attributes.get('_route') starts with 'app_sous_tache_' %}active{% endif %}">
+            <i class="fas fa-check-circle"></i>
+            <span>Mes Tâches</span>
+        </a>
+
+        <a href="{{ path('app_tache_focus_new') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') == 'app_tache_focus_new' %}active{% endif %}">
+            <i class="fas fa-plus-circle"></i>
+            <span>Nouvelle Tâche</span>
+        </a>
+
+        <a href="{{ path('app_sous_tache_index') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_sous_tache' %}active{% endif %}">
+            <i class="fas fa-list-check"></i>
+            <span>Sous-Tâches</span>
+        </a>
+
+        <div class="front-sidebar-label">Mon Espace</div>
+
+        <a href="{{ path('front_user_home') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'front_user' or app.request.attributes.get('_route') starts with 'front_test' %}active{% endif %}">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Tests Psy</span>
+        </a>
+
+        <a href="{{ path('user_test_history') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') == 'user_test_history' or app.request.attributes.get('_route') == 'user_test_evolution' %}active{% endif %}">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>Historique</span>
+        </a>
+
+        <a href="{{ path('user_statistics_dashboard') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'user_statistics' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Statistiques &amp; Mailing</span>
+        </a>
+
+        <a href="{{ path('user_ai_chat') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'user_ai_' %}active{% endif %}">
+            <i class="fas fa-robot"></i>
+            <span>Coach IA</span>
+        </a>
+
+        <a href="{{ path('app_profile_show') }}"
+           class="front-sidebar-link {% if app.request.attributes.get('_route') starts with 'app_profile' %}active{% endif %}">
+            <i class="fas fa-user-circle"></i>
+            <span>Mon Profil</span>
+        </a>
+
+        {% if is_granted('ROLE_ADMIN') %}
+        <hr class="front-sidebar-divider">
+        <div class="front-sidebar-label">Administration</div>
+        <a href="{{ path('back_dashboard') }}"
+           class="front-sidebar-link">
             <i class="fas fa-shield-heart"></i>
             <span>Espace Admin</span>
         </a>
+        {% endif %}
+
+        <hr class="front-sidebar-divider">
+
+        {% if app.user %}
+        <a href="{{ path('app_logout') }}" class="front-sidebar-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Déconnexion</span>
+        </a>
+        {% else %}
+        <a href="{{ path('app_login') }}" class="front-sidebar-link">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Connexion</span>
+        </a>
+        <a href="{{ path('app_register') }}" class="front-sidebar-link">
+            <i class="fas fa-user-plus"></i>
+            <span>Inscription</span>
+        </a>
+        {% endif %}
     </aside>
 
     <main class="front-main">
@@ -365,9 +470,15 @@
             </div>
 
             <div class="front-topbar-right">
-                <div class="front-chip">
-                    <i class="fas fa-user me-2"></i>Utilisateur
-                </div>
+                {% if app.user %}
+                <a href="{{ path('app_profile_show') }}" class="front-chip">
+                    <i class="fas fa-user me-2"></i>{{ app.user.displayName }}
+                </a>
+                {% else %}
+                <a href="{{ path('app_login') }}" class="front-chip">
+                    <i class="fas fa-sign-in-alt me-2"></i>Connexion
+                </a>
+                {% endif %}
             </div>
         </div>
 
@@ -394,7 +505,7 @@
             {% endfor %}
 
             <div class="front-shell">
-                {% block content %}{% endblock %}
+                {% block body %}{% block content %}{% endblock %}{% endblock %}
             </div>
         </div>
     </main>

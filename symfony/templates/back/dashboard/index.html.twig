@@ -1,435 +1,155 @@
 {% extends 'back/base.html.twig' %}
 
-{% block title %}Dashboard — MindBoost{% endblock %}
+{% block title %}Dashboard — Admin MindBoost{% endblock %}
 {% block page_title %}Dashboard{% endblock %}
-{% block page_subtitle %}Vue d'ensemble du contenu MindBoost{% endblock %}
 
-{% block extra_css %}
-<style>
-    .kpi-icon-wrap {
-        width: 52px;
-        height: 52px;
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.35rem;
-        flex-shrink: 0;
-    }
-    .kpi-posts    { background: linear-gradient(135deg, #2F6BFF, #4D83FF); }
-    .kpi-comments { background: linear-gradient(135deg, #29CC7A, #1FAE65); }
-    .kpi-achiev   { background: linear-gradient(135deg, #F7B84B, #E8A020); }
-    .kpi-saves    { background: linear-gradient(135deg, #19B5FE, #00D1C7); }
-
-    .quick-btn {
-        display: flex;
-        align-items: center;
-        gap: .75rem;
-        padding: 1rem 1.25rem;
-        border-radius: 18px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: .95rem;
-        transition: all .22s ease;
-        border: 1px solid transparent;
-    }
-    .quick-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,0.30); }
-    .quick-btn-primary  { background: linear-gradient(135deg, #2F6BFF, #4D83FF); color: white; }
-    .quick-btn-warning  { background: linear-gradient(135deg, #F7B84B, #E8A020); color: #142033; }
-    .quick-btn-info     { background: linear-gradient(135deg, #19B5FE, #00D1C7); color: white; }
-    .quick-btn-ghost    { background: rgba(255,255,255,0.06); color: #AAB6D3; border-color: rgba(255,255,255,0.08); }
-    .quick-btn-ghost:hover { background: rgba(255,255,255,0.10); color: white; }
-
-    .recent-tag {
-        display: inline-block;
-        padding: .3rem .75rem;
-        border-radius: 999px;
-        font-size: .78rem;
-        font-weight: 700;
-        background: rgba(47,107,255,0.18);
-        color: #7BA5FF;
-        border: 1px solid rgba(47,107,255,0.25);
-    }
-
-    .achiev-row {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: .85rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .achiev-row:last-child { border-bottom: none; }
-
-    .achiev-badge {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #F7B84B, #E8A020);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        color: #142033;
-        flex-shrink: 0;
-    }
-
-    .score-pill {
-        background: rgba(41,204,122,0.15);
-        color: #29CC7A;
-        border: 1px solid rgba(41,204,122,0.25);
-        border-radius: 999px;
-        padding: .28rem .7rem;
-        font-size: .82rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 2.5rem 1rem;
-        color: #7E8DB1;
-    }
-    .empty-state i { font-size: 2.5rem; opacity: .4; }
-
-    .section-title {
-        font-size: 1rem;
-        font-weight: 800;
-        color: white;
-        margin-bottom: 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: .6rem;
-    }
-    .section-title i { color: #4D83FF; }
-
-    /* ── Post list view ── */
-    .post-list-item {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 1rem 1.25rem;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        transition: background .2s;
-    }
-    .post-list-item:last-child { border-bottom: none; }
-    .post-list-item:hover { background: rgba(255,255,255,0.03); }
-
-    .post-index {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: rgba(47,107,255,0.15);
-        color: #4D83FF;
-        font-size: .78rem;
-        font-weight: 800;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-
-    .post-body { flex: 1; min-width: 0; }
-    .post-title-link {
-        display: block;
-        font-weight: 700;
-        font-size: .95rem;
-        color: var(--text-main, #F4F7FC);
-        text-decoration: none;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-    }
-    .post-title-link:hover { color: #4D83FF; }
-    .post-meta { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-top: .3rem; }
-
-    .vote-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: .25rem;
-        font-size: .78rem;
-        font-weight: 700;
-        border-radius: 999px;
-        padding: .2rem .55rem;
-    }
-    .vote-up   { background: rgba(41,204,122,0.15); color: #29CC7A; }
-    .vote-down { background: rgba(255,90,116,0.15);  color: #FF5A74; }
-    .score-badge-sm {
-        background: rgba(25,181,254,0.15);
-        color: #19B5FE;
-        border-radius: 999px;
-        padding: .2rem .55rem;
-        font-size: .78rem;
-        font-weight: 700;
-    }
-
-    /* ── Achievement earned badge ── */
-    .achiev-earned {
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-        background: linear-gradient(135deg, rgba(247,184,75,0.22), rgba(232,160,32,0.15));
-        border: 1px solid rgba(247,184,75,0.35);
-        color: #F7B84B;
-        border-radius: 999px;
-        padding: .22rem .65rem;
-        font-size: .75rem;
-        font-weight: 800;
-        white-space: nowrap;
-        animation: shimmer 2.5s ease-in-out infinite;
-    }
-    @keyframes shimmer {
-        0%, 100% { opacity: 1; }
-        50% { opacity: .75; }
-    }
-
-    /* ── Achievement list in side panel ── */
-    .achiev-item {
-        display: flex;
-        align-items: center;
-        gap: .85rem;
-        padding: .75rem 0;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .achiev-item:last-child { border-bottom: none; }
-    .achiev-icon-wrap {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
-        background: linear-gradient(135deg, #F7B84B, #E8A020);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1rem;
-        color: #142033;
-        flex-shrink: 0;
-    }
-    .achiev-name {
-        font-weight: 700;
-        color: white;
-        font-size: .9rem;
-        line-height: 1.2;
-    }
-    .achiev-score-pill {
-        background: rgba(247,184,75,0.18);
-        color: #F7B84B;
-        border: 1px solid rgba(247,184,75,0.28);
-        border-radius: 999px;
-        padding: .18rem .6rem;
-        font-size: .76rem;
-        font-weight: 800;
-        margin-left: auto;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-
-{# ── Page heading ── #}
-<div class="page-heading">
-    <h1><i class="fas fa-house me-2" style="color:#4D83FF;font-size:1.6rem;"></i>Dashboard</h1>
-    <p>Bienvenue dans le panneau d'administration MindBoost.</p>
-</div>
-
-{# ── KPI Stats ── #}
+{% block body %}
+{# Stats row #}
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="card stat-card p-3" style="border-left-color:#0d6efd;">
             <div class="d-flex align-items-center gap-3">
-                <div class="kpi-icon-wrap kpi-posts">
-                    <i class="fas fa-file-lines text-white"></i>
-                </div>
+                <div class="fs-2 text-primary"><i class="bi bi-file-post"></i></div>
                 <div>
-                    <div class="stat-number">{{ totalPosts }}</div>
-                    <div class="stat-label">Posts publiés</div>
+                    <div class="fs-3 fw-bold">{{ totalPosts }}</div>
+                    <div class="text-muted small">Total Posts</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="card stat-card p-3" style="border-left-color:#198754;">
             <div class="d-flex align-items-center gap-3">
-                <div class="kpi-icon-wrap kpi-comments">
-                    <i class="fas fa-comments text-white"></i>
-                </div>
+                <div class="fs-2 text-success"><i class="bi bi-chat-dots"></i></div>
                 <div>
-                    <div class="stat-number">{{ totalComments }}</div>
-                    <div class="stat-label">Commentaires</div>
+                    <div class="fs-3 fw-bold">{{ totalComments }}</div>
+                    <div class="text-muted small">Total Comments</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="card stat-card p-3" style="border-left-color:#ffc107;">
             <div class="d-flex align-items-center gap-3">
-                <div class="kpi-icon-wrap kpi-achiev">
-                    <i class="fas fa-trophy" style="color:#142033;"></i>
-                </div>
+                <div class="fs-2 text-warning"><i class="bi bi-trophy"></i></div>
                 <div>
-                    <div class="stat-number">{{ totalAchievements }}</div>
-                    <div class="stat-label">Achievements</div>
+                    <div class="fs-3 fw-bold">{{ totalAchievements }}</div>
+                    <div class="text-muted small">Achievements</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card">
+        <div class="card stat-card p-3" style="border-left-color:#0dcaf0;">
             <div class="d-flex align-items-center gap-3">
-                <div class="kpi-icon-wrap kpi-saves">
-                    <i class="fas fa-bookmark text-white"></i>
-                </div>
+                <div class="fs-2 text-info"><i class="bi bi-bookmark"></i></div>
                 <div>
-                    <div class="stat-number">{{ totalSaves }}</div>
-                    <div class="stat-label">Sauvegardes</div>
+                    <div class="fs-3 fw-bold">{{ totalSaves }}</div>
+                    <div class="text-muted small">Saved Posts</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-{# ── Quick actions ── #}
+{# Quick links #}
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-lg-3">
-        <a href="{{ path('back_post_new') }}" class="quick-btn quick-btn-primary w-100">
-            <i class="fas fa-plus"></i>
-            <span>Nouveau Post</span>
+    <div class="col-md-3">
+        <a href="{{ path('back_post_new') }}" class="btn btn-primary w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Post
         </a>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <a href="{{ path('back_achievement_new') }}" class="quick-btn quick-btn-warning w-100">
-            <i class="fas fa-plus"></i>
-            <span>Nouvel Achievement</span>
+    <div class="col-md-3">
+        <a href="{{ path('back_achievement_new') }}" class="btn btn-warning w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Achievement
         </a>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <a href="{{ path('back_saves_new') }}" class="quick-btn quick-btn-info w-100">
-            <i class="fas fa-plus"></i>
-            <span>Nouvelle Sauvegarde</span>
+    <div class="col-md-3">
+        <a href="{{ path('back_saves_new') }}" class="btn btn-info text-white w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Save
         </a>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <a href="{{ path('front_post_index') }}" class="quick-btn quick-btn-ghost w-100">
-            <i class="fas fa-eye"></i>
-            <span>Voir le site</span>
+    <div class="col-md-3">
+        <a href="{{ path('front_home') }}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-eye me-1"></i>View Site
         </a>
     </div>
 </div>
 
-{# ── Content grid ── #}
-<div class="row g-3">
-
-    {# Recent posts #}
-    <div class="col-lg-8">
-        <div class="card h-100">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <span><i class="fas fa-clock-rotate-left me-2"></i>Posts récents</span>
-                <a href="{{ path('back_post_index') }}" class="btn btn-secondary btn-sm" style="padding:.4rem .9rem;font-size:.82rem;border-radius:10px;">
-                    Voir tout <i class="fas fa-arrow-right ms-1"></i>
-                </a>
-            </div>
-            <div class="card-body p-0">
-                {% if recentPosts is empty %}
-                    <div class="empty-state">
-                        <i class="fas fa-inbox d-block mb-2"></i>
-                        <p class="mb-0">Aucun post pour l'instant.</p>
-                        <a href="{{ path('back_post_new') }}" class="btn btn-primary btn-sm mt-3">Créer le premier</a>
-                    </div>
-                {% else %}
-                    {% for post in recentPosts %}
-                        {# Compute post score (helpMeter) and find the best matching achievement #}
-                        {% set postScore = post.helpMeter %}
-                        {% set earnedAchievement = null %}
-                        {% for ach in achievements %}
-                            {% if postScore >= ach.achievementScore %}
-                                {% set earnedAchievement = ach %}
-                            {% endif %}
-                        {% endfor %}
-
-                        <div class="post-list-item">
-                            <div class="post-index">{{ loop.index }}</div>
-
-                            <div class="post-body">
-                                <a href="{{ path('front_post_show', {id: post.id}) }}"
-                                   target="_blank"
-                                   class="post-title-link">
-                                    {{ post.title|slice(0, 60) }}{% if post.title|length > 60 %}…{% endif %}
-                                </a>
-                                <div class="post-meta">
-                                    {% if post.tag %}
-                                        <span class="recent-tag">{{ post.tag }}</span>
-                                    {% endif %}
-                                    <span class="vote-pill vote-up">
-                                        <i class="fas fa-thumbs-up"></i> {{ post.likes }}
-                                    </span>
-                                    <span class="vote-pill vote-down">
-                                        <i class="fas fa-thumbs-down"></i> {{ post.dislikes }}
-                                    </span>
-                                    <span class="score-badge-sm" title="Help Meter">
-                                        <i class="fas fa-star-half-stroke me-1"></i>{{ postScore }}
-                                    </span>
-                                    {% if earnedAchievement %}
-                                        <span class="achiev-earned" title="Score requis : {{ earnedAchievement.achievementScore }}">
-                                            <i class="fas fa-trophy"></i>
-                                            {{ earnedAchievement.achievementName }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <a href="{{ path('back_post_edit', {id: post.id}) }}"
-                               class="btn btn-secondary btn-sm flex-shrink-0"
-                               style="padding:.3rem .7rem;font-size:.78rem;border-radius:10px;">
-                                <i class="fas fa-pencil"></i>
+{# Recent posts #}
+<div class="card">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-muted"></i>Recent Posts</h6>
+        {% if recentPosts is empty %}
+        <p class="text-muted">No posts yet.</p>
+        {% else %}
+        <div class="row g-3">
+            {% for post in recentPosts %}
+            <div class="col-md-6 col-xl-4">
+                <div class="card" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <a href="{{ path('front_post_show', {id: post.id}) }}" class="fw-bold text-decoration-none" style="color:#9A8CFF;" target="_blank">
+                                {{ post.title|slice(0, 50) }}{% if post.title|length > 50 %}…{% endif %}
                             </a>
+                            {% if post.tag %}<span class="badge bg-secondary ms-1">{{ post.tag }}</span>{% endif %}
                         </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    {# Achievements panel #}
-    <div class="col-lg-4">
-        <div class="card h-100">
-            <div class="card-header d-flex align-items-center justify-content: space-between">
-                <span><i class="fas fa-trophy me-2" style="color:#F7B84B;"></i>Achievements</span>
-                <a href="{{ path('back_achievement_index') }}" class="btn btn-secondary btn-sm ms-auto" style="padding:.4rem .9rem;font-size:.82rem;border-radius:10px;">
-                    Voir tout
-                </a>
-            </div>
-            <div class="card-body">
-                {% if totalAchievements == 0 %}
-                    <div class="empty-state">
-                        <i class="fas fa-trophy d-block mb-2"></i>
-                        <p class="mb-0">Aucun achievement.</p>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="badge bg-success"><i class="bi bi-hand-thumbs-up me-1"></i>{{ post.likes }}</span>
+                            <a href="{{ path('back_post_edit', {id: post.id}) }}" class="btn btn-outline-secondary btn-sm ms-auto"><i class="bi bi-pencil"></i></a>
+                        </div>
                     </div>
-                {% else %}
-                    <div class="d-flex flex-column">
-                        {% for ach in achievements %}
-                            <div class="achiev-item">
-                                <div class="achiev-icon-wrap">
-                                    <i class="fas fa-trophy"></i>
-                                </div>
-                                <div class="flex-grow-1 min-width-0">
-                                    <div class="achiev-name">{{ ach.achievementName }}</div>
-                                    <div style="color:#7E8DB1;font-size:.78rem;">Score requis</div>
-                                </div>
-                                <span class="achiev-score-pill">
-                                    <i class="fas fa-star-half-stroke me-1"></i>{{ ach.achievementScore }}
-                                </span>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <a href="{{ path('back_achievement_new') }}" class="btn btn-warning w-100 mt-3" style="border-radius:14px;">
-                        <i class="fas fa-plus me-2"></i>Ajouter un achievement
-                    </a>
-                {% endif %}
+                </div>
             </div>
+            {% endfor %}
         </div>
+        <div class="mt-2">
+            <a href="{{ path('back_post_index') }}" class="btn btn-sm btn-outline-primary">View all posts →</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 
+{# Quick Access to All Gestions #}
+<div class="row g-3 mt-2">
+    <div class="col-12">
+        <h6 class="fw-bold text-muted"><i class="bi bi-grid me-2"></i>Accès Rapide — Toutes les Gestions</h6>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('back_post_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #6C63FF;">
+                <i class="bi bi-file-post fs-3 mb-1" style="color:#6C63FF;"></i>
+                <div class="fw-semibold">Posts Forum</div>
+                <small class="text-muted">Gérer les posts</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_tache_focus_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #2ECC71;">
+                <i class="bi bi-check2-square fs-3 mb-1" style="color:#2ECC71;"></i>
+                <div class="fw-semibold">Tâches Focus</div>
+                <small class="text-muted">Gérer les tâches</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('general_test_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #4ECDC4;">
+                <i class="bi bi-clipboard2-pulse fs-3 mb-1" style="color:#4ECDC4;"></i>
+                <div class="fw-semibold">Tests Psy</div>
+                <small class="text-muted">Gérer les tests</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_admin_user_list') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #F39C12;">
+                <i class="bi bi-people fs-3 mb-1" style="color:#F39C12;"></i>
+                <div class="fw-semibold">Utilisateurs</div>
+                <small class="text-muted">Gérer les comptes</small>
+            </div>
+        </a>
+    </div>
+</div>
 {% endblock %}

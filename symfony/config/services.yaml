@@ -1,18 +1,16 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    resend.api_key: '%env(RESEND_API_KEY)%'
+    
+    resend.from_name: '%env(RESEND_FROM_NAME)%'
+    resend.reply_to: '%env(RESEND_REPLY_TO)%'
+    sentiment.api_url: '%env(SENTIMENT_API_URL)%'
+    huggingface.api_key: '%env(string:HUGGINGFACE_API_KEY)%'
 
 services:
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
@@ -20,9 +18,31 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # Quotes API
+    App\Service\ExternalApiService:
+        arguments:
+            $quoteApiUrl: '%env(QUOTE_API_URL)%'
+            $quoteApiKey: '%env(QUOTE_API_KEY)%'
 
+    # Sentiment API
+    App\Service\SentimentApiService:
+        arguments:
+            $sentimentApiUrl: '%sentiment.api_url%'
+            $apiKey: '%env(QUOTE_API_KEY)%'
+
+    # Gemini (Admin IA)
+    App\Service\GeminiClientService:
+        arguments:
+            $apiKey: '%env(GEMINI_API_KEY)%'
+            $model: '%env(GEMINI_MODEL)%'
+
+    # Groq (User chatbot)
+    App\Service\GroqClientService:
+        arguments:
+            $apiKey: '%env(GROQ_API_KEY)%'
+            $model: '%env(GROQ_MODEL)%'
+
+   
     App\Service\AIService:
         arguments:
-            $hfToken: '%env(HF_TOKEN)%'
+            $hfToken: '%huggingface.api_key%'

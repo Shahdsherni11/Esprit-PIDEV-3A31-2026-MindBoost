@@ -1,7 +1,30 @@
+<<<<<<< HEAD
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###
+
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+=======
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.kotlin
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -35,4 +58,5 @@ build/
 .vscode/
 
 ### Mac OS ###
-.DS_Store.idea/
+.DS_Store
+>>>>>>> c1a5eca729fcc5975a333d336c0ede15fad43c31

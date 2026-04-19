@@ -1,0 +1,58 @@
+{% extends 'front/base.html.twig' %}
+{% block title %}Modifier mon Profil — MindBoost{% endblock %}
+
+{% block body %}
+<div class="mb-4">
+    <h1 class="fw-bold"><i class="bi bi-pencil-square me-2" style="color:#6C63FF;"></i>Modifier mon Profil</h1>
+    <p class="text-muted">Mettez à jour vos informations personnelles</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card p-4">
+            {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    {{ form_label(form.firstName, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.firstName) }}
+                    <div class="text-danger small">{{ form_errors(form.firstName) }}</div>
+                </div>
+                <div class="col-sm-6">
+                    {{ form_label(form.lastName, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.lastName) }}
+                    <div class="text-danger small">{{ form_errors(form.lastName) }}</div>
+                </div>
+                <div class="col-sm-6">
+                    {{ form_label(form.phone, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.phone) }}
+                    <div class="text-danger small">{{ form_errors(form.phone) }}</div>
+                </div>
+                <div class="col-sm-6">
+                    {{ form_label(form.personalityType, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.personalityType) }}
+                    <div class="text-danger small">{{ form_errors(form.personalityType) }}</div>
+                </div>
+                <div class="col-12">
+                    {{ form_label(form.avatarUrl, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.avatarUrl) }}
+                    <div class="text-danger small">{{ form_errors(form.avatarUrl) }}</div>
+                </div>
+                <div class="col-12">
+                    {{ form_label(form.bio, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.bio) }}
+                    <div class="text-danger small">{{ form_errors(form.bio) }}</div>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-2"></i>Enregistrer
+                </button>
+                <a href="{{ path('app_profile_show') }}" class="btn btn-secondary">
+                    <i class="bi bi-x me-2"></i>Annuler
+                </a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

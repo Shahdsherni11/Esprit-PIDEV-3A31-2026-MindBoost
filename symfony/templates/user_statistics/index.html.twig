@@ -1,0 +1,352 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Mes Statistiques{% endblock %}
+
+{% block content %}
+<style>
+    .user-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-kpi-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        padding: 1.1rem;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+        text-align: center;
+    }
+
+    .user-kpi-value {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #2563eb;
+    }
+
+    .user-kpi-label {
+        margin-top: 0.35rem;
+        color: #6c7b95;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .motivational-alert {
+        background: linear-gradient(135deg, rgba(59,182,255,0.1), rgba(79,172,254,0.1));
+        border: 2px solid #a7d8ff;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        animation: slideDown 0.5s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .motivational-alert-title {
+        color: #0c5ba3;
+        font-weight: 700;
+        margin: 0 0 0.8rem 0;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .motivational-alert-quote {
+        color: #0c5ba3;
+        font-style: italic;
+        margin: 0.5rem 0 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        padding: 0.8rem 0;
+    }
+
+    .motivational-alert-author {
+        color: #0c5ba3;
+        font-size: 0.9rem;
+        margin: 0.5rem 0 0;
+        font-weight: 500;
+    }
+
+    .quote-actions {
+        display: flex;
+        gap: 0.8rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-small {
+        padding: 0.6rem 1rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.22s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-small-secondary {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+
+    .btn-small-secondary:hover {
+        background: #d1d5db;
+        transform: translateY(-1px);
+        color: #1f2937;
+    }
+
+    .user-chart-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-chart-card, .user-history-card {
+        background: white;
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        padding: 1.2rem;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+    }
+
+    .user-card-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #17253a;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+    }
+
+    .timeline-item {
+        background: #f7fbff;
+        border: 1px solid #dbe7ff;
+        border-radius: 18px;
+        padding: 0.95rem 1rem;
+        transition: all 0.22s ease;
+    }
+
+    .timeline-item:hover {
+        border-color: #2563eb;
+        box-shadow: 0 4px 12px rgba(37,99,235,0.1);
+    }
+
+    .timeline-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-title {
+        font-weight: 900;
+        color: #17253a;
+    }
+
+    .timeline-percent {
+        font-weight: 900;
+        color: #2563eb;
+    }
+
+    .timeline-meta {
+        color: #6c7b95;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: #6c7b95;
+    }
+
+    .empty-state-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 1100px) {
+        .user-kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .user-chart-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .user-kpi-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quote-actions {
+            flex-direction: column;
+        }
+
+        .btn-small {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="page-heading">
+    <h1><i class="fas fa-chart-line me-2"></i>Mes Statistiques</h1>
+    <p>Suivez votre progrès au cours des semaines.</p>
+</div>
+
+{% if motivationalQuote %}
+    <div class="motivational-alert">
+        <p class="motivational-alert-title">
+            <i class="fas fa-lightbulb"></i>
+            <strong>Message de soutien du jour</strong>
+        </p>
+
+        <p class="motivational-alert-quote">
+            "{{ motivationalQuote.content }}"
+        </p>
+
+        <p class="motivational-alert-author">
+            — {{ motivationalQuote.author }}
+        </p>
+
+        <div class="quote-actions">
+            <a href="{{ path('user_statistics_dashboard') }}" class="btn-small btn-small-secondary" style="flex: 1; justify-content: center;">
+                <i class="fas fa-sync-alt"></i>
+                Actualiser
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<div class="user-kpi-grid">
+    <div class="user-kpi-card">
+        <div class="user-kpi-value">{{ stats.kpis.total_tests }}</div>
+        <div class="user-kpi-label">Tests passés</div>
+    </div>
+    <div class="user-kpi-card">
+        <div class="user-kpi-value">{{ stats.kpis.best_percentage }}%</div>
+        <div class="user-kpi-label">Meilleur score</div>
+    </div>
+    <div class="user-kpi-card">
+        <div class="user-kpi-value">{{ stats.kpis.average_percentage }}%</div>
+        <div class="user-kpi-label">Moyenne</div>
+    </div>
+    <div class="user-kpi-card">
+        <div class="user-kpi-value" style="font-size: 1.2rem;">
+            {% if stats.kpis.dominant_category %}
+                {{ stats.kpis.dominant_category }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="user-kpi-label">Catégorie dominante</div>
+    </div>
+    <div class="user-kpi-card">
+        <div class="user-kpi-value" style="font-size: 1.2rem;">
+            {% if stats.kpis.dominant_level %}
+                {{ stats.kpis.dominant_level }}
+            {% else %}
+                -
+            {% endif %}
+        </div>
+        <div class="user-kpi-label">Niveau dominant</div>
+    </div>
+</div>
+
+<div class="user-chart-grid">
+    <div class="user-chart-card">
+        <div class="user-card-title">
+            <i class="fas fa-chart-line"></i>
+            Progression hebdomadaire
+        </div>
+        {% if stats.weekly_labels|length > 0 %}
+            {{ render_chart(progressChart) }}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                <p>Aucune donnée de progression disponible</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="user-chart-card">
+        <div class="user-card-title">
+            <i class="fas fa-chart-pie"></i>
+            Répartition des catégories
+        </div>
+        {% if stats.category_labels|length > 0 %}
+            {{ render_chart(userCategoryChart) }}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                <p>Aucune catégorie testée</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="user-history-card">
+    <div class="user-card-title">
+        <i class="fas fa-history"></i>
+        Historique détaillé
+    </div>
+
+    {% if stats.history|length > 0 %}
+        <div class="timeline">
+            {% for item in stats.history|reverse %}
+                <div class="timeline-item">
+                    <div class="timeline-top">
+                        <div class="timeline-title">
+                            <i class="fas fa-calendar-check" style="color: #2563eb; margin-right: 0.5rem;"></i>
+                            Semaine {{ item.week }}
+                        </div>
+                        <div class="timeline-percent">{{ item.percentage }}%</div>
+                    </div>
+                    <div class="timeline-meta">
+                        📁 Catégorie : <strong>{{ item.category }}</strong> |
+                        📊 Niveau : <strong>{{ item.level }}</strong>
+                        {% if item.date %} | 📅 {{ item.date|date('d/m/Y') }}{% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+            <p>Aucune donnée statistique pour le moment.</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+                <a href="{{ path('front_general_test') }}" style="color: #2563eb; text-decoration: none; font-weight: 600;">
+                    Passez un test pour commencer →
+                </a>
+            </p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

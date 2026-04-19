@@ -1,0 +1,207 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Mon Évolution{% endblock %}
+
+{% block content %}
+<style>
+    .evolution-hero {
+        margin-bottom: 1.5rem;
+    }
+
+    .evolution-hero h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 2.2rem;
+        font-weight: 900;
+        margin: 0;
+    }
+
+    .evolution-hero p {
+        margin: 0.5rem 0 0;
+        color: #6c7b95;
+        font-size: 1.02rem;
+    }
+
+    .evolution-timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .evolution-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+        padding: 1.2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .evolution-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(180deg, #2563eb, #06b6d4);
+    }
+
+    .evolution-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+
+    .evolution-week {
+        font-size: 1.28rem;
+        font-weight: 900;
+        color: #17253a;
+    }
+
+    .evolution-percent {
+        font-size: 1.7rem;
+        font-weight: 900;
+        color: #2563eb;
+        text-align: right;
+    }
+
+    .evolution-date {
+        color: #6b7a95;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .evolution-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .evo-box {
+        background: #f3f8ff;
+        border: 1px solid #dce9fb;
+        border-radius: 16px;
+        padding: 0.9rem;
+    }
+
+    .evo-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #72829c;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .evo-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #17253a;
+    }
+
+    .trend-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.86rem;
+        font-weight: 800;
+    }
+
+    .trend-good {
+        background: rgba(22,163,74,0.12);
+        color: #15803d;
+    }
+
+    .trend-bad {
+        background: rgba(239,68,68,0.12);
+        color: #b91c1c;
+    }
+
+    .trend-stable {
+        background: rgba(245,158,11,0.14);
+        color: #a16207;
+    }
+
+    .evolution-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        background: white;
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+    }
+
+    .evolution-empty i {
+        font-size: 2.6rem;
+        color: #2563eb;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="evolution-hero">
+    <h1><i class="fas fa-arrow-trend-up"></i>Suivi d’évolution</h1>
+    <p>Suivez votre progression semaine après semaine dans une interface plus lisible et plus visuelle.</p>
+</div>
+
+{% if evolution|length > 0 %}
+    <div class="evolution-timeline">
+        {% for row in evolution %}
+            <div class="evolution-card">
+                <div class="evolution-head">
+                    <div>
+                        <div class="evolution-week">Semaine {{ row.week }}</div>
+                        <div class="evolution-date">{{ row.date|date('d/m/Y') }}</div>
+                    </div>
+
+                    <div class="evolution-percent">
+                        {{ row.percentage }}%
+                    </div>
+                </div>
+
+                <div class="evolution-meta">
+                    <div class="evo-box">
+                        <div class="evo-label">Catégorie</div>
+                        <div class="evo-value">{{ row.category }}</div>
+                    </div>
+
+                    <div class="evo-box">
+                        <div class="evo-label">Niveau</div>
+                        <div class="evo-value">{{ row.level }}</div>
+                    </div>
+                </div>
+
+                {% if row.trend == 'amélioration' %}
+                    <span class="trend-badge trend-good">
+                        <i class="fas fa-arrow-up"></i>
+                        Amélioration (+{{ row.difference }})
+                    </span>
+                {% elseif row.trend == 'aggravation' %}
+                    <span class="trend-badge trend-bad">
+                        <i class="fas fa-arrow-down"></i>
+                        Aggravation ({{ row.difference }})
+                    </span>
+                {% else %}
+                    <span class="trend-badge trend-stable">
+                        <i class="fas fa-minus"></i>
+                        Stable
+                    </span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="evolution-empty">
+        <i class="fas fa-chart-line"></i>
+        <h3>Aucune donnée d’évolution</h3>
+        <p class="mb-0">Passez plusieurs tests pour voir apparaître votre progression.</p>
+    </div>
+{% endif %}
+{% endblock %}

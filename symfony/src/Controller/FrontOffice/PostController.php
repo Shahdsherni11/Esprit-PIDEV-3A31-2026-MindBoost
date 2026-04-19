@@ -10,6 +10,7 @@ use App\Repository\AchievementRepository;
 use App\Repository\PostRepository;
 use App\Service\AIService;
 use App\Service\ProfanityService;
+use App\Service\UserSessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,9 +24,10 @@ class PostController extends AbstractController
     public function __construct(
         private EntityManagerInterface $em,
         private PostRepository $postRepository,
+        private AchievementRepository $achievementRepository,
         private AIService $aiService,
         private ProfanityService $profanityService,
-        private AchievementRepository $achievementRepository
+        private UserSessionService $userSessionService
     ) {}
 
     #[Route('', name: 'front_post_index', methods: ['GET'])]
@@ -44,6 +46,7 @@ class PostController extends AbstractController
 
         $totalPosts = $this->postRepository->count([]);
         $mostLiked = $this->postRepository->findMostLiked();
+        $achievements = $this->achievementRepository->findBy([], ['achievementScore' => 'DESC']);
 
         return $this->render('front/post/index.html.twig', [
             'posts' => $posts,
@@ -51,11 +54,12 @@ class PostController extends AbstractController
             'mostLiked' => $mostLiked,
             'search' => $search,
             'tag' => $tag,
+            'achievements' => $achievements,
         ]);
     }
 
     #[Route('/{id}', name: 'front_post_show', methods: ['GET'], requirements: ['id' => '\d+'])]
-    public function show(int $id): Response
+    public function show(Request $request, int $id): Response
     {
         $post = $this->postRepository->find($id);
         if (!$post) {
@@ -76,13 +80,16 @@ class PostController extends AbstractController
             $commentsProfane[$comment->getId()] = $this->profanityService->isProfane($comment->getComment());
         }
 
+        $currentUserId = $this->userSessionService->getCurrentUserId($request);
+        $canManagePost = $post->getUserId() === $currentUserId || $this->userSessionService->isAdmin($request);
+
         return $this->render('front/post/show.html.twig', [
             'post' => $post,
             'comments' => $comments,
             'commentForm' => $commentForm->createView(),
             'postProfane' => $postProfane,
             'commentsProfane' => $commentsProfane,
-            'achievements' => $this->achievementRepository->findBy([], ['achievementScore' => 'ASC']),
+            'canManagePost' => $canManagePost,
         ]);
     }
 
@@ -139,11 +146,13 @@ class PostController extends AbstractController
     public function new(Request $request): Response
     {
         $post = new Post();
-        $post->setUserId(1);
+        $post->setUserId($this->userSessionService->getCurrentUserId($request));
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $post->setContent($this->profanityService->censor($post->getContent()));
+            $post->setTitle($this->profanityService->censor($post->getTitle()));
             $this->em->persist($post);
             $this->em->flush();
             $this->addFlash('success', 'Post created successfully!');
@@ -163,10 +172,20 @@ class PostController extends AbstractController
             throw $this->createNotFoundException('Post not found.');
         }
 
+        $currentUserId = $this->userSessionService->getCurrentUserId($request);
+        $isAdmin = $this->userSessionService->isAdmin($request);
+
+        if ($post->getUserId() !== $currentUserId && !$isAdmin) {
+            $this->addFlash('error', 'You can only edit your own posts.');
+            return $this->redirectToRoute('front_post_show', ['id' => $id]);
+        }
+
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $post->setContent($this->profanityService->censor($post->getContent()));
+            $post->setTitle($this->profanityService->censor($post->getTitle()));
             $this->em->flush();
             $this->addFlash('success', 'Post updated successfully!');
             return $this->redirectToRoute('front_post_show', ['id' => $post->getId()]);
@@ -184,6 +203,14 @@ class PostController extends AbstractController
         $post = $this->postRepository->find($id);
         if (!$post) {
             throw $this->createNotFoundException('Post not found.');
+        }
+
+        $currentUserId = $this->userSessionService->getCurrentUserId($request);
+        $isAdmin = $this->userSessionService->isAdmin($request);
+
+        if ($post->getUserId() !== $currentUserId && !$isAdmin) {
+            $this->addFlash('error', 'You can only delete your own posts.');
+            return $this->redirectToRoute('front_post_show', ['id' => $id]);
         }
 
         if ($this->isCsrfTokenValid('delete' . $id, $request->request->get('_token'))) {
