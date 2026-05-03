@@ -231,6 +231,7 @@
     "symfony/scheduler": {
         "version": "7.4",
         "recipe": {
+<<<<<<< HEAD
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "7.2",
@@ -239,6 +240,10 @@
         "files": [
             "./src/Schedule.php"
         ]
+=======
+            "version": "7.2"
+        }
+>>>>>>> d2b3d15336a67a0344925a2e9fa229736e40350a
     },
     "symfony/security-bundle": {
         "version": "7.4",
