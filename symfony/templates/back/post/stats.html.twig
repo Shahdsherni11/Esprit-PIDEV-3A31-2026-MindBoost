@@ -317,9 +317,10 @@ new Chart(document.getElementById('chartCommentSentiment'), {
 
 {% if commentEngagement|length > 0 %}
 // ── Chart 4: Per-Comment Engagement (Line) ──
-const ceLabels  = [{% for c in commentEngagement %}'{{ c.label }}'{% if not loop.last %},{% endif %}{% endfor %}];
-const ceLikes    = [{% for c in commentEngagement %}{{ c.likes }}{% if not loop.last %},{% endif %}{% endfor %}];
-const ceDislikes = [{% for c in commentEngagement %}{{ c.dislikes }}{% if not loop.last %},{% endif %}{% endfor %}];
+const commentEngagementData = {{ commentEngagement|default([])|json_encode|raw }};
+const ceLabels  = commentEngagementData.map(item => item.label);
+const ceLikes    = commentEngagementData.map(item => item.likes);
+const ceDislikes = commentEngagementData.map(item => item.dislikes);
 
 new Chart(document.getElementById('chartCommentLine'), {
     type: 'line',
@@ -362,8 +363,9 @@ new Chart(document.getElementById('chartCommentLine'), {
 
 {% if commentsPerUser|length > 0 %}
 // ── Chart 5: Top Commenters Bar ──
-const topUsers  = [{% for uid, cnt in commentsPerUser %}'User {{ uid }}'{% if not loop.last %},{% endif %}{% endfor %}];
-const topCounts = [{% for uid, cnt in commentsPerUser %}{{ cnt }}{% if not loop.last %},{% endif %}{% endfor %}];
+const commentsPerUserData = {{ commentsPerUser|default({})|json_encode|raw }};
+const topUsers  = Object.keys(commentsPerUserData).map(uid => `User ${uid}`);
+const topCounts = Object.values(commentsPerUserData);
 
 new Chart(document.getElementById('chartTopCommenters'), {
     type: 'bar',
