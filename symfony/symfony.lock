@@ -44,6 +44,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v6.10.0"
+    },
     "phpunit/phpunit": {
         "version": "11.5",
         "recipe": {
@@ -225,6 +228,12 @@
             "./config/routes.yaml"
         ]
     },
+    "symfony/scheduler": {
+        "version": "7.4",
+        "recipe": {
+            "version": "7.2"
+        }
+    },
     "symfony/security-bundle": {
         "version": "7.4",
         "recipe": {
@@ -278,6 +287,9 @@
             "./config/packages/twig.yaml",
             "./templates/base.html.twig"
         ]
+    },
+    "symfony/ux-chartjs": {
+        "version": "v3.0.0"
     },
     "symfony/ux-turbo": {
         "version": "2.34",
