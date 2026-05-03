@@ -317,7 +317,7 @@ new Chart(document.getElementById('chartCommentSentiment'), {
 
 {% if commentEngagement|length > 0 %}
 // ── Chart 4: Per-Comment Engagement (Line) ──
-const commentEngagementData = {{ commentEngagement|default([])|json_encode|raw }};
+const commentEngagementData = JSON.parse('{{ commentEngagement|default([])|json_encode|e('js') }}');
 const ceLabels  = commentEngagementData.map(item => item.label);
 const ceLikes    = commentEngagementData.map(item => item.likes);
 const ceDislikes = commentEngagementData.map(item => item.dislikes);
@@ -363,7 +363,7 @@ new Chart(document.getElementById('chartCommentLine'), {
 
 {% if commentsPerUser|length > 0 %}
 // ── Chart 5: Top Commenters Bar ──
-const commentsPerUserData = {{ commentsPerUser|default({})|json_encode|raw }};
+const commentsPerUserData = JSON.parse('{{ commentsPerUser|default({})|json_encode|e('js') }}');
 const topUsers  = Object.keys(commentsPerUserData).map(uid => `User ${uid}`);
 const topCounts = Object.values(commentsPerUserData);
 
