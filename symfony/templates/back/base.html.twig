@@ -1,154 +1,655 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MindBoost Admin{% endblock %}</title>
 
-{% block title %}Statistiques Admin{% endblock %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-{% block content %}
-<style>
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
+    {% block stylesheets %}{% endblock %}
 
-    .kpi-card {
-        background: linear-gradient(180deg, rgba(17,32,61,0.98), rgba(21,40,76,0.98));
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 24px;
-        padding: 1.2rem;
-        box-shadow: 0 16px 36px rgba(0,0,0,0.20);
-    }
-
-    .kpi-value {
-        font-size: 2rem;
-        font-weight: 900;
-        color: white;
-    }
-
-    .kpi-label {
-        margin-top: 0.35rem;
-        color: #aab6d3;
-        font-weight: 600;
-    }
-
-    .chart-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.2rem;
-    }
-
-    .chart-card {
-        background: white;
-        border: 1px solid #dbe7ff;
-        border-radius: 24px;
-        padding: 1.2rem;
-        box-shadow: 0 14px 30px rgba(8,26,58,0.08);
-    }
-
-    .chart-title {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #17253a;
-        margin-bottom: 1rem;
-    }
-
-    .actions-wrap {
-        margin: 1rem 0 1.4rem 0;
-    }
-
-    @media (max-width: 1100px) {
-        .stats-grid, .chart-grid {
-            grid-template-columns: 1fr 1fr;
+    <style>
+        :root {
+            --bg-main: #081120;
+            --bg-sidebar: #0B1730;
+            --primary: #2F6BFF;
+            --primary-light: #4D83FF;
+            --secondary: #19B5FE;
+            --accent: #00D1C7;
+            --danger: #FF5A74;
+            --warning: #F7B84B;
+            --success: #29CC7A;
+            --text-main: #F4F7FC;
+            --text-soft: #AAB6D3;
+            --text-fade: #7E8DB1;
+            --shadow: 0 18px 40px rgba(0,0,0,0.30);
         }
-    }
 
-    @media (max-width: 768px) {
-        .stats-grid, .chart-grid {
-            grid-template-columns: 1fr;
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(47,107,255,0.16), transparent 18%),
+                radial-gradient(circle at bottom left, rgba(25,181,254,0.10), transparent 20%),
+                linear-gradient(135deg, #07101D 0%, #091425 50%, #0C1A2E 100%);
+            color: var(--text-main);
+            min-height: 100vh;
         }
-    }
-</style>
 
-<div class="page-heading">
-    <h1><i class="fas fa-chart-pie me-2"></i>Statistiques Admin</h1>
-    <p>Nombre de personnes stressées, niveaux détectés, tranches de score et évolution hebdomadaire.</p>
+        .app-layout { display: flex; min-height: 100vh; }
+
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: linear-gradient(180deg, #091326 0%, #0B1730 100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 12px 0 30px rgba(0,0,0,0.18);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0 0.6rem;
+            margin-bottom: 2rem;
+        }
+
+        .brand-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.35rem;
+            box-shadow: 0 14px 30px rgba(47,107,255,0.35);
+            flex-shrink: 0;
+        }
+
+        .brand-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .brand-subtitle {
+            font-size: 0.84rem;
+            color: var(--text-fade);
+        }
+
+        .sidebar-label {
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+            color: var(--text-fade);
+            margin: 1rem 0.8rem 0.5rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            text-decoration: none;
+            color: var(--text-soft);
+            padding: 0.85rem 1rem;
+            border-radius: 18px;
+            margin-bottom: 0.35rem;
+            transition: all 0.25s ease;
+            font-weight: 600;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(47,107,255,0.12);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(47,107,255,0.22), rgba(25,181,254,0.10));
+            color: white;
+            border: 1px solid rgba(77,131,255,0.20);
+        }
+
+        .sidebar-link i { width: 20px; text-align: center; flex-shrink: 0; }
+
+        .sidebar-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin: 0.75rem 0;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-user {
+            font-size: 0.82rem;
+            color: var(--text-fade);
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            padding: 1.2rem 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(9,20,37,0.55);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .topbar h2 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .topbar p {
+            margin: 0.2rem 0 0;
+            color: var(--text-fade);
+            font-size: 0.88rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .topbar-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.07);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.88rem;
+        }
+
+        .topbar-date {
+            color: var(--text-fade);
+            font-size: 0.85rem;
+        }
+
+        .page { padding: 2rem; }
+
+        .page-shell {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 30px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .page-heading { margin-bottom: 1.5rem; }
+
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            color: white;
+        }
+
+        .page-heading p {
+            margin: 0.45rem 0 0;
+            color: var(--text-soft);
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(17,32,61,0.98) 0%, rgba(14,27,52,0.98) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 26px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, rgba(47,107,255,0.16), rgba(25,181,254,0.10));
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: white;
+            padding: 1rem 1.25rem;
+            font-weight: 800;
+        }
+
+        .card-body {
+            color: var(--text-main);
+            padding: 1.25rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg, rgba(17,32,61,0.96) 0%, rgba(21,40,76,0.96) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 1.25rem;
+            height: 100%;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .stat-label {
+            color: var(--text-soft);
+            margin-top: 0.3rem;
+        }
+
+        .quick-card {
+            display: block;
+            background: linear-gradient(180deg, rgba(17,32,61,0.98) 0%, rgba(14,27,52,0.98) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.22s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .quick-card:hover {
+            background: linear-gradient(180deg, rgba(47,107,255,0.18) 0%, rgba(25,181,254,0.10) 100%);
+            border-color: rgba(77,131,255,0.30);
+            transform: translateY(-3px);
+            color: white;
+        }
+
+        .quick-card h5 { color: white; font-weight: 700; margin: 0.75rem 0 0.4rem; }
+        .quick-card p  { color: var(--text-soft); font-size: 0.88rem; margin: 0; }
+
+        h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
+        .text-muted { color: var(--text-soft) !important; }
+        a { color: var(--primary-light); }
+        a:hover { color: var(--secondary); }
+
+        .form-label {
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.55rem;
+        }
+
+        .form-control,
+        .form-select,
+        textarea.form-control {
+            background: #0F1D37;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            border-radius: 16px;
+            padding: 0.9rem 1rem;
+        }
+
+        .form-control::placeholder,
+        textarea.form-control::placeholder {
+            color: #7F90B6;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background: #122242;
+            color: white;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 0.2rem rgba(47,107,255,0.16);
+        }
+
+        .form-select option { color: #111827; }
+
+        .btn {
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            padding: 0.8rem 1.15rem;
+            transition: all 0.22s ease;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00B8D9, var(--accent));
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #FFC857, var(--warning));
+            color: #142033;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #FF6B8A, var(--danger));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #27C2FF, #19B5FE);
+            color: white;
+        }
+
+        .btn-outline-primary   { border: 1px solid var(--primary) !important; color: var(--primary-light) !important; background: transparent !important; }
+        .btn-outline-primary:hover   { background: rgba(47,107,255,0.18) !important; color: white !important; }
+        .btn-outline-secondary { border: 1px solid rgba(255,255,255,0.18) !important; color: var(--text-soft) !important; background: transparent !important; }
+        .btn-outline-secondary:hover { background: rgba(255,255,255,0.08) !important; color: white !important; }
+        .btn-outline-danger    { border: 1px solid var(--danger) !important; color: var(--danger) !important; background: transparent !important; }
+        .btn-outline-danger:hover    { background: rgba(255,90,116,0.15) !important; color: white !important; }
+        .btn-outline-warning   { border: 1px solid var(--warning) !important; color: var(--warning) !important; background: transparent !important; }
+        .btn-outline-warning:hover   { background: rgba(247,184,75,0.15) !important; color: white !important; }
+        .btn-close { filter: invert(1) grayscale(1); }
+
+        .table {
+            color: var(--text-main);
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: rgba(47,107,255,0.12);
+        }
+
+        .table th {
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .table td {
+            border-color: rgba(255,255,255,0.05);
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.55rem 0.8rem;
+            border-radius: 999px;
+        }
+
+        .alert {
+            border-radius: 18px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background: rgba(41,204,122,0.12);
+            color: #D6FFE8;
+            border-color: rgba(41,204,122,0.18);
+        }
+
+        .alert-danger {
+            background: rgba(255,90,116,0.12);
+            color: #FFD8E0;
+            border-color: rgba(255,90,116,0.18);
+        }
+
+        .alert-warning {
+            background: rgba(247,184,75,0.12);
+            color: #FFE8B8;
+            border-color: rgba(247,184,75,0.18);
+        }
+
+        .alert-info {
+            background: rgba(25,181,254,0.12);
+            color: #C8EEFF;
+            border-color: rgba(25,181,254,0.18);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                min-width: 80px;
+                padding: 1.5rem 0.5rem;
+            }
+
+            .brand-text,
+            .sidebar-label,
+            .sidebar-link span,
+            .sidebar-user,
+            .sidebar-footer .sidebar-link span {
+                display: none;
+            }
+
+            .brand { justify-content: center; }
+            .sidebar-link { justify-content: center; padding: 0.85rem; }
+        }
+
+        @media (max-width: 768px) {
+            .app-layout { flex-direction: column; }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .brand-text,
+            .sidebar-label,
+            .sidebar-link span {
+                display: block;
+            }
+
+            .sidebar-link { justify-content: flex-start; }
+            .page, .topbar { padding-left: 1rem; padding-right: 1rem; }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="brand-text">
+                <div class="brand-title">MindBoost</div>
+                <div class="brand-subtitle">Back Office</div>
+            </div>
+        </div>
+
+        <div class="sidebar-label">Vue d'ensemble</div>
+        <a href="{{ path('back_dashboard') }}" class="sidebar-link {% if app.request.attributes.get('_route') == 'back_dashboard' %}active{% endif %}">
+            <i class="fas fa-house"></i>
+            <span>Dashboard Forum</span>
+        </a>
+        <a href="{{ path('dashboard') }}" class="sidebar-link {% if app.request.attributes.get('_route') == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-chart-line"></i>
+            <span>Dashboard Tests</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Forum</div>
+        <a href="{{ path('back_post_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_post_' %}active{% endif %}">
+            <i class="fas fa-file-lines"></i>
+            <span>Posts</span>
+        </a>
+        <a href="{{ path('back_achievement_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_achievement_' %}active{% endif %}">
+            <i class="fas fa-trophy"></i>
+            <span>Achievements</span>
+        </a>
+        <a href="{{ path('back_saves_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_saves_' %}active{% endif %}">
+            <i class="fas fa-bookmark"></i>
+            <span>Saves</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Tâches</div>
+        <a href="{{ path('back_tache_focus_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_tache_focus' %}active{% endif %}">
+            <i class="fas fa-square-check"></i>
+            <span>Tâches Focus</span>
+        </a>
+        <a href="{{ path('back_sous_tache_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'back_sous_tache' %}active{% endif %}">
+            <i class="fas fa-list-check"></i>
+            <span>Sous-Tâches</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Tests Psy</div>
+        <a href="{{ path('general_test_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'general_test' %}active{% endif %}">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Tests Généraux</span>
+        </a>
+        <a href="{{ path('specific_test_index') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'specific_test' %}active{% endif %}">
+            <i class="fas fa-clipboard-check"></i>
+            <span>Tests Spécifiques</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Insights & Stats</div>
+        <a href="{{ path('admin_results_history') }}" class="sidebar-link {% if app.request.attributes.get('_route') == 'admin_results_history' %}active{% endif %}">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>Historique résultats</span>
+        </a>
+        <a href="{{ path('admin_analytics_dashboard') }}" class="sidebar-link {% if app.request.attributes.get('_route') == 'admin_analytics_dashboard' %}active{% endif %}">
+            <i class="fas fa-chart-pie"></i>
+            <span>Analytique</span>
+        </a>
+        <a href="{{ path('admin_statistics_dashboard') }}" class="sidebar-link {% if app.request.attributes.get('_route') == 'admin_statistics_dashboard' %}active{% endif %}">
+            <i class="fas fa-chart-bar"></i>
+            <span>Statistiques & Mailing</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Intelligence IA</div>
+        <a href="{{ path('admin_ai_tests') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'admin_ai_' %}active{% endif %}">
+            <i class="fas fa-robot"></i>
+            <span>Gérer par IA</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-label">Utilisateurs</div>
+        <a href="{{ path('app_admin_user_list') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_admin_user' %}active{% endif %}">
+            <i class="fas fa-users"></i>
+            <span>Utilisateurs</span>
+        </a>
+        <a href="{{ path('app_admin_profile_list') }}" class="sidebar-link {% if app.request.attributes.get('_route') starts with 'app_admin_profile' %}active{% endif %}">
+            <i class="fas fa-id-badge"></i>
+            <span>Profils</span>
+        </a>
+
+        <hr class="sidebar-divider">
+        <div class="sidebar-footer">
+            {% if app.user %}
+                <div class="sidebar-user">
+                    <i class="fas fa-circle-user me-1"></i>{{ app.user.displayName }}
+                    <span class="badge bg-secondary ms-1" style="font-size:0.7rem;padding:0.3rem 0.5rem;border-radius:8px;">{{ app.user.role }}</span>
+                </div>
+                <a href="{{ path('app_logout') }}" class="sidebar-link" style="color: var(--danger);">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Déconnexion</span>
+                </a>
+            {% endif %}
+            <a href="{{ path('app_dashboard') }}" class="sidebar-link">
+                <i class="fas fa-right-to-bracket"></i>
+                <span>Espace Étudiant</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div>
+                <h2>{% block page_title %}MindBoost Admin Panel{% endblock %}</h2>
+                <p>{% block page_subtitle %}Gestion du contenu MindBoost{% endblock %}</p>
+            </div>
+            <div class="topbar-right">
+                <span class="topbar-date"><i class="fas fa-calendar me-1"></i>{{ "now"|date("d M Y") }}</span>
+                {% if app.user %}
+                    <div class="topbar-chip">
+                        <i class="fas fa-shield-heart me-2"></i>{{ app.user.displayName }}
+                    </div>
+                {% else %}
+                    <div class="topbar-chip">
+                        <i class="fas fa-shield-heart me-2"></i>Admin
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="page">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-circle-check me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-circle-xmark me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('warning') %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-triangle-exclamation me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('info') %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-circle-info me-2"></i>{{ message }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            <div class="page-shell">
+                {% block body %}{% block content %}{% endblock %}{% endblock %}
+            </div>
+        </div>
+    </main>
 </div>
 
-{% for message in app.flashes('success') %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-circle-check me-2"></i>{{ message }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-    </div>
-{% endfor %}
-{% for message in app.flashes('error') %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-circle-xmark me-2"></i>{{ message }}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-    </div>
-{% endfor %}
-
-<div class="actions-wrap">
-    <form method="POST" action="{{ path('admin_statistics_send_reminder') }}">
-        <button type="submit" class="btn btn-warning">
-            <i class="fas fa-envelope me-2"></i>Envoyer rappel test aux utilisateurs
-        </button>
-    </form>
-</div>
-
-<div class="stats-grid">
-    <div class="kpi-card">
-        <div class="kpi-value">{{ stats.kpis.total_general_results }}</div>
-        <div class="kpi-label">Tests généraux passés</div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-value">{{ stats.kpis.total_specific_results }}</div>
-        <div class="kpi-label">Tests spécifiques passés</div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-value">{{ stats.kpis.total_students_tested }}</div>
-        <div class="kpi-label">Étudiants testés</div>
-    </div>
-    <div class="kpi-card">
-        <div class="kpi-value">{{ stats.kpis.average_general_score }}%</div>
-        <div class="kpi-label">Moyenne générale</div>
-    </div>
-</div>
-
-<div class="chart-grid">
-    <div class="chart-card">
-        <div class="chart-title">Répartition par catégorie</div>
-        {{ render_chart(categoryChart) }}
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-title">Répartition par niveau</div>
-        {{ render_chart(levelChart) }}
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-title">Tranches de score</div>
-        {{ render_chart(scoreRangeChart) }}
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-title">Tests passés par semaine</div>
-        {{ render_chart(weeklyChart) }}
-    </div>
-</div>
-
-<div class="chart-grid mt-4">
-    <div class="chart-card">
-        <div class="chart-title">Tests généraux les plus utilisés</div>
-        {{ render_chart(generalUsageChart) }}
-    </div>
-
-    <div class="chart-card">
-        <div class="chart-title">Tests spécifiques les plus utilisés</div>
-        {{ render_chart(specificUsageChart) }}
-    </div>
-</div>
-{% endblock %}
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block javascripts %}
-    {{ parent() }}
+    {{ importmap('app') }}
 {% endblock %}
+</body>
+</html>
