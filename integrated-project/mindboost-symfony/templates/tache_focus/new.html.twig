@@ -1,0 +1,17 @@
+{% extends 'front/base.html.twig' %}
+{% block title %}Nouvelle Tâche Focus{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-heading" style="margin-bottom:0;">
+        <h1>➕ Nouvelle Tâche Focus</h1>
+        <p>Créez une nouvelle tâche de productivité</p>
+    </div>
+    <a href="{{ path('app_tache_focus_index') }}" class="btn btn-secondary">← Retour</a>
+</div>
+<div class="card" style="max-width:600px;">
+    <div class="card-header"><h5 class="mb-0">📝 Formulaire</h5></div>
+    <div class="card-body p-4">
+        {{ include('tache_focus/_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

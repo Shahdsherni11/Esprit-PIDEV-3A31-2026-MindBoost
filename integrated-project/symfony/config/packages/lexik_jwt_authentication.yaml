@@ -1,0 +1,23 @@
+lexik_jwt_authentication:
+    secret_key: '%env(resolve:JWT_SECRET)%' # On production, change to real secret
+    public_key: '%env(resolve:JWT_PUBLIC)%' # Not needed if asymmetric
+    pass_phrase: '%env(JWT_PASSPHRASE)%'
+    token_ttl: 3600
+
+    # Token is valid 1 hour max, refresh token 1 month
+    user_identity_field: email
+    user_id_claim: email
+
+    # Encoding options
+    encoder:
+        algorithm: RS256
+        secret_key: '%env(resolve:JWT_SECRET)%'
+        public_key: '%env( resolve:JWT_PUBLIC)%'
+        token_ttl: 3600
+
+    # Providers (optional)
+    token_extractors:
+        authorization_header:
+            enabled: true
+            prefix: 'Bearer'
+            name: Authorization

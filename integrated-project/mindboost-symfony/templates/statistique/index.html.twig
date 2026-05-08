@@ -1,0 +1,117 @@
+{% extends 'front/base.html.twig' %}
+{% block title %}Statistiques{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-heading" style="margin-bottom:0;">
+        <h1>📊 Statistiques de Productivité</h1>
+        <p>Vue globale de votre progression</p>
+    </div>
+    <a href="{{ path('app_statistiques_pdf') }}" class="btn btn-danger">
+        📄 Exporter en PDF
+    </a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card text-center p-4">
+            <div style="font-size:36px;">🎯</div>
+            <div class="stat-number">{{ totalTaches }}</div>
+            <div class="stat-label">Total Tâches</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center p-4">
+            <div style="font-size:36px;">✓</div>
+            <div class="stat-number">{{ totalSousTaches }}</div>
+            <div class="stat-label">Total Sous-Tâches</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center p-4">
+            <div style="font-size:36px;">✅</div>
+            <div class="stat-number" style="color:#16a34a;">{{ tachesTerminees }}</div>
+            <div class="stat-label">Tâches Terminées</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card text-center p-4">
+            <div style="font-size:36px;">🚀</div>
+            <div class="stat-number" style="color:#e879a0;">{{ scoreMoyen }}%</div>
+            <div class="stat-label">Score Moyen</div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header"><h5 class="mb-0">📈 Progression Globale</h5></div>
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between mb-2">
+            <span style="color:var(--text-soft);">Tâches terminées</span>
+            <span style="font-weight:bold;">{{ progression }}%</span>
+        </div>
+        <div style="background:rgba(37,99,235,0.10);border-radius:10px;height:12px;">
+            <div style="background:linear-gradient(to right,#2563eb,#06b6d4);width:{{ progression }}%;height:12px;border-radius:10px;"></div>
+        </div>
+        <small style="color:var(--text-soft);">{{ tachesTerminees }} sur {{ totalTaches }} tâches terminées</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">🎯 Tâches par Statut</h5></div>
+            <div class="card-body p-4">
+                {% for statut, count in parStatut %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ statut }}</span>
+                        <span style="color:#2563eb;font-weight:bold;">{{ count }}</span>
+                    </div>
+                    <div style="background:rgba(37,99,235,0.10);border-radius:6px;height:8px;">
+                        <div style="background:#2563eb;width:{{ (count/totalTaches*100)|round }}%;height:8px;border-radius:6px;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">✅ Sous-Tâches par État</h5></div>
+            <div class="card-body p-4">
+                {% for etat, count in parEtat %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ etat }}</span>
+                        <span style="color:#06b6d4;font-weight:bold;">{{ count }}</span>
+                    </div>
+                    <div style="background:rgba(6,182,212,0.10);border-radius:6px;height:8px;">
+                        <div style="background:#06b6d4;width:{{ (count/totalSousTaches*100)|round }}%;height:8px;border-radius:6px;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header"><h5 class="mb-0">⚡ Tâches par Difficulté</h5></div>
+            <div class="card-body p-4">
+                {% for diff, count in parDifficulte %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>{{ diff }}</span>
+                        <span style="color:#e879a0;font-weight:bold;">{{ count }}</span>
+                    </div>
+                    <div style="background:rgba(232,121,160,0.10);border-radius:6px;height:8px;">
+                        <div style="background:#e879a0;width:{{ (count/totalTaches*100)|round }}%;height:8px;border-radius:6px;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

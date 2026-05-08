@@ -1,0 +1,29 @@
+{% extends 'back/base.html.twig' %}
+{% block title %}Modifier Profil — Admin{% endblock %}
+{% block page_title %}Modifier le Profil{% endblock %}
+
+{% block body %}
+<div class="mb-4">
+    <a href="{{ path('app_admin_profile_list') }}" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+    </a>
+</div>
+
+<div class="card p-4" style="max-width:600px;">
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+    {% for field in ['firstName', 'lastName', 'phone', 'personalityType', 'avatarUrl', 'bio'] %}
+        {% if attribute(form, field) is defined %}
+        <div class="mb-3">
+            {{ form_label(attribute(form, field), null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(attribute(form, field)) }}
+            <div class="text-danger small">{{ form_errors(attribute(form, field)) }}</div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Enregistrer</button>
+        <a href="{{ path('app_admin_profile_list') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

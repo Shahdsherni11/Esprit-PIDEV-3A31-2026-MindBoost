@@ -1,0 +1,155 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Dashboard — Admin MindBoost{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block body %}
+{# Stats row #}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#0d6efd;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-primary"><i class="bi bi-file-post"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalPosts }}</div>
+                    <div class="text-muted small">Total Posts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#198754;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-success"><i class="bi bi-chat-dots"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalComments }}</div>
+                    <div class="text-muted small">Total Comments</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#ffc107;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-warning"><i class="bi bi-trophy"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalAchievements }}</div>
+                    <div class="text-muted small">Achievements</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card stat-card p-3" style="border-left-color:#0dcaf0;">
+            <div class="d-flex align-items-center gap-3">
+                <div class="fs-2 text-info"><i class="bi bi-bookmark"></i></div>
+                <div>
+                    <div class="fs-3 fw-bold">{{ totalSaves }}</div>
+                    <div class="text-muted small">Saved Posts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Quick links #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <a href="{{ path('back_post_new') }}" class="btn btn-primary w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Post
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('back_achievement_new') }}" class="btn btn-warning w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Achievement
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('back_saves_new') }}" class="btn btn-info text-white w-100">
+            <i class="bi bi-plus-lg me-1"></i>New Save
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ path('front_home') }}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-eye me-1"></i>View Site
+        </a>
+    </div>
+</div>
+
+{# Recent posts #}
+<div class="card">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-muted"></i>Recent Posts</h6>
+        {% if recentPosts is empty %}
+        <p class="text-muted">No posts yet.</p>
+        {% else %}
+        <div class="row g-3">
+            {% for post in recentPosts %}
+            <div class="col-md-6 col-xl-4">
+                <div class="card" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <a href="{{ path('front_post_show', {id: post.id}) }}" class="fw-bold text-decoration-none" style="color:#9A8CFF;" target="_blank">
+                                {{ post.title|slice(0, 50) }}{% if post.title|length > 50 %}…{% endif %}
+                            </a>
+                            {% if post.tag %}<span class="badge bg-secondary ms-1">{{ post.tag }}</span>{% endif %}
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="badge bg-success"><i class="bi bi-hand-thumbs-up me-1"></i>{{ post.likes }}</span>
+                            <a href="{{ path('back_post_edit', {id: post.id}) }}" class="btn btn-outline-secondary btn-sm ms-auto"><i class="bi bi-pencil"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-2">
+            <a href="{{ path('back_post_index') }}" class="btn btn-sm btn-outline-primary">View all posts →</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Quick Access to All Gestions #}
+<div class="row g-3 mt-2">
+    <div class="col-12">
+        <h6 class="fw-bold text-muted"><i class="bi bi-grid me-2"></i>Accès Rapide — Toutes les Gestions</h6>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('back_post_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #6C63FF;">
+                <i class="bi bi-file-post fs-3 mb-1" style="color:#6C63FF;"></i>
+                <div class="fw-semibold">Posts Forum</div>
+                <small class="text-muted">Gérer les posts</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_tache_focus_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #2ECC71;">
+                <i class="bi bi-check2-square fs-3 mb-1" style="color:#2ECC71;"></i>
+                <div class="fw-semibold">Tâches Focus</div>
+                <small class="text-muted">Gérer les tâches</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('general_test_index') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #4ECDC4;">
+                <i class="bi bi-clipboard2-pulse fs-3 mb-1" style="color:#4ECDC4;"></i>
+                <div class="fw-semibold">Tests Psy</div>
+                <small class="text-muted">Gérer les tests</small>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <a href="{{ path('app_admin_user_list') }}" class="text-decoration-none">
+            <div class="card p-3 text-center h-100" style="border-left: 3px solid #F39C12;">
+                <i class="bi bi-people fs-3 mb-1" style="color:#F39C12;"></i>
+                <div class="fw-semibold">Utilisateurs</div>
+                <small class="text-muted">Gérer les comptes</small>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
