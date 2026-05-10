@@ -1,0 +1,155 @@
+{% extends 'back/base.html.twig' %}
+
+{% block title %}Tests Spécifiques — Admin MindBoost{% endblock %}
+{% block page_title %}Tests Spécifiques{% endblock %}
+
+{% block extra_css %}
+<style>
+    .spec-test-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .spec-test-list-item:last-child { border-bottom: none; }
+    .spec-test-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .spec-test-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #29CC7A, #00D1C7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .spec-test-title {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+    }
+
+    .spec-test-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .category-pill {
+        display: inline-block;
+        padding: .2rem .6rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        font-weight: 700;
+        background: rgba(25,181,254,0.18);
+        color: #19B5FE;
+        border: 1px solid rgba(25,181,254,0.25);
+    }
+
+    .date-pill {
+        font-size: .75rem;
+        color: #7E8DB1;
+    }
+
+    .desc-text {
+        font-size: .78rem;
+        color: #7E8DB1;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 300px;
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ specificCount }} test(s) au total</span>
+    <a href="{{ path('specific_test_create') }}" class="btn btn-success btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Nouveau Test
+    </a>
+</div>
+
+<div class="card mb-4 p-3">
+    <form method="GET" class="d-flex gap-2 flex-wrap align-items-end">
+        <input type="text" name="search" class="form-control form-control-sm"
+               placeholder="Rechercher par titre..." value="{{ search ?? '' }}" style="width:220px;">
+        <select name="category" class="form-select form-select-sm" style="width:200px;">
+            <option value="">Toutes les catégories</option>
+            <option value="Anxiete"          {% if category == 'Anxiete'          %}selected{% endif %}>Anxiété</option>
+            <option value="Stress"           {% if category == 'Stress'           %}selected{% endif %}>Stress</option>
+            <option value="Depression"       {% if category == 'Depression'       %}selected{% endif %}>Dépression</option>
+            <option value="Trouble du Sommeil" {% if category == 'Trouble du Sommeil' %}selected{% endif %}>Trouble du Sommeil</option>
+        </select>
+        <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-search me-1"></i>Rechercher</button>
+    </form>
+</div>
+
+{% if specificTests|length == 0 %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-inbox display-4"></i>
+    <p class="mt-2">Aucun test spécifique trouvé.</p>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body p-0">
+        {% for test in specificTests %}
+            <div class="spec-test-list-item">
+                <div class="spec-test-icon">
+                    <i class="bi bi-layers-fill"></i>
+                </div>
+
+                <div class="flex-grow-1 min-width-0">
+                    <div class="spec-test-title">{{ test.title }}</div>
+                    <div class="spec-test-meta">
+                        {% if test.category %}
+                            <span class="category-pill">{{ test.category }}</span>
+                        {% endif %}
+                        <span class="date-pill"><i class="bi bi-calendar3 me-1"></i>{{ test.createdAt|date('d/m/Y') }}</span>
+                        {% if test.description %}
+                            <span class="desc-text">{{ test.description|slice(0, 60) }}{% if test.description|length > 60 %}…{% endif %}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('specific_test_show', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-info"
+                       style="font-size:.75rem;padding:3px 9px;" title="Voir">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ path('specific_test_edit', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ path('specific_test_delete', {id: test.id}) }}"
+                       class="btn btn-xs btn-outline-danger"
+                       style="font-size:.75rem;padding:3px 9px;" title="Supprimer"
+                       onclick="return confirm('Supprimer ce test ?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-4 d-flex justify-content-center">
+    {{ knp_pagination_render(specificTests) }}
+</div>
+{% endif %}
+
+{% endblock %}

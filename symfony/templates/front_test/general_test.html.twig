@@ -1,0 +1,274 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Test Général - MindBoost{% endblock %}
+
+{% block content %}
+<style>
+    .test-hero {
+        background: linear-gradient(135deg, rgba(37,99,235,0.10), rgba(20,184,166,0.08));
+        border: 1px solid #d7e5ff;
+        border-radius: 28px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .test-hero h1 {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #17253a;
+    }
+
+    .test-hero p {
+        margin: 0.7rem 0 0;
+        font-size: 1.03rem;
+        color: #62738f;
+    }
+
+    .questions-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .question-card-ui {
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        border: 1px solid #dbe7ff;
+        border-radius: 24px;
+        box-shadow: 0 14px 30px rgba(23,37,84,0.06);
+        overflow: hidden;
+    }
+
+    .question-card-head {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1rem 1.2rem;
+        background: linear-gradient(90deg, rgba(37,99,235,0.08), rgba(6,182,212,0.08));
+        border-bottom: 1px solid #e2ebfb;
+    }
+
+    .question-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #2563eb, #06b6d4);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        box-shadow: 0 10px 20px rgba(37,99,235,0.18);
+    }
+
+    .question-label {
+        font-size: 0.88rem;
+        color: #5f708d;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .question-body-ui {
+        padding: 1.3rem;
+    }
+
+    .question-text-ui {
+        font-size: 1.18rem;
+        line-height: 1.5;
+        font-weight: 800;
+        color: #17253a;
+        margin-bottom: 1rem;
+    }
+
+    .answers-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.9rem;
+    }
+
+    .answer-choice {
+        position: relative;
+    }
+
+    .answer-choice input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .answer-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        width: 100%;
+        padding: 1rem 1rem;
+        border-radius: 18px;
+        border: 1px solid #d8e5fb;
+        background: #f8fbff;
+        cursor: pointer;
+        transition: all 0.22s ease;
+        min-height: 72px;
+    }
+
+    .answer-pill:hover {
+        border-color: #8bb4ff;
+        background: #f0f6ff;
+        transform: translateY(-1px);
+    }
+
+    .answer-marker {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 2px solid #9cb9ea;
+        background: white;
+        flex-shrink: 0;
+        position: relative;
+        transition: all 0.22s ease;
+    }
+
+    .answer-marker::after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: transparent;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: all 0.22s ease;
+    }
+
+    .answer-code {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #eaf2ff, #f4f8ff);
+        color: #2563eb;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .answer-text-ui {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #23344e;
+    }
+
+    .answer-choice input[type="radio"]:checked + .answer-pill {
+        background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(20,184,166,0.10));
+        border-color: #4d86ff;
+        box-shadow: 0 10px 24px rgba(37,99,235,0.12);
+    }
+
+    .answer-choice input[type="radio"]:checked + .answer-pill .answer-marker {
+        border-color: #2563eb;
+    }
+
+    .answer-choice input[type="radio"]:checked + .answer-pill .answer-marker::after {
+        background: #2563eb;
+    }
+
+    .submit-bar {
+        margin-top: 1.6rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .submit-bar .btn {
+        min-width: 240px;
+        font-size: 1.02rem;
+    }
+
+    @media (max-width: 768px) {
+        .answers-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .test-hero h1 {
+            font-size: 1.8rem;
+        }
+
+        .question-text-ui {
+            font-size: 1.05rem;
+        }
+
+        .submit-bar {
+            justify-content: stretch;
+        }
+
+        .submit-bar .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="test-hero">
+    <h1>
+        <i class="fas fa-book-open"></i>
+        {{ test.title }}
+    </h1>
+    <p>
+        Répondez avec attention à chaque question pour obtenir un résultat plus précis et cohérent.
+    </p>
+</div>
+
+<form method="POST" action="{{ path('front_general_test_submit') }}">
+    <div class="questions-stack">
+        {% for item in questionsWithAnswers %}
+            {% set question = item.question %}
+            {% set answers = item.answers %}
+
+            <div class="question-card-ui">
+                <div class="question-card-head">
+                    <div class="question-icon">
+                        <i class="fas fa-circle-question"></i>
+                    </div>
+                    <div>
+                        <div class="question-label">Question {{ loop.index }}</div>
+                    </div>
+                </div>
+
+                <div class="question-body-ui">
+                    <div class="question-text-ui">
+                        {{ question.questionText }}
+                    </div>
+
+                    <div class="answers-grid">
+                        {% for answer in answers %}
+                            <div class="answer-choice">
+                                <input
+                                    type="radio"
+                                    id="answer_{{ answer.id }}"
+                                    name="answers[{{ question.id }}]"
+                                    value="{{ answer.id }}"
+                                    required
+                                >
+                                <label class="answer-pill" for="answer_{{ answer.id }}">
+                                    <span class="answer-marker"></span>
+                                    <span class="answer-code">{{ answer.answerLabel ?? loop.index }}</span>
+                                    <span class="answer-text-ui">{{ answer.answerText }}</span>
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="submit-bar">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-check me-2"></i>Soumettre le test général
+        </button>
+    </div>
+</form>
+{% endblock %}

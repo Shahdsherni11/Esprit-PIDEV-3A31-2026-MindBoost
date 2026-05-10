@@ -1,0 +1,209 @@
+{% extends 'front/base.html.twig' %}
+{% block title %}Mes Sous-Tâches{% endblock %}
+{% block page_title %}Mes Sous-Tâches{% endblock %}
+
+{% block extra_css %}
+<style>
+    .sous-tache-list-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .2s;
+    }
+    .sous-tache-list-item:last-child { border-bottom: none; }
+    .sous-tache-list-item:hover { background: rgba(255,255,255,0.03); }
+
+    .sous-tache-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+        background: linear-gradient(135deg, #00D1C7, #19B5FE);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .sous-tache-desc {
+        font-weight: 700;
+        font-size: .95rem;
+        color: var(--text-main, #F4F7FC);
+    }
+
+    .sous-tache-meta {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        flex-wrap: wrap;
+        margin-top: .3rem;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        border-radius: 999px;
+        padding: .2rem .6rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+    .status-done    { background: rgba(41,204,122,0.18); color: #29CC7A; }
+    .status-ongoing { background: rgba(47,107,255,0.18); color: #4D83FF; }
+    .status-todo    { background: rgba(247,184,75,0.18);  color: #F7B84B; }
+    .status-pending { background: rgba(255,255,255,0.08); color: #AAB6D3; }
+
+    .parent-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .25rem;
+        font-size: .75rem;
+        font-weight: 700;
+        background: rgba(108,99,255,0.15);
+        color: #9A8CFF;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+    }
+
+    .prio-pill {
+        background: rgba(255,255,255,0.07);
+        color: #AAB6D3;
+        border-radius: 999px;
+        padding: .2rem .55rem;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .dur-pill {
+        font-size: .75rem;
+        color: #7E8DB1;
+    }
+
+    .time-pill {
+        font-size: .75rem;
+        color: #7E8DB1;
+        font-style: italic;
+    }
+
+    .action-group { display: flex; gap: .4rem; flex-shrink: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ── Counters ── #}
+<div class="row g-3 mb-4">
+    <div class="col-6">
+        <div class="card text-center p-3">
+            <div style="font-size:1.8rem;font-weight:900;color:var(--primary,#2563eb);">{{ totalSousTaches }}</div>
+            <div class="text-muted small fw-bold mt-1">Total sous-tâches</div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card text-center p-3">
+            <div style="font-size:1.8rem;font-weight:900;color:#29CC7A;">{{ nbTerminees }}</div>
+            <div class="text-muted small fw-bold mt-1">Terminées</div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <span class="text-muted">{{ sous_taches|length }} sous-tâche(s)</span>
+    <a href="{{ path('app_sous_tache_new') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Ajouter
+    </a>
+</div>
+
+<div class="card mb-4 p-3">
+    <form method="GET" action="{{ path('app_sous_tache_index') }}" class="d-flex gap-2 flex-wrap align-items-end">
+        <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." class="form-control form-control-sm" style="width:200px;">
+        <select name="etat" class="form-select form-select-sm" style="width:160px;">
+            <option value="">Tous les états</option>
+            <option value="Terminée"      {{ etat == 'Terminée'      ? 'selected' : '' }}>Terminée</option>
+            <option value="En cours"      {{ etat == 'En cours'      ? 'selected' : '' }}>En cours</option>
+            <option value="Non commencée" {{ etat == 'Non commencée' ? 'selected' : '' }}>Non commencée</option>
+            <option value="À faire"       {{ etat == 'À faire'       ? 'selected' : '' }}>À faire</option>
+        </select>
+        <select name="tache_id" class="form-select form-select-sm" style="width:190px;">
+            <option value="">Toutes les tâches</option>
+            {% for tache in taches %}
+                <option value="{{ tache.id }}" {{ tache_id == tache.id ? 'selected' : '' }}>{{ tache.titre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search me-1"></i>Filtrer</button>
+        <a href="{{ path('app_sous_tache_index') }}" class="btn btn-outline-secondary btn-sm">Réinitialiser</a>
+    </form>
+</div>
+
+{% if sous_taches|length == 0 %}
+<div class="card p-5 text-center text-muted">
+    <i class="bi bi-inbox display-4"></i>
+    <p class="mt-2">Aucune sous-tâche trouvée.</p>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body p-0">
+        {% for sous_tache in sous_taches %}
+            <div class="sous-tache-list-item">
+                <div class="sous-tache-icon">
+                    <i class="bi bi-list-check"></i>
+                </div>
+
+                <div class="flex-grow-1 min-width-0">
+                    <div class="sous-tache-desc">
+                        {{ sous_tache.description|slice(0,70) }}{% if sous_tache.description|length > 70 %}…{% endif %}
+                    </div>
+                    <div class="sous-tache-meta">
+                        {% if sous_tache.etat == 'Terminée' or sous_tache.etat == 'Terminee' %}
+                            <span class="status-pill status-done"><i class="bi bi-check-circle-fill"></i>Terminée</span>
+                        {% elseif sous_tache.etat == 'En cours' %}
+                            <span class="status-pill status-ongoing"><i class="bi bi-circle-fill" style="font-size:.5rem;"></i>En cours</span>
+                        {% elseif sous_tache.etat == 'À faire' or sous_tache.etat == 'A faire' %}
+                            <span class="status-pill status-todo"><i class="bi bi-diamond-fill" style="font-size:.5rem;"></i>À faire</span>
+                        {% else %}
+                            <span class="status-pill status-pending">{{ sous_tache.etat }}</span>
+                        {% endif %}
+                        {% if sous_tache.tacheFocus %}
+                            <span class="parent-pill">
+                                <i class="bi bi-link-45deg"></i>{{ sous_tache.tacheFocus.titre|slice(0,40) }}
+                            </span>
+                        {% endif %}
+                        <span class="prio-pill"><i class="bi bi-flag me-1"></i>{{ sous_tache.priorite }}</span>
+                        <span class="dur-pill"><i class="bi bi-hourglass-split me-1"></i>{{ sous_tache.dureeRecommandee }} min</span>
+                        {% if sous_tache.heureDebut %}
+                            <span class="time-pill"><i class="bi bi-clock me-1"></i>{{ sous_tache.heureDebut|date('H:i') }} → {{ sous_tache.heureFin ? sous_tache.heureFin|date('H:i') : '?' }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <a href="{{ path('app_sous_tache_show', {id: sous_tache.id}) }}"
+                       class="btn btn-xs btn-outline-info"
+                       style="font-size:.75rem;padding:3px 9px;" title="Voir">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ path('app_sous_tache_edit', {id: sous_tache.id}) }}"
+                       class="btn btn-xs btn-outline-secondary"
+                       style="font-size:.75rem;padding:3px 9px;" title="Modifier">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <form method="post" action="{{ path('app_sous_tache_delete', {id: sous_tache.id}) }}"
+                          onsubmit="return confirm('Supprimer cette sous-tâche ?')">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sous_tache.id) }}">
+                        <button class="btn btn-xs btn-outline-danger"
+                                style="font-size:.75rem;padding:3px 9px;" title="Supprimer">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

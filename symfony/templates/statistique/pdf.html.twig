@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; color: #1a1a2e; margin: 0; padding: 20px; }
+
+        .header { background: #2563eb; color: white; padding: 20px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .header p { margin: 5px 0 0; font-size: 11px; opacity: 0.85; }
+
+        .stats-row { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
+        .stat-box { width: 25%; text-align: center; background: #f0f6ff; border: 1px solid #dbe7ff; padding: 12px; }
+        .stat-number { font-size: 26px; font-weight: bold; color: #2563eb; }
+        .stat-label { font-size: 11px; color: #6c7b95; margin-top: 4px; }
+
+        .section-title { font-size: 14px; font-weight: bold; color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 5px; margin: 20px 0 10px; }
+
+        .progress-bg { background: #e2ebfb; height: 12px; margin: 6px 0; }
+        .progress-fill { background: #2563eb; height: 12px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        thead tr { background: #2563eb; color: white; }
+        th { padding: 8px 10px; text-align: left; }
+        td { padding: 7px 10px; border-bottom: 1px solid #e2ebfb; }
+        tr:nth-child(even) td { background: #f8fbff; }
+
+        .badge-terminee { background: #d1fae5; color: #065f46; padding: 2px 8px; }
+        .badge-encours  { background: #dbeafe; color: #1e40af; padding: 2px 8px; }
+        .badge-autre    { background: #f3f4f6; color: #374151; padding: 2px 8px; }
+
+        .footer { text-align: center; font-size: 10px; color: #9ca3af; margin-top: 30px; padding-top: 10px; border-top: 1px solid #e2ebfb; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>MindBoost — Rapport de Productivité</h1>
+    <p>Généré le {{ date|date('d/m/Y à H:i') }}</p>
+</div>
+
+<table class="stats-row">
+    <tr>
+        <td class="stat-box">
+            <div class="stat-number">{{ totalTaches }}</div>
+            <div class="stat-label">Total Tâches</div>
+        </td>
+        <td class="stat-box">
+            <div class="stat-number">{{ totalSousTaches }}</div>
+            <div class="stat-label">Total Sous-Tâches</div>
+        </td>
+        <td class="stat-box">
+            <div class="stat-number" style="color:#16a34a;">{{ tachesTerminees }}</div>
+            <div class="stat-label">Tâches Terminées</div>
+        </td>
+        <td class="stat-box">
+            <div class="stat-number" style="color:#e879a0;">{{ scoreMoyen }}%</div>
+            <div class="stat-label">Score Moyen</div>
+        </td>
+    </tr>
+</table>
+
+<div class="section-title">Progression Globale</div>
+<p style="font-size:12px;color:#6c7b95;margin:0;">{{ tachesTerminees }} sur {{ totalTaches }} tâches terminées — {{ progression }}%</p>
+<div class="progress-bg">
+    <div class="progress-fill" style="width:{{ progression }}%;"></div>
+</div>
+
+<div class="section-title">Liste des Tâches Focus</div>
+<table>
+    <thead>
+        <tr>
+            <th>Titre</th>
+            <th>Objectif</th>
+            <th>Difficulté</th>
+            <th>Statut</th>
+            <th>Score</th>
+            <th>Début</th>
+            <th>Fin</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for tache in taches %}
+        <tr>
+            <td><strong>{{ tache.titre }}</strong></td>
+            <td>{{ tache.objectifPrincipal }}</td>
+            <td style="text-align:center;">{{ tache.niveauDifficulte ?? '-' }}</td>
+            <td>
+                {% if tache.statut == 'Terminée' %}
+                    <span class="badge-terminee">{{ tache.statut }}</span>
+                {% elseif tache.statut == 'En cours' %}
+                    <span class="badge-encours">{{ tache.statut }}</span>
+                {% else %}
+                    <span class="badge-autre">{{ tache.statut ?? '-' }}</span>
+                {% endif %}
+            </td>
+            <td style="text-align:center;font-weight:bold;color:
+                {% if tache.scoreProductivite >= 75 %}#16a34a
+                {% elseif tache.scoreProductivite >= 50 %}#f59e0b
+                {% else %}#ef4444{% endif %};">
+                {{ tache.scoreProductivite ?? 0 }}%
+            </td>
+            <td>{{ tache.heureDebut ? tache.heureDebut|date('H:i') : '-' }}</td>
+            <td>{{ tache.heureFin ? tache.heureFin|date('H:i') : '-' }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="7" style="text-align:center;padding:15px;color:#9ca3af;">Aucune tâche</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div class="footer">
+    MindBoost &copy; {{ date|date('Y') }} — Application de gestion de focus et productivité
+</div>
+
+</body>
+</html>
