@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { ExternalLink, Loader2 } from 'lucide-react';
 
-export default function Community() {
-  const target = '/posts';
+const FORUM_PATH = '/posts';
 
+export default function Community() {
   useEffect(() => {
-    window.location.replace(target);
-  }, [target]);
+    window.location.replace(FORUM_PATH);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center gap-3">
@@ -16,7 +16,7 @@ export default function Community() {
         Si la redirection échoue, ouvrez le forum directement.
       </div>
       <a
-        href={target}
+        href={FORUM_PATH}
         aria-label="Accéder manuellement au forum si la redirection échoue"
         className="text-xs font-bold flex items-center gap-1"
         style={{ color: '#4D83FF' }}
