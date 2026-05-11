@@ -32,7 +32,7 @@ const REACT_ROUTES = [
 
 // Symfony route prefixes — forward everything under these to :8000
 const SYMFONY_PREFIXES = [
-  '/admin', '/back', '/front', '/logout', '/register',
+  '/admin', '/back', '/front', '/logout', '/register', '/session',
   '/tests', '/taches', '/posts', '/achievements', '/statistiques',
   '/bundles', '/build', '/home',
 ];

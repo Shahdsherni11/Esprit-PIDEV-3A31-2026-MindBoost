@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
         '/login':        { target: 'http://localhost:8000', changeOrigin: true, bypass: symfonyBypass },
         '/logout':       { target: 'http://localhost:8000', changeOrigin: true },
         '/register':     { target: 'http://localhost:8000', changeOrigin: true, bypass: symfonyBypass },
+        '/session':      { target: 'http://localhost:8000', changeOrigin: true },
         '/profile':      { target: 'http://localhost:8000', changeOrigin: true, bypass: symfonyBypass },
         '/tests':        { target: 'http://localhost:8000', changeOrigin: true },
         '/taches':       { target: 'http://localhost:8000', changeOrigin: true },

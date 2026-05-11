@@ -55,7 +55,7 @@ qui sont créés automatiquement au démarrage :
 | Coach IA | `/chat` | Chat Gemini AI |
 | Journal | `/journal` | Entrées + humeurs (localStorage) |
 | Rendez-vous | `/appointments` | Liste RDV |
-| Communauté | `/community` | Forum (localStorage) |
+| Communauté | `/community` | Forum Symfony (`/posts`) |
 | Tests Psy | `/tests` | PHQ-9, GAD-7, DASS-21... |
 | Résultats Tests | `/tests/history` | Historique |
 | Stats Tests | `/tests/stats` | Graphiques |
@@ -110,8 +110,8 @@ GEMINI_API_KEY=votre_nouvelle_cle
 
 ## ▶ MindBoost Symfony (optionnel)
 
-Les tests psychologiques, tâches et posts sont **intégrés directement en React** 
-et fonctionnent sans Symfony.
+Le forum communauté utilise le module Symfony (`/posts`) et nécessite
+le backend Symfony pour fonctionner correctement.
 
 Pour activer le backend Symfony complet (base de données Symfony) :
 ```bash
@@ -123,4 +123,3 @@ symfony serve --port=8000 --no-tls
 ```
 Les routes Symfony (`/admin`, `/front`, `/tests` Symfony) seront automatiquement 
 proxiées depuis `localhost:3002`.
-

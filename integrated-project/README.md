@@ -35,7 +35,8 @@ Ouvrez **http://localhost:3002** — c'est tout.
 |-----|-------------|-------------|
 | `/dashboard` `/chat` `/journal` `/focus` | React MindCare+ | Frontend bien-être IA |
 | `/insights` `/soundscapes` `/constellation` `/kernel` | React MindCare+ | Modules avancés |
-| `/appointments` `/community` `/profile` | React MindCare+ | Partagé |
+| `/appointments` `/profile` | React MindCare+ | Partagé |
+| `/community` | React → Symfony | Redirection vers le forum (`/posts`) |
 | `/api/*` | Express API | Authentification, données utilisateurs |
 | `/admin` `/back/*` | Symfony MindBoost | Panneau d'administration |
 | `/front/*` `/tests` `/taches` `/posts` | Symfony MindBoost | Espace étudiant |
