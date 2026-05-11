@@ -111,7 +111,8 @@ GEMINI_API_KEY=votre_nouvelle_cle
 ## ▶ MindBoost Symfony (optionnel)
 
 Le forum communauté utilise le module Symfony (`/posts`) et nécessite
-le backend Symfony pour fonctionner correctement.
+le backend Symfony pour fonctionner correctement. Si Symfony n'est pas démarré,
+la passerelle Express affichera une page d'erreur invitant à lancer `symfony serve`.
 
 Pour activer le backend Symfony complet (base de données Symfony) :
 ```bash
