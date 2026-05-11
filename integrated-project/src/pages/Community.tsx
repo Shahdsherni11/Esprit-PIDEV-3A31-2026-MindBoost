@@ -1,20 +1,10 @@
 import React, { useEffect } from 'react';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
 export default function Community() {
-  const { profile, loading } = useAuth();
-
   useEffect(() => {
-    if (loading) return;
-    const params = new URLSearchParams();
-    const role = profile?.role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_USER';
-    params.set('role', role);
-    if (profile?.id) params.set('userId', String(profile.id));
-    if (profile?.email) params.set('email', profile.email);
-    params.set('target', '/posts');
-    window.location.assign(`/session/set?${params.toString()}`);
-  }, [loading, profile]);
+    window.location.assign('/posts');
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center gap-3">
