@@ -5,8 +5,7 @@ const FORUM_PATH = '/posts';
 
 export default function Community() {
   useEffect(() => {
-    const forumUrl = new URL(FORUM_PATH, window.location.origin).toString();
-    window.location.replace(forumUrl);
+    window.location.replace(FORUM_PATH);
   }, []);
 
   return (
